@@ -1,1 +1,1 @@
-# praktikum_new_diplom
+# Grad project docs (to do)
