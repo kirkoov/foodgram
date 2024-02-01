@@ -1,1 +1,1 @@
-# Grad project docs (to do)
+# Yandex Practicum graduation project (to do)
