@@ -34,17 +34,15 @@ class Tag(models.Model):
     )
     color: models.CharField = models.CharField(
         max_length=settings.NUM_CHARS_MEALTIME_HEX,
-        null=True,
         unique=True,
         verbose_name=_("colour"),
-        help_text=_("Enter a unique HEX value or leave empty"),
+        help_text=_("Enter a unique HEX value"),
     )
     slug: models.SlugField = models.SlugField(
         max_length=settings.NUM_CHARS_MEALTIME_SLUG,
-        null=True,
         unique=True,
         verbose_name=_("slug"),
-        help_text=_("Enter a unique slug or leave empty"),
+        help_text=_("Enter a unique slug"),
     )
 
     class Meta:

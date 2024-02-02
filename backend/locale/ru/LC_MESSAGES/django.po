@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-02 11:43+0300\n"
+"POT-Creation-Date: 2024-02-02 13:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,19 +19,56 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
-#: backend/settings.py:133
-msgid "English"
-msgstr ""
 
 #: backend/settings.py:134
+msgid "English"
+msgstr "английский"
+
+#: backend/settings.py:135
 msgid "Russian"
 msgstr "русский"
+
+#: recipes/apps.py:7
+msgid "recipes"
+msgstr "рецепты"
+
+#: recipes/models.py:32
+msgid "occasion name"
+msgstr "название приема пищи"
+
+#: recipes/models.py:33
+msgid "Enter an occasion to eat: breakfast, lunch or dinner"
+msgstr "Введите время приема пищи: завтрак, обед или ужин"
+
+#: recipes/models.py:38
+msgid "colour"
+msgstr "цвет"
+
+#: recipes/models.py:39
+msgid "Enter a unique HEX value"
+msgstr "Введите уникальное значение HEX"
+
+#: recipes/models.py:44
+msgid "slug"
+msgstr "сокращенное название"
+
+#: recipes/models.py:45
+msgid "Enter a unique slug"
+msgstr "Введите уникальное сокращение"
+
+#: recipes/models.py:49
+msgid "mealtime"
+msgstr "время приема пищи"
+
+#: recipes/models.py:50
+msgid "mealtimes"
+msgstr "время приема пищи"
 
 #: users/admin.py:27
 msgid "empty"
 msgstr "пусто"
 
-#: users/apps.py:8
+#: users/apps.py:7
 msgid "users"
 msgstr "пользователи"
 

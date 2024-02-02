@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-02 11:43+0300\n"
+"POT-Creation-Date: 2024-02-02 13:13+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,19 +17,56 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: backend/settings.py:133
+
+#: backend/settings.py:134
 msgid "English"
 msgstr ""
 
-#: backend/settings.py:134
+#: backend/settings.py:135
 msgid "Russian"
+msgstr ""
+
+#: recipes/apps.py:7
+msgid "recipes"
+msgstr ""
+
+#: recipes/models.py:32
+msgid "occasion name"
+msgstr ""
+
+#: recipes/models.py:33
+msgid "Enter an occasion to eat: breakfast, lunch or dinner"
+msgstr ""
+
+#: recipes/models.py:38
+msgid "colour"
+msgstr ""
+
+#: recipes/models.py:39
+msgid "Enter a unique HEX value"
+msgstr ""
+
+#: recipes/models.py:44
+msgid "slug"
+msgstr ""
+
+#: recipes/models.py:45
+msgid "Enter a unique slug"
+msgstr ""
+
+#: recipes/models.py:49
+msgid "mealtime"
+msgstr ""
+
+#: recipes/models.py:50
+msgid "mealtimes"
 msgstr ""
 
 #: users/admin.py:27
 msgid "empty"
 msgstr ""
 
-#: users/apps.py:8
+#: users/apps.py:7
 msgid "users"
 msgstr ""
 
