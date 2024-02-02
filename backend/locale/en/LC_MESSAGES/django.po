@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-27 13:17+0300\n"
+"POT-Creation-Date: 2024-02-02 11:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-#: foodgram/settings.py:113
+#: backend/settings.py:133
 msgid "English"
 msgstr ""
 
-#: foodgram/settings.py:114
+#: backend/settings.py:134
 msgid "Russian"
-msgstr ""
-
-#: foodgram/settings.py:115
-msgid "Spanish"
 msgstr ""
 
 #: users/admin.py:27
 msgid "empty"
 msgstr ""
 
-#: users/apps.py:7
+#: users/apps.py:8
 msgid "users"
 msgstr ""
 
@@ -54,10 +49,10 @@ msgstr ""
 msgid "last name"
 msgstr ""
 
-#: users/models.py:33
+#: users/models.py:40
 msgid "custom user"
 msgstr ""
 
-#: users/models.py:34
+#: users/models.py:41
 msgid "custom users"
 msgstr ""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-27 13:17+0300\n"
+"POT-Creation-Date: 2024-02-02 11:43+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,24 +19,19 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
-
-#: foodgram/settings.py:113
+#: backend/settings.py:133
 msgid "English"
-msgstr "английский"
+msgstr ""
 
-#: foodgram/settings.py:114
+#: backend/settings.py:134
 msgid "Russian"
 msgstr "русский"
 
-#: foodgram/settings.py:115
-msgid "Spanish"
-msgstr "испанский"
-
 #: users/admin.py:27
 msgid "empty"
-msgstr "-не задано-"
+msgstr "пусто"
 
-#: users/apps.py:7
+#: users/apps.py:8
 msgid "users"
 msgstr "пользователи"
 
@@ -46,23 +41,20 @@ msgstr "эл.почта"
 
 #: users/models.py:15
 msgid "Enter the preferred email here"
-msgstr "Здесь введите предпочитаемую эл.почту"
+msgstr "Введите предпочитаемую эл.почту"
 
 #: users/models.py:18
 msgid "first name"
-msgstr ""
+msgstr "имя"
 
 #: users/models.py:21
 msgid "last name"
-msgstr ""
+msgstr "фамилия"
 
-#: users/models.py:33
+#: users/models.py:40
 msgid "custom user"
-msgstr "наш пользователь"
+msgstr "\"наш пользователь\""
 
-#: users/models.py:34
+#: users/models.py:41
 msgid "custom users"
 msgstr "наши пользователи"
-
-#~ msgid "admin/"
-#~ msgstr "админ"
