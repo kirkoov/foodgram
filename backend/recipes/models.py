@@ -21,13 +21,13 @@ from django.utils.translation import gettext_lazy as _
 #     ...
 
 
-# class Favourite(models.Model):
+# class Favorite(models.Model):
 #     ...
 
 
 class Tag(models.Model):
     name: models.CharField = models.CharField(
-        max_length=settings.NUM_CHARS_MEALTIME,
+        max_length=settings.NUM_CHARS_MEALTIME_NAME,
         unique=True,
         verbose_name=_("occasion name"),
         help_text=_("Enter an occasion to eat: breakfast, lunch or dinner"),
