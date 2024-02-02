@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "djoser",
     "users.apps.UsersConfig",
+    "recipes.apps.RecipesConfig",
     "debug_toolbar",
 ]
 
@@ -148,3 +149,7 @@ AUTH_USER_MODEL = "users.CustomUser"
 NUM_CHARS_FIRSTNAME = 50
 NUM_CHARS_LASTNAME = 50
 NUM_CHARS_EMAIL = 254
+
+NUM_CHARS_MEALTIME = 200
+NUM_CHARS_MEALTIME_HEX = 16
+NUM_CHARS_MEALTIME_SLUG = 16
