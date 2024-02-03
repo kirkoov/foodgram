@@ -6,6 +6,7 @@ colorama==0.4.6
 cryptography==42.0.2 
 defusedxml==0.7.1 
 django-debug-toolbar==4.3.0 
+django-extensions==3.2.3 
 django-filter==23.5 
 django-stubs-ext==4.2.7 
 django-stubs==4.2.7 
@@ -37,7 +38,8 @@ social-auth-app-django==5.4.0
 social-auth-core==4.5.2 
 sqlparse==0.4.4 
 tomli==2.0.1 
-types-pytz==2023.4.0.20240130 
+types-psycopg2==2.9.21.20240201 
+types-pytz==2024.1.0.20240203 
 types-pyyaml==6.0.12.12 
 types-requests==2.31.0.20240125 
 typing-extensions==4.9.0 
