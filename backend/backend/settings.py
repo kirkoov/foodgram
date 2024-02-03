@@ -141,12 +141,10 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
-    # "DEFAULT_AUTHENTICATION_CLASSES": (
-    #     "rest_framework_authentication.TokenAuthentication",
-    # ),
-    # "TEST_REQUEST_DEFAULT_FORMAT": "json",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",  # noqa: E501
+    "PAGE_SIZE": 6,
 }
 
 LANGUAGES = (
@@ -159,9 +157,9 @@ LOCALE_PATHS = [
 
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/app/media/"
-STATIC_URL = "/static/django/"
-STATIC_ROOT = "/app/static_django/"
+MEDIA_ROOT = BASE_DIR / "media"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "collected_static"
 
 
 DJOSER = {
