@@ -1,2 +1,1 @@
-
-# Create your views here.
+from djoser.views import UserViewSet

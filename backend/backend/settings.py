@@ -1,4 +1,3 @@
-from datetime import timedelta
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -39,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "djoser",
     "users.apps.UsersConfig",
     "recipes.apps.RecipesConfig",
@@ -96,6 +96,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.getenv(),
+#         "USER":
+#         "PASSWORD":
+#         "HOST":
+#         "PORT":
+#     }
+# }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -117,47 +128,53 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ],
-}
-
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=100),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
-
-
 LANGUAGE_CODE = "en"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
+
+AUTH_USER_MODEL = "users.CustomUser"
+
+REST_FRAMEWORK = {
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.IsAuthenticated",
+    # ],
+    # "DEFAULT_AUTHENTICATION_CLASSES": [
+    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_authentication.TokenAuthentication",
+    ],
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+}
+
 
 LANGUAGES = (
     ("en", _("English")),
     ("ru", _("Russian")),
 )
-
 LOCALE_PATHS = [
     BASE_DIR / "locale/",
 ]
 
 
-STATIC_URL = "static/"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = "/app/media/"
+STATIC_URL = "/static/django/"
+STATIC_ROOT = "/app/static_django/"
+
+
+DJOSER = {
+    "LOGIN_FIELD": "email",
+    "PERMISSIONS": {
+        "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
+        "user_list": ["rest_framework.permissions.AllowAny"],
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "users.CustomUser"
 
 NUM_CHARS_FIRSTNAME = 50
 NUM_CHARS_LASTNAME = 50
