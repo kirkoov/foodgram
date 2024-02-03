@@ -1,7 +1,7 @@
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django_extensions.validators import HexValidator  # type: ignore[import-untyped]  # noqa: E501
 
 # class Ingredient(models.Model):
 #     name = models.CharField(max_length=100, verbose_name="...")
@@ -27,19 +27,22 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Tag(models.Model):
-    name: models.CharField = models.CharField(
+    name = models.CharField(
         max_length=settings.NUM_CHARS_MEALTIME_NAME,
         unique=True,
         verbose_name=_("occasion name"),
         help_text=_("Enter an occasion to eat: breakfast, lunch or dinner"),
     )
-    color: models.CharField = models.CharField(
+    color = models.CharField(
         max_length=settings.NUM_CHARS_MEALTIME_HEX,
+        validators=[
+            HexValidator(max_length=settings.NUM_CHARS_MEALTIME_HEX - 1)
+        ],
         unique=True,
         verbose_name=_("colour"),
-        help_text=_("Enter a unique HEX value"),
+        help_text=_("Enter a unique HEX value without the #"),
     )
-    slug: models.SlugField = models.SlugField(
+    slug = models.SlugField(
         max_length=settings.NUM_CHARS_MEALTIME_SLUG,
         unique=True,
         verbose_name=_("slug"),
