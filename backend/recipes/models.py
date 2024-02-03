@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_extensions.validators import HexValidator  # type: ignore[import-untyped]  # noqa: E501
+from django_extensions.validators import HexValidator
 
 # class Ingredient(models.Model):
 #     name = models.CharField(max_length=100, verbose_name="...")
