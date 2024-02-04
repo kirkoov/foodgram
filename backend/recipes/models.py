@@ -50,6 +50,7 @@ class Tag(models.Model):
     )
 
     class Meta:
+        ordering = ("name",)
         verbose_name = _("mealtime")
         verbose_name_plural = _("mealtimes")
 

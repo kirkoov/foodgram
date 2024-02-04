@@ -128,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = "en"
+LANGUAGE_CODE = "ru"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_L10N = True
@@ -137,9 +137,9 @@ USE_TZ = True
 AUTH_USER_MODEL = "users.CustomUser"
 
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
+    # "DEFAULT_PERMISSION_CLASSES": [
+    #     "rest_framework.permissions.IsAuthenticated",
+    # ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
@@ -148,8 +148,8 @@ REST_FRAMEWORK = {
 }
 
 LANGUAGES = (
-    ("en", _("English")),
     ("ru", _("Russian")),
+    ("en", _("English")),
 )
 LOCALE_PATHS = [
     BASE_DIR / "locale/",
