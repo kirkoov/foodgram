@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-05 11:20+0300\n"
+"POT-Creation-Date: 2024-02-05 17:31+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,35 +30,35 @@ msgstr ""
 msgid "recipes"
 msgstr ""
 
-#: recipes/models.py:36
+#: recipes/models.py:34
 msgid "occasion name"
 msgstr ""
 
-#: recipes/models.py:37
+#: recipes/models.py:35
 msgid "Enter an occasion to eat: breakfast, lunch or dinner"
 msgstr ""
 
-#: recipes/models.py:45
+#: recipes/models.py:43
 msgid "colour"
 msgstr ""
 
-#: recipes/models.py:46
+#: recipes/models.py:44
 msgid "Enter a unique HEX value with the #"
 msgstr ""
 
-#: recipes/models.py:53
+#: recipes/models.py:51
 msgid "slug"
 msgstr ""
 
-#: recipes/models.py:54
+#: recipes/models.py:52
 msgid "Enter a unique slug"
 msgstr ""
 
-#: recipes/models.py:59
+#: recipes/models.py:57
 msgid "mealtime"
 msgstr ""
 
-#: recipes/models.py:60
+#: recipes/models.py:58
 msgid "mealtimes"
 msgstr ""
 

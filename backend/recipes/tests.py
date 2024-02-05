@@ -18,6 +18,7 @@ class TagTests(TestCase):
         cls.factory = APIRequestFactory()
         cls.test_tags = []
         cls.request_detail = cls.factory.get("/api/tags/0/")
+        cls.view_detail = TagViewSet.as_view({"get": "retrieve"})
         for index in range(3):
             tag = Tag(
                 name=f"Tag {index}",
@@ -66,10 +67,9 @@ class TagTests(TestCase):
             )
 
     def test_get_tagdetail(self):
-        view = TagViewSet.as_view({"get": "retrieve"})
-        response = view(self.request_detail, pk=1)
+        response = self.view_detail(self.request_detail, pk=1)
         data = response.__dict__.get("data")
-        if data is not None:
+        if data is not None:  # 1 vs 0
             assert data["name"] == self.test_tags[0].name
             assert data["color"] == self.test_tags[0].color
             assert data["slug"] == self.test_tags[0].slug
@@ -79,11 +79,9 @@ class TagTests(TestCase):
             )
 
     def test_get_tagdetail_status200(self):
-        view = TagViewSet.as_view({"get": "retrieve"})
-        response = view(self.request_detail, pk=1)
+        response = self.view_detail(self.request_detail, pk=1)
         assert response.status_code == 200
 
     def test_get_tagdetail_status404(self):
-        view = TagViewSet.as_view({"get": "retrieve"})
-        response = view(self.request_detail, pk=maxsize)
+        response = self.view_detail(self.request_detail, pk=maxsize)
         assert response.status_code == 404
