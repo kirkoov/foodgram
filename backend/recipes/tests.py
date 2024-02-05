@@ -1,3 +1,4 @@
+import re
 import pytest
 
 from django.conf import settings
@@ -24,13 +25,13 @@ class RecipeTests(TestCase):
                 slug=None,
             )
 
-        # if not age.isdigit():
-        # raise ValueError("Возраст должен указываться числом")
-
-    # def test_create_tag_hex(self):
-    #     with pytest.raises(DataError):
-    #         Tag.objects.create(
-    #             name=settings.NUM_CHARS_MEALTIME_NAME * "s",
-    #             color="",
-    #             slug="вообще не то",  # ^[-a-zA-Z0-9_]+$
-    #         )
+    def test_create_tag_hex(self):
+        slug = "a-proper-slug"
+        if re.search(settings.SLUG_FIELD_REQ, slug):
+            Tag.objects.create(
+                name=settings.NUM_CHARS_MEALTIME_NAME * "s",
+                color="",
+                slug=slug,
+            )
+        else:
+            raise ValueError("See the ReDoc for the slug field requirements.")
