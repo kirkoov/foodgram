@@ -23,3 +23,14 @@ class RecipeTests(TestCase):
                 color="wrongHEX",
                 slug=None,
             )
+
+        # if not age.isdigit():
+        # raise ValueError("Возраст должен указываться числом")
+
+    # def test_create_tag_hex(self):
+    #     with pytest.raises(DataError):
+    #         Tag.objects.create(
+    #             name=settings.NUM_CHARS_MEALTIME_NAME * "s",
+    #             color="",
+    #             slug="вообще не то",  # ^[-a-zA-Z0-9_]+$
+    #         )
