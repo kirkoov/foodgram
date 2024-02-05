@@ -6,7 +6,6 @@ colorama==0.4.6
 cryptography==42.0.2 
 defusedxml==0.7.1 
 django-debug-toolbar==4.3.0 
-django-extensions==3.2.3 
 django-filter==23.5 
 django-stubs-ext==4.2.7 
 django-stubs==4.2.7 

@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_extensions.validators import HexValidator
+
+from recipes import validators
 
 # class Ingredient(models.Model):
 #     name = models.CharField(max_length=100, verbose_name="...")
@@ -35,14 +36,12 @@ class Tag(models.Model):
     )
     color = models.CharField(
         max_length=settings.NUM_CHARS_MEALTIME_HEX,
-        validators=[
-            HexValidator(max_length=settings.NUM_CHARS_MEALTIME_HEX - 1)
-        ],
+        validators=[validators.validate_hex_color],
         null=True,
         blank=True,
         unique=True,
         verbose_name=_("colour"),
-        help_text=_("Enter a unique HEX value without the #"),
+        help_text=_("Enter a unique HEX value with the #"),
     )
     slug = models.SlugField(
         max_length=settings.NUM_CHARS_MEALTIME_SLUG,

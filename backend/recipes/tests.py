@@ -1,11 +1,12 @@
-import re
 import pytest
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db.utils import DataError
 from django.test import TestCase
 
 from .models import Tag
+from .validators import validate_hex_color, validate_slug_field
 
 
 class RecipeTests(TestCase):
@@ -18,20 +19,16 @@ class RecipeTests(TestCase):
             )
 
     def test_create_tag_color(self):
-        with pytest.raises(DataError):
+        with pytest.raises(ValidationError):
             Tag.objects.create(
                 name=settings.NUM_CHARS_MEALTIME_NAME * "s",
-                color="wrongHEX",
+                color=validate_hex_color("E26C2D"),
                 slug=None,
             )
 
-    def test_create_tag_hex(self):
-        slug = "a-proper-slug"
-        if re.search(settings.SLUG_FIELD_REQ, slug):
-            Tag.objects.create(
-                name=settings.NUM_CHARS_MEALTIME_NAME * "s",
-                color="",
-                slug=slug,
-            )
-        else:
-            raise ValueError("See the ReDoc for the slug field requirements.")
+    def test_create_tag_slug(self):
+        Tag.objects.create(
+            name=settings.NUM_CHARS_MEALTIME_NAME * "s",
+            color="",
+            slug=validate_slug_field("a-proper-slug"),
+        )
