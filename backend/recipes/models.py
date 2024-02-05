@@ -4,17 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 from recipes import validators
 
-# class Ingredient(models.Model):
-#     name = models.CharField(max_length=100, verbose_name="...")
-#     measurement_unit = models.CharField(max_length=100, verbose_name="...")
-
-#     class Meta:
-#         ...
-
-#     def __str__(self):
-#         ...
-
-
 # class Recipe(models.Model):
 #     ...
 
@@ -25,6 +14,28 @@ from recipes import validators
 
 # class Favorite(models.Model):
 #     ...
+
+
+class Ingredient(models.Model):
+    name = models.CharField(
+        max_length=settings.NUM_CHARS_INGREDIENT_NAME,
+        verbose_name=_("ingredient name"),
+        unique=True,
+        help_text=_("Enter a unique ingredient name"),
+    )
+    measurement_unit = models.CharField(
+        max_length=settings.NUM_CHARS_MEASUREMENT_UNIT,
+        verbose_name=_("measurement unit"),
+        help_text=_("In grams, pieces, to taste, etc"),
+    )
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name = _("ingredient")
+        verbose_name_plural = _("ingredients")
+
+    def __str__(self):
+        return f"{self.name} ({self.measurement_unit})"
 
 
 class Tag(models.Model):
