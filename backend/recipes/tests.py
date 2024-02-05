@@ -12,8 +12,8 @@ class RecipeTests(TestCase):
         with pytest.raises(DataError):
             Tag.objects.create(
                 name=settings.NUM_CHARS_MEALTIME_NAME * "s" + "more",
-                color="5d8aa8",
-                slug="breakfast",
+                color=None,
+                slug="",
             )
 
     def test_create_tag_color(self):
@@ -21,5 +21,5 @@ class RecipeTests(TestCase):
             Tag.objects.create(
                 name=settings.NUM_CHARS_MEALTIME_NAME * "s",
                 color="wrongHEX",
-                slug="breakfast",
+                slug=None,
             )

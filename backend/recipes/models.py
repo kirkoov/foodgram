@@ -38,12 +38,16 @@ class Tag(models.Model):
         validators=[
             HexValidator(max_length=settings.NUM_CHARS_MEALTIME_HEX - 1)
         ],
+        null=True,
+        blank=True,
         unique=True,
         verbose_name=_("colour"),
         help_text=_("Enter a unique HEX value without the #"),
     )
     slug = models.SlugField(
         max_length=settings.NUM_CHARS_MEALTIME_SLUG,
+        null=True,
+        blank=True,
         unique=True,
         verbose_name=_("slug"),
         help_text=_("Enter a unique slug"),
