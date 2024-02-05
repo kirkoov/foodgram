@@ -20,7 +20,6 @@ class Ingredient(models.Model):
     name = models.CharField(
         max_length=settings.NUM_CHARS_INGREDIENT_NAME,
         verbose_name=_("ingredient name"),
-        unique=True,
         help_text=_("Enter a unique ingredient name"),
     )
     measurement_unit = models.CharField(
@@ -33,6 +32,12 @@ class Ingredient(models.Model):
         ordering = ("name",)
         verbose_name = _("ingredient")
         verbose_name_plural = _("ingredients")
+        constraints = (
+            models.UniqueConstraint(
+                fields=("name", "measurement_unit"),
+                name="Unique ingredient-measure constraint",
+            ),
+        )
 
     def __str__(self):
         return f"{self.name} ({self.measurement_unit})"
