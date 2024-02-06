@@ -1,5 +1,7 @@
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from api.serializers import IngredientSerializer, TagSerializer
 from recipes.models import Ingredient, Tag
 
@@ -14,3 +16,5 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
     pagination_class = None
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("name",)
