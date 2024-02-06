@@ -30,8 +30,6 @@ if settings.DEBUG:
 
 
 # When using Docker:
-# (as per https://github.com/jazzband/django-debug-toolbar/blob/main/docs/
-# installation.rst)
 # if DEBUG:
 #     import socket  # only if you haven't already imported this
 #     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())

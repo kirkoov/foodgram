@@ -1,6 +1,6 @@
-from sys import maxsize
-import pytest
 from rest_framework.test import APIRequestFactory
+import pytest
+from sys import maxsize
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
