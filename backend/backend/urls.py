@@ -12,6 +12,7 @@ app_name = "backend"
 urlpatterns = i18n_patterns(
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
+    path("rosetta/", include("rosetta.urls")),
     prefix_default_language=False,
 )
 
