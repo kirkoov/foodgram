@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db.utils import DataError
 from django.test import TestCase
 
-from .models import Tag
+from .models import Ingredient, Tag
 from .validators import validate_hex_color, validate_slug_field
 from api.views import TagViewSet
 
