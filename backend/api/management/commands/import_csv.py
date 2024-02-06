@@ -19,9 +19,7 @@ class Command(BaseCommand):
         print("\tImporting the ingredients csv...")
         try:
             # ingredients_eng_alphasorted.csv
-            with open(
-                "../data/ingredients_eng_alphasorted.csv", newline=""
-            ) as csvfile:
+            with open("../data/ingredients.csv", newline="") as csvfile:
                 reader = csv.reader(csvfile)
                 Ingredient.objects.bulk_create(
                     Ingredient(
