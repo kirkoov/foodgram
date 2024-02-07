@@ -22,6 +22,7 @@ class CustomUserAdmin(UserAdmin):
     )
     # list_editable = ("first_name",)
     # list_display_links = ("email",)
+    # list_filter = ('pub_date',)
     search_fields = ("email", "username")
     ordering = ("email",)
     empty_value_display = _("empty")
