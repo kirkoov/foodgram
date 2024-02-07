@@ -14,17 +14,10 @@ class CustomUserAdmin(UserAdmin):
         "first_name",
         "last_name",
         "is_staff",
+        "is_superuser",
     )
-    list_filter = (
-        "email",
-        "is_staff",
-        "is_active",
-    )
-    # list_editable = ("first_name",)
-    # list_display_links = ("email",)
-    # list_filter = ('pub_date',)
-    search_fields = ("email", "username")
-    ordering = ("email",)
+    list_filter = ("email", "username")
+    # ordering = ("email",)
     empty_value_display = _("empty")
 
 

@@ -145,7 +145,8 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",  # noqa: E501
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
+    "Pagination",
     "PAGE_SIZE": 6,
 }
 
@@ -175,8 +176,7 @@ DJOSER = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-NUM_CHARS_FIRSTNAME = 50
-NUM_CHARS_LASTNAME = 50
+NUM_CHARS_FIRSTNAME = NUM_CHARS_LASTNAME = 150
 NUM_CHARS_EMAIL = 254
 
 NUM_CHARS_MEALTIME_NAME = NUM_CHARS_INGREDIENT_NAME = 200

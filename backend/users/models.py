@@ -15,20 +15,19 @@ class CustomUser(AbstractUser):
         help_text=_("Enter the preferred email here"),
     )
     first_name = models.CharField(
-        _("first name"), max_length=settings.NUM_CHARS_FIRSTNAME, blank=False
+        max_length=settings.NUM_CHARS_FIRSTNAME,
+        blank=False,
+        verbose_name=_("first name"),
     )
     last_name = models.CharField(
-        _("last name"), max_length=settings.NUM_CHARS_LASTNAME, blank=False
+        max_length=settings.NUM_CHARS_LASTNAME,
+        blank=False,
+        verbose_name=_("last name"),
     )
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
-    # REQUIRED_FIELDS = [
-    #     "password",
-    #     "email",
-    #     "first_name",
-    #     "last_name",
-    # ]
+    EMAIL_FIELD = "email"
+    USERNAME_FIELD = "username"
+    # REQUIRED_FIELDS = ["email"]
 
     class Meta:
         constraints = [

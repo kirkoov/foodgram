@@ -1,3 +1,4 @@
+from djoser.views import UserViewSet
 from rest_framework import filters
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
@@ -17,3 +18,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
     search_fields = ("^name",)
+
+
+class CustomUserViewSet(UserViewSet):
+    ...
