@@ -1,21 +1,32 @@
-from rest_framework.test import APIRequestFactory
+import json
 import pytest
+from rest_framework.test import APIRequestFactory
 from sys import maxsize
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db.utils import DataError
+from django.db.utils import DataError, IntegrityError
 from django.test import TestCase
 
 from .models import Ingredient, Tag
 from .validators import validate_hex_color, validate_slug_field
-from api.views import TagViewSet
+from api.views import IngredientViewSet, TagViewSet
 
 
 class TagTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = APIRequestFactory()
+
+        cls.test_ingredients = []
+        for index in range(3):
+            ingredient = Ingredient(
+                name=f"Ingredient{index}",
+                measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+            )
+            cls.test_ingredients.append(ingredient)
+        Ingredient.objects.bulk_create(cls.test_ingredients)
+
         cls.test_tags = []
         cls.request_detail = cls.factory.get("/api/tags/0/")
         cls.view_detail = TagViewSet.as_view({"get": "retrieve"})
@@ -85,3 +96,48 @@ class TagTests(TestCase):
     def test_get_tagdetail_status404(self):
         response = self.view_detail(self.request_detail, pk=maxsize)
         assert response.status_code == 404
+
+    def test_create_valid_ingredient(self):
+        Ingredient.objects.create(
+            name=settings.NUM_CHARS_INGREDIENT_NAME,
+            measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+        )
+
+    def test_create_same_ingredients(self):
+        with pytest.raises(IntegrityError):
+            Ingredient.objects.create(
+                name=settings.NUM_CHARS_INGREDIENT_NAME,
+                measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+            )
+            Ingredient.objects.create(
+                name=settings.NUM_CHARS_INGREDIENT_NAME,
+                measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+            )
+
+    def test_get_ingredientlist(self):
+        request = self.factory.get("/api/ingredients/")
+        view = IngredientViewSet.as_view({"get": "list"})
+        response = view(request)
+        data = response.__dict__.get("data")
+        if data is not None:
+            for new, default in zip(data, self.test_ingredients):
+                assert new["name"] == default.name
+                assert new["measurement_unit"] == default.measurement_unit
+        else:
+            raise DataError(
+                "Empty data in the test_get_ingredientlist() ordered dicts."
+            )
+
+    def test_get_ingredientdetail(self):
+        request_detail = self.factory.get("/api/ingredients/1/")
+        view_detail = IngredientViewSet.as_view({"get": "retrieve"})
+        response = view_detail(request_detail, pk=1)
+        response.render()
+        self.assertEqual(
+            json.loads(response.content),
+            {
+                "id": 1,
+                "name": "Ingredient0",
+                "measurement_unit": settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+            },
+        )

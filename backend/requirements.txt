@@ -13,7 +13,7 @@ django-rosetta @ git+https://github.com/mbi/django-rosetta.git@0825204e095e84b65
 django-stubs-ext==4.2.7 
 django-stubs==4.2.7 
 django-templated-mail==1.1.1 
-django==5.0.1 
+django==5.0.2 
 djangorestframework-simplejwt==5.3.1 
 djangorestframework-stubs==3.14.5 
 djangorestframework==3.14.0 
