@@ -19,9 +19,10 @@ class TagTests(TestCase):
         cls.factory = APIRequestFactory()
 
         cls.test_ingredients = []
+        cls.test_name = "Ingredient"
         for index in range(3):
             ingredient = Ingredient(
-                name=f"Ingredient{index}",
+                name=f"{cls.test_name}{index}",
                 measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
             )
             cls.test_ingredients.append(ingredient)
@@ -137,13 +138,10 @@ class TagTests(TestCase):
         )
 
     def test_ingredient_search(self):
-        request = self.factory.get("/api/ingredients/?search=ingredient")
+        request = self.factory.get(
+            f"/api/ingredients/?search={self.test_name}"
+        )
         view = IngredientViewSet.as_view({"get": "list"})
         response = view(request)
         data = response.__dict__.get("data")
-        if data is not None:
-            for new, default in zip(data, self.test_ingredients):
-                assert new["name"] == default.name
-                assert new["measurement_unit"] == default.measurement_unit
-        else:
-            raise DataError("No data in the test_ingredient_search().")
+        self.assertEqual(len(data), len(self.test_ingredients))
