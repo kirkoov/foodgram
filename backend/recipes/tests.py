@@ -13,7 +13,7 @@ from .validators import validate_hex_color, validate_slug_field
 from api.views import IngredientViewSet, TagViewSet
 
 
-class TagTests(TestCase):
+class RecipeTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = APIRequestFactory()
