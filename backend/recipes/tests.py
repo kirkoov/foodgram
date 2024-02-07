@@ -73,9 +73,7 @@ class TagTests(TestCase):
                 assert new["color"] == default.color
                 assert new["slug"] == default.slug
         else:
-            raise DataError(
-                "Empty data in the test_get_taglist() ordered dicts."
-            )
+            raise DataError("No data in the test_get_taglist().")
 
     def test_get_tagdetail(self):
         response = self.view_detail(self.request_detail, pk=1)
@@ -85,9 +83,7 @@ class TagTests(TestCase):
             assert data["color"] == self.test_tags[0].color
             assert data["slug"] == self.test_tags[0].slug
         else:
-            raise DataError(
-                "Empty data in the test_get_tagdetail() ordered dicts."
-            )
+            raise DataError("No data in the test_get_tagdetail().")
 
     def test_get_tagdetail_status200(self):
         response = self.view_detail(self.request_detail, pk=1)
@@ -124,20 +120,30 @@ class TagTests(TestCase):
                 assert new["name"] == default.name
                 assert new["measurement_unit"] == default.measurement_unit
         else:
-            raise DataError(
-                "Empty data in the test_get_ingredientlist() ordered dicts."
-            )
+            raise DataError("No data in the test_get_ingredientlist().")
 
     def test_get_ingredientdetail(self):
-        request_detail = self.factory.get("/api/ingredients/1/")
+        request_detail = self.factory.get("/api/ingredients/2/")
         view_detail = IngredientViewSet.as_view({"get": "retrieve"})
-        response = view_detail(request_detail, pk=1)
+        response = view_detail(request_detail, pk=2)
         response.render()
         self.assertEqual(
             json.loads(response.content),
             {
-                "id": 1,
-                "name": "Ingredient0",
+                "id": 2,
+                "name": "Ingredient1",
                 "measurement_unit": settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
             },
         )
+
+    def test_ingredient_search(self):
+        request = self.factory.get("/api/ingredients/?search=ingredient")
+        view = IngredientViewSet.as_view({"get": "list"})
+        response = view(request)
+        data = response.__dict__.get("data")
+        if data is not None:
+            for new, default in zip(data, self.test_ingredients):
+                assert new["name"] == default.name
+                assert new["measurement_unit"] == default.measurement_unit
+        else:
+            raise DataError("No data in the test_ingredient_search().")
