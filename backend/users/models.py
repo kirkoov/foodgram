@@ -4,6 +4,38 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+from django.contrib.auth.base_user import BaseUserManager
+
+
+class CustomUserManager(BaseUserManager):
+    def _create_user(self, email, password, **extra_fields):
+        """
+        Create and save a User with the given email and password.
+        """
+        if not email:
+            raise ValueError("No required email set.")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self._create_user(email, password, **extra_fields)
+
+
 class CustomUser(AbstractUser):
     """Use a custom user class to tweak more options later if needed."""
 
@@ -25,9 +57,9 @@ class CustomUser(AbstractUser):
         verbose_name=_("last name"),
     )
 
-    EMAIL_FIELD = "email"
-    USERNAME_FIELD = "username"
-    # REQUIRED_FIELDS = ["email"]
+    USERNAME_FIELD = "email"  # make the user log in with the email
+    REQUIRED_FIELDS = ["username"]
+    objects = CustomUserManager()  # type: ignore[assignment, misc]
 
     class Meta:
         constraints = [

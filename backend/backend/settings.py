@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -38,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework.authtoken",
+    "corsheaders",
     "djoser",
     "django_filters",
     "users.apps.UsersConfig",
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -139,15 +141,20 @@ USE_TZ = True
 AUTH_USER_MODEL = "users.CustomUser"
 
 REST_FRAMEWORK = {
-    # "DEFAULT_PERMISSION_CLASSES": [
-    #     "rest_framework.permissions.IsAuthenticated",
-    # ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
     # "Pagination",
     # "PAGE_SIZE": 6,
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=20),
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
 LANGUAGES = (
@@ -175,6 +182,11 @@ DJOSER = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost",
+# ]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r"^/api/.*$"
 
 NUM_CHARS_FIRSTNAME = NUM_CHARS_LASTNAME = 150
 NUM_CHARS_EMAIL = 254
