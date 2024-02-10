@@ -1,6 +1,6 @@
 from rest_framework import routers
 
-from django.urls import include, path
+from django.urls import include, re_path
 
 from api.views import CustomUserViewSet, IngredientViewSet, TagViewSet
 
@@ -14,7 +14,7 @@ router_v1.register(r"ingredients", IngredientViewSet, basename="ingredients")
 router_v1.register(r"users", CustomUserViewSet, basename="users")
 
 urlpatterns = [
-    path(r"auth/", include("djoser.urls")),
-    path(r"auth/", include("djoser.urls.jwt")),
-    path(r"", include(router_v1.urls)),
+    re_path(r"auth/", include("djoser.urls")),
+    re_path(r"auth/", include("djoser.urls.authtoken")),
+    re_path(r"", include(router_v1.urls)),
 ]

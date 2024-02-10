@@ -4,7 +4,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.serializers import (
-    CustomUserSerializer,
+    CustomUserRegistrationSerializer,
     IngredientSerializer,
     TagSerializer,
 )
@@ -34,7 +34,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 #     ...
 
 
-class CustomUserViewSet(ModelViewSet):
-    serializer_class = CustomUserSerializer
+class CustomUserViewSet(UserViewSet):
+    serializer_class = CustomUserRegistrationSerializer
     queryset = CustomUser.objects.all()
     pagination_class = CustomPagination
