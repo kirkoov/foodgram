@@ -1,7 +1,9 @@
 from djoser.views import UserViewSet
-from rest_framework import filters
+from rest_framework import filters, permissions
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet
+
+from django.contrib.auth import get_user_model
 
 from api.serializers import (
     CustomUserSerializer,
@@ -10,6 +12,9 @@ from api.serializers import (
 )
 from recipes.models import Ingredient, Tag
 from users.models import CustomUser
+
+
+User = get_user_model()
 
 
 class CustomPagination(PageNumberPagination):
@@ -30,11 +35,25 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     search_fields = ("^name",)
 
 
-# class CustomUserViewSet(UserViewSet):
-#     ...
-
-
 class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
     queryset = CustomUser.objects.all()
     pagination_class = CustomPagination
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    # @action(
+    #     methods=["get"],
+    #     url_path="me",
+    #     detail=False,
+    #     permission_classes=(permissions.IsAuthenticated,),
+    # )
+    # def me(self, request):
+    #     serializer = CustomUserSerializer(request.user)
+    #     if request.user.is_authenticated:
+    #         return Response(serializer.data)
+    #     return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def get_permissions(self):
+        if self.action == "me":
+            self.permission_classes = [permissions.IsAuthenticated]
+        return super().get_permissions()

@@ -15,7 +15,10 @@ SECRET_KEY = (
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+]
 
 # For DjDT
 INTERNAL_IPS = ["127.0.0.1"]
@@ -176,7 +179,8 @@ DJOSER = {
     "HIDE_USERS": False,
     "LOGIN_FIELD": "email",
     "SERIALIZERS": {
-        # "user_create": "api.serializers.CustomUserRegistrationSerializer"
+        "user": "api.serializers.CustomUserSerializer",
+        "current_user": "api.serializers.CustomUserSerializer",
     },
     "PERMISSIONS": {
         "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
