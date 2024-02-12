@@ -57,8 +57,14 @@ class CustomUser(AbstractUser):
         verbose_name=_("last name"),
     )
 
-    USERNAME_FIELD = "email"  # make the user log in with the email
-    REQUIRED_FIELDS = ["username"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = [
+        "username",
+        "first_name",
+        "last_name",
+        "password",
+    ]
+
     objects = CustomUserManager()  # type: ignore[assignment, misc]
 
     class Meta:

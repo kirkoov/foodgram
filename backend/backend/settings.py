@@ -1,4 +1,3 @@
-from datetime import timedelta
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -153,9 +152,9 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
     ),
-    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
-    # "Pagination",
-    # "PAGE_SIZE": 6,
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
+    "Pagination",
+    "PAGE_SIZE": 6,
 }
 
 LANGUAGES = (
@@ -177,7 +176,7 @@ DJOSER = {
     "HIDE_USERS": False,
     "LOGIN_FIELD": "email",
     "SERIALIZERS": {
-        "user_create": "api.serializers.CustomUserRegistrationSerializer"
+        # "user_create": "api.serializers.CustomUserRegistrationSerializer"
     },
     "PERMISSIONS": {
         "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
