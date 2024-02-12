@@ -53,13 +53,13 @@ social-auth-app-django==5.4.0
 social-auth-core==4.5.2 
 sqlparse==0.4.4 
 tomli==2.0.1 
-tqdm==4.66.1 
+tqdm==4.66.2 
 types-psycopg2==2.9.21.20240201 
 types-pytz==2024.1.0.20240203 
 types-pyyaml==6.0.12.12 
 types-requests==2.31.0.20240125 
 typing-extensions==4.9.0 
-tzdata==2023.4 
+tzdata==2024.1 
 urllib3==2.2.0 
 webcolors-stubs==0.0.3 
 webcolors==1.13 
