@@ -1,5 +1,4 @@
 import json
-from pprint import pprint
 from sys import maxsize
 
 from django.contrib.auth import get_user_model
