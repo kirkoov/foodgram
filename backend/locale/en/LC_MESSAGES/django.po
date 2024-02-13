@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-05 21:49+0300\n"
+"POT-Creation-Date: 2024-02-13 15:51+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,102 +18,122 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: backend/settings.py:151
+#: backend/settings.py:164
 msgid "Russian"
 msgstr ""
 
-#: backend/settings.py:152
+#: backend/settings.py:165
 msgid "English"
+msgstr ""
+
+#: recipes/admin.py:11 users/admin.py:21
+msgid "empty"
 msgstr ""
 
 #: recipes/apps.py:7
 msgid "recipes"
 msgstr ""
 
-#: recipes/models.py:22
+#: recipes/models.py:29
 msgid "ingredient name"
 msgstr ""
 
-#: recipes/models.py:24
+#: recipes/models.py:30
 msgid "Enter a unique ingredient name"
 msgstr ""
 
-#: recipes/models.py:28
+#: recipes/models.py:34
 msgid "measurement unit"
 msgstr ""
 
-#: recipes/models.py:29
+#: recipes/models.py:35
 msgid "In grams, pieces, to taste, etc"
 msgstr ""
 
-#: recipes/models.py:34
+#: recipes/models.py:40 recipes/models.py:93
 msgid "ingredient"
 msgstr ""
 
-#: recipes/models.py:35
+#: recipes/models.py:41
 msgid "ingredients"
 msgstr ""
 
-#: recipes/models.py:45
+#: recipes/models.py:57
 msgid "occasion name"
 msgstr ""
 
-#: recipes/models.py:46
+#: recipes/models.py:58
 msgid "Enter an occasion to eat: breakfast, lunch or dinner"
 msgstr ""
 
-#: recipes/models.py:54
+#: recipes/models.py:66
 msgid "colour"
 msgstr ""
 
-#: recipes/models.py:55
+#: recipes/models.py:67
 msgid "Enter a unique HEX value with the #"
 msgstr ""
 
-#: recipes/models.py:62
+#: recipes/models.py:74
 msgid "slug"
 msgstr ""
 
-#: recipes/models.py:63
+#: recipes/models.py:75
 msgid "Enter a unique slug"
 msgstr ""
 
-#: recipes/models.py:68
+#: recipes/models.py:80
 msgid "mealtime"
 msgstr ""
 
-#: recipes/models.py:69
+#: recipes/models.py:81
 msgid "mealtimes"
 msgstr ""
 
-#: users/admin.py:27
-msgid "empty"
+#: recipes/models.py:89
+msgid "quantity"
+msgstr ""
+
+#: recipes/models.py:90
+msgid "Enter a quantity of this to use in cooking"
+msgstr ""
+
+#: recipes/models.py:96
+msgid "recipe"
+msgstr ""
+
+#: recipes/models.py:101
+msgid "recipe ingredient"
+msgstr ""
+
+#: recipes/models.py:102
+msgid "recipe ingredients"
 msgstr ""
 
 #: users/apps.py:7
 msgid "users"
 msgstr ""
 
-#: users/models.py:14
+#: users/models.py:46
 msgid "email"
 msgstr ""
 
-#: users/models.py:15
+#: users/models.py:47
 msgid "Enter the preferred email here"
 msgstr ""
 
-#: users/models.py:18
+#: users/models.py:52
 msgid "first name"
 msgstr ""
 
-#: users/models.py:21
+#: users/models.py:57
 msgid "last name"
 msgstr ""
 
-#: users/models.py:40
+#: users/models.py:72
 msgid "custom user"
 msgstr ""
 
-#: users/models.py:41
+#: users/models.py:73
 msgid "custom users"
 msgstr ""

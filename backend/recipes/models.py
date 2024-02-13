@@ -1,15 +1,22 @@
+# from typing import Optional
+
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from recipes import validators
 
-# class Recipe(models.Model):
-#     ...
 
-
-# class RecipeIngredient(models.Model):
-#     ...
+class RecipeQuerySet(models.QuerySet):
+    pass
+    # def add_user_annotations(self, user_id: Optional[int]):
+    #     return self.annotate(
+    #         is_favorite=models.Exists(
+    #             Favorite.objects.filter(
+    #                 user_id=user_id, recipe__pk=models.OuterRef("pk")
+    #             )
+    #         ),
+    #     )
 
 
 # class Favorite(models.Model):
@@ -75,3 +82,28 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class RecipeIngredient(models.Model):
+    amount = models.PositiveIntegerField(
+        verbose_name=_("quantity"),
+        help_text=_("Enter a quantity of this to use in cooking"),
+    )
+    ingredient = models.ForeignKey(
+        Ingredient, on_delete=models.CASCADE, verbose_name=_("ingredient")
+    )
+    recipe = models.ForeignKey(
+        "Recipe", on_delete=models.CASCADE, verbose_name=_("recipe")
+    )
+
+    class Meta:
+        ordering = ("amount",)
+        verbose_name = _("recipe ingredient")
+        verbose_name_plural = _("recipe ingredients")
+
+    def __str__(self):
+        return f"{self.ingredient} -> {self.recipe}"
+
+
+class Recipe(models.Model):
+    ...

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from recipes.models import Ingredient, Tag
+from recipes.models import Ingredient, RecipeIngredient, Tag
 
 
 class IngredientAdmin(admin.ModelAdmin):
@@ -13,3 +13,4 @@ class IngredientAdmin(admin.ModelAdmin):
 
 admin.site.register(Tag)
 admin.site.register(Ingredient, IngredientAdmin)
+admin.site.register(RecipeIngredient)
