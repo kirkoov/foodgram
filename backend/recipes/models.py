@@ -1,10 +1,14 @@
 # from typing import Optional
 
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from recipes import validators
+
+
+User = get_user_model()
 
 
 class RecipeQuerySet(models.QuerySet):
@@ -17,10 +21,6 @@ class RecipeQuerySet(models.QuerySet):
     #             )
     #         ),
     #     )
-
-
-# class Favorite(models.Model):
-#     ...
 
 
 class Ingredient(models.Model):
@@ -103,6 +103,34 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return f"{self.ingredient} -> {self.recipe}"
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="favorites",
+        verbose_name=_("custom user"),
+    )
+    recipe = models.ForeignKey(
+        "Recipe",
+        on_delete=models.CASCADE,
+        related_name="favorites",
+        verbose_name=_("recipe"),
+    )
+
+    class Meta:
+        ordering = ("user",)
+        verbose_name = _("favourite")
+        verbose_name_plural = _("favourites")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique_favorite_user_recipe"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user} 😋 {self.recipe}"
 
 
 class Recipe(models.Model):

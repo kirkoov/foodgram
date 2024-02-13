@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
-from recipes.models import Ingredient, RecipeIngredient, Tag
+from recipes.models import Favorite, Ingredient, RecipeIngredient, Tag
 
 
 class IngredientAdmin(admin.ModelAdmin):
@@ -11,6 +11,7 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = _("empty")
 
 
+admin.site.register(Favorite)
 admin.site.register(Tag)
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(RecipeIngredient)

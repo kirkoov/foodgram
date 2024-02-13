@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-13 15:51+0300\n"
-"PO-Revision-Date: 2024-02-13 12:53+0000\n"
+"POT-Creation-Date: 2024-02-13 16:11+0300\n"
+"PO-Revision-Date: 2024-02-13 13:12+0000\n"
 "Last-Translator: Admin Admeenov <admin@foodgram.zapto.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -99,20 +99,29 @@ msgstr "количество"
 msgid "Enter a quantity of this to use in cooking"
 msgstr "Введите нужное для приготовления количество"
 
-#: recipes/models.py:96
-#| msgid "recipes"
+#: recipes/models.py:96 recipes/models.py:119
 msgid "recipe"
 msgstr "рецепт"
 
 #: recipes/models.py:101
-#| msgid "ingredient"
 msgid "recipe ingredient"
 msgstr "ингредиент рецепта"
 
 #: recipes/models.py:102
-#| msgid "ingredients"
 msgid "recipe ingredients"
 msgstr "ингредиенты рецепта"
+
+#: recipes/models.py:113 users/models.py:72
+msgid "custom user"
+msgstr "\"наш пользователь\""
+
+#: recipes/models.py:124
+msgid "favourite"
+msgstr "объект избранного"
+
+#: recipes/models.py:125
+msgid "favourites"
+msgstr "объекты избранного"
 
 #: users/apps.py:7
 msgid "users"
@@ -133,10 +142,6 @@ msgstr "имя"
 #: users/models.py:57
 msgid "last name"
 msgstr "фамилия"
-
-#: users/models.py:72
-msgid "custom user"
-msgstr "\"наш пользователь\""
 
 #: users/models.py:73
 msgid "custom users"
