@@ -64,17 +64,17 @@
 #         )
 
 #     def test_get_taglist(self):
-#         request = self.factory.get("/api/tags/")
-#         view = TagViewSet.as_view({"get": "list"})
-#         response = view(request)
-#         data = response.__dict__.get("data")
-#         if data is not None:
-#             for new, default in zip(data, self.test_tags):
-#                 assert new["name"] == default.name
-#                 assert new["color"] == default.color
-#                 assert new["slug"] == default.slug
-#         else:
-#             raise DataError("No data in the test_get_taglist().")
+# request = self.factory.get("/api/tags/")
+# view = TagViewSet.as_view({"get": "list"})
+# response = view(request)
+# data = response.__dict__.get("data")
+# if data is not None:
+#     for new, default in zip(data, self.test_tags):
+#         assert new["name"] == default.name
+#         assert new["color"] == default.color
+#         assert new["slug"] == default.slug
+# else:
+#     raise DataError("No data in the test_get_taglist().")
 
 #     def test_get_tagdetail(self):
 #         response = self.view_detail(self.request_detail, pk=1)
@@ -124,18 +124,18 @@
 #             raise DataError("No data in the test_get_ingredientlist().")
 
 #     def test_get_ingredientdetail(self):
-#         request_detail = self.factory.get("/api/ingredients/2/")
-#         view_detail = IngredientViewSet.as_view({"get": "retrieve"})
-#         response = view_detail(request_detail, pk=2)
-#         response.render()
-#         self.assertEqual(
-#             json.loads(response.content),
-#             {
-#                 "id": 2,
-#                 "name": "Ingredient1",
-#                 "measurement_unit": settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
-#             },
-#         )
+# request_detail = self.factory.get("/api/ingredients/2/")
+# view_detail = IngredientViewSet.as_view({"get": "retrieve"})
+# response = view_detail(request_detail, pk=2)
+# response.render()
+# self.assertEqual(
+#     json.loads(response.content),
+#     {
+#         "id": 2,
+#         "name": "Ingredient1",
+#         "measurement_unit": settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+#     },
+# )
 
 #     def test_ingredient_search(self):
 #         request = self.factory.get(
