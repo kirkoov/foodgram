@@ -105,7 +105,7 @@ const RecipeEdit = ({ onItemDelete }) => {
     <Container>
       <MetaTags>
         <title>Редактирование рецепта</title>
-        <meta name="description" content="Продуктовый помощник - Редактирование рецепта" />
+        <meta name="description" content="Foodgram - Редактирование рецепта" />
         <meta property="og:title" content="Редактирование рецепта" />
       </MetaTags>
       <Title title='Редактирование рецепта' />

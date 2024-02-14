@@ -8,9 +8,10 @@ from django.contrib.auth import get_user_model
 from api.serializers import (
     CustomUserSerializer,
     IngredientSerializer,
+    RecipeSerializer,
     TagSerializer,
 )
-from recipes.models import Ingredient, Tag
+from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
 
@@ -19,6 +20,12 @@ User = get_user_model()
 
 class CustomPagination(PageNumberPagination):
     page_size_query_param = "limit"
+
+
+class RecipeViewSet(ReadOnlyModelViewSet):
+    serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all()
+    permission_classes = (permissions.AllowAny,)
 
 
 class TagViewSet(ReadOnlyModelViewSet):

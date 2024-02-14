@@ -1,8 +1,14 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from recipes.models import Ingredient, Tag
+from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ("id", "name")
 
 
 class TagSerializer(serializers.ModelSerializer):
