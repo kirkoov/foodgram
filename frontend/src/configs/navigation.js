@@ -1,6 +1,6 @@
 export default [
   {
-    title: 'Рецепты',
+    title: 'Recipes',
     href: '/recipes',
     auth: false
   },{

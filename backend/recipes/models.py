@@ -1,4 +1,4 @@
-from typing import Optional
+# from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -12,14 +12,15 @@ User = get_user_model()
 
 
 class RecipeQuerySet(models.QuerySet):
-    def add_user_annotations(self, user_id: Optional[int]):
-        return self.annotate(
-            is_favorite=models.Exists(
-                Favorite.objects.filter(
-                    user_id=user_id, recipe__pk=models.OuterRef("pk")
-                )
-            ),
-        )
+    pass
+    # def add_user_annotations(self, user_id: Optional[int]):
+    #     return self.annotate(
+    #         is_favorite=models.Exists(
+    #             Favorite.objects.filter(
+    #                 user_id=user_id, recipe__pk=models.OuterRef("pk")
+    #             )
+    #         ),
+    #     )
 
 
 class Ingredient(models.Model):
