@@ -202,3 +202,6 @@ NUM_CHARS_MEALTIME_SLUG = NUM_CHARS_MEASUREMENT_UNIT = 200
 
 HEX_FIELD_REQ = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
 SLUG_FIELD_REQ = "^[-a-zA-Z0-9_]+$"
+
+MIN_COOKING_TIME_MINS = 1
+MAX_COOKING_TIME_MINS = 525960  # = 365.25 days in min ( e.g., for a cheese)

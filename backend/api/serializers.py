@@ -8,7 +8,7 @@ from users.models import CustomUser
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ("id", "name")
+        fields = ("id", "name", "author")
 
 
 class TagSerializer(serializers.ModelSerializer):

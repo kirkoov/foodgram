@@ -2,8 +2,10 @@ from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 
 from recipes import validators
 
@@ -133,21 +135,32 @@ class Favorite(models.Model):
 
 
 class Recipe(models.Model):
-    # tags,
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="recipes",
-        verbose_name=_("author"),
-    )
+    # "is_in_shopping_cart": true,
     name = models.CharField(
         max_length=settings.NUM_CHARS_RECIPE_NAME,
         verbose_name=_("recipe name"),
         help_text=_("Enter a name for your recipe"),
     )
+    # "image": "http://foodgram.example.org/media/recipes/images/image.jpeg",
     text = models.TextField(
         verbose_name=_("recipe description"),
         help_text=_("Describe how to cook"),
+    )
+    cooking_time = models.PositiveIntegerField(
+        validators=[
+            MaxValueValidator(settings.MAX_COOKING_TIME_MINS),
+            MinValueValidator(settings.MIN_COOKING_TIME_MINS),
+        ],
+        verbose_name=_("cooking time"),
+        help_text=_("Enter now many minutes it needs to cook"),
+    )
+    # "tags":
+    # []
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="recipes",
+        verbose_name=_("author"),
     )
     ingredients = models.ManyToManyField(
         Ingredient,
