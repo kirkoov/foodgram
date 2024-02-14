@@ -56,7 +56,7 @@ class Tag(models.Model):
         max_length=settings.NUM_CHARS_MEALTIME_NAME,
         unique=True,
         verbose_name=_("occasion name"),
-        help_text=_("Enter an occasion to eat: breakfast, lunch or dinner"),
+        help_text=_("Enter an occasion to eat on, e.g. breakfast, etc."),
     )
     color = models.CharField(
         max_length=settings.NUM_CHARS_MEALTIME_HEX,
@@ -77,7 +77,7 @@ class Tag(models.Model):
     )
 
     class Meta:
-        ordering = ("name",)
+        # ordering = ("name",)
         verbose_name = _("mealtime")
         verbose_name_plural = _("mealtimes")
 
@@ -154,8 +154,10 @@ class Recipe(models.Model):
         verbose_name=_("cooking time"),
         help_text=_("Enter now many minutes it needs to cook"),
     )
-    # "tags":
-    # []
+    tags = models.ManyToManyField(
+        Tag,
+        verbose_name=_("mealtimes"),
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

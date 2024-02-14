@@ -8,7 +8,19 @@ from users.models import CustomUser
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ("id", "name", "author")
+        fields = (
+            "id",
+            # "tags",
+            "author",
+            "ingredients",
+            # "is_favorited": true,
+            # "is_in_shopping_cart": true,
+            "name",
+            # "image": "http://foodgram.example.org/media/recipes/images/
+            # image.jpeg",
+            "text",
+            "cooking_time",
+        )
 
 
 class TagSerializer(serializers.ModelSerializer):
