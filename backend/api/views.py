@@ -1,7 +1,7 @@
 from djoser.views import UserViewSet
 from rest_framework import filters, permissions
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.contrib.auth import get_user_model
 
@@ -22,7 +22,7 @@ class CustomPagination(PageNumberPagination):
     page_size_query_param = "limit"
 
 
-class RecipeViewSet(ReadOnlyModelViewSet):
+class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
     permission_classes = (permissions.AllowAny,)

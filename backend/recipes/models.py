@@ -1,4 +1,4 @@
-# from typing import Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -12,15 +12,14 @@ User = get_user_model()
 
 
 class RecipeQuerySet(models.QuerySet):
-    pass
-    # def add_user_annotations(self, user_id: Optional[int]):
-    #     return self.annotate(
-    #         is_favorite=models.Exists(
-    #             Favorite.objects.filter(
-    #                 user_id=user_id, recipe__pk=models.OuterRef("pk")
-    #             )
-    #         ),
-    #     )
+    def add_user_annotations(self, user_id: Optional[int]):
+        return self.annotate(
+            is_favorite=models.Exists(
+                Favorite.objects.filter(
+                    user_id=user_id, recipe__pk=models.OuterRef("pk")
+                )
+            ),
+        )
 
 
 class Ingredient(models.Model):
@@ -105,32 +104,32 @@ class RecipeIngredient(models.Model):
         return f"{self.ingredient} -> {self.recipe}"
 
 
-# class Favorite(models.Model):
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name="favorites",
-#         verbose_name=_("custom user"),
-#     )
-#     recipe = models.ForeignKey(
-#         "Recipe",
-#         on_delete=models.CASCADE,
-#         related_name="favorites",
-#         verbose_name=_("recipe"),
-#     )
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="favorites",
+        verbose_name=_("custom user"),
+    )
+    recipe = models.ForeignKey(
+        "Recipe",
+        on_delete=models.CASCADE,
+        related_name="favorites",
+        verbose_name=_("recipe"),
+    )
 
-#     class Meta:
-#         ordering = ("user",)
-#         verbose_name = _("favourite")
-#         verbose_name_plural = _("favourites")
-#         constraints = [
-#             models.UniqueConstraint(
-#                 fields=["user", "recipe"], name="unique_favorite_user_recipe"
-#             )
-#         ]
+    class Meta:
+        ordering = ("user",)
+        verbose_name = _("favourite")
+        verbose_name_plural = _("favourites")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique_favorite_user_recipe"
+            )
+        ]
 
-#     def __str__(self):
-#         return f"{self.user} 😋 {self.recipe}"
+    def __str__(self):
+        return f"{self.user} 😋 {self.recipe}"
 
 
 class Recipe(models.Model):
