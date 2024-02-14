@@ -64,10 +64,10 @@ const RecipeCreate = ({ onEdit }) => {
     <Container>
       <MetaTags>
         <title>Создание рецепта</title>
-        <meta name="description" content="Продуктовый помощник - Создание рецепта" />
-        <meta property="og:title" content="Создание рецепта" />
+        <meta name="description" content="Foodgram - Add a recipe" />
+        <meta property="og:title" content="Add a recipe" />
       </MetaTags>
-      <Title title='Создание рецепта' />
+      <Title title='Add a recipe' />
       <Form
         className={styles.form}
         onSubmit={e => {
@@ -235,7 +235,7 @@ const RecipeCreate = ({ onEdit }) => {
           disabled={checkIfDisabled()}
           className={styles.button}
         >
-          Создать рецепт
+          Add a recipe
         </Button>
       </Form>
     </Container>
