@@ -141,7 +141,7 @@ class Recipe(models.Model):
         verbose_name=_("recipe name"),
         help_text=_("Enter a name for your recipe"),
     )
-    # "image": "http://foodgram.example.org/media/recipes/images/image.jpeg",
+    image = models.ImageField(upload_to="recipes/images/", default=None)
     text = models.TextField(
         verbose_name=_("recipe description"),
         help_text=_("Describe how to cook"),
