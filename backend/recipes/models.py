@@ -43,7 +43,7 @@ class Ingredient(models.Model):
         constraints = (
             models.UniqueConstraint(
                 fields=("name", "measurement_unit"),
-                name="Unique ingredient-measure constraint",
+                name="unique_ingredient_measurement_unit",
             ),
         )
 
@@ -141,15 +141,20 @@ class Recipe(models.Model):
         verbose_name=_("recipe name"),
         help_text=_("Enter a name for your recipe"),
     )
-    image = models.ImageField(upload_to="recipes/images/", default=None)
+    image = models.ImageField(
+        upload_to="recipes/",
+        default=None,
+        verbose_name=_("recipe image"),
+        help_text=_("Upload a <=3MB image for your recipe"),
+    )
     text = models.TextField(
         verbose_name=_("recipe description"),
         help_text=_("Describe how to cook"),
     )
-    cooking_time = models.PositiveIntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         validators=[
-            MaxValueValidator(settings.MAX_COOKING_TIME_MINS),
             MinValueValidator(settings.MIN_COOKING_TIME_MINS),
+            MaxValueValidator(settings.MAX_COOKING_TIME_MINS),
         ],
         verbose_name=_("cooking time"),
         help_text=_("Enter now many minutes it needs to cook"),
@@ -167,7 +172,6 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through=RecipeIngredient,
-        through_fields=("recipe", "ingredient"),
         verbose_name=_("ingredients"),
     )
 

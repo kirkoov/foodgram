@@ -4,7 +4,7 @@ cffi==1.16.0
 charset-normalizer==3.3.2 
 click==8.1.7 
 colorama==0.4.6 
-cryptography==42.0.2 
+cryptography==42.0.3 
 defusedxml==0.7.1 
 django-cors-headers==4.3.1 
 django-debug-toolbar==4.3.0 

@@ -1,3 +1,5 @@
+from sys import maxsize
+
 from pathlib import Path
 
 from django.utils.translation import gettext_lazy as _
@@ -205,3 +207,6 @@ SLUG_FIELD_REQ = "^[-a-zA-Z0-9_]+$"
 
 MIN_COOKING_TIME_MINS = 1
 MAX_COOKING_TIME_MINS = 525960  # = 365.25 days in min (e.g., for a cheese)
+
+MIN_INGREDIENT_AMOUNT = 0
+MAX_INGREDIENT_AMOUNT = maxsize

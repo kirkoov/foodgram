@@ -5,7 +5,7 @@ from recipes.models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ("name", "measurement_unit")
+    list_display = ("id", "name", "measurement_unit")
     list_filter = ("name", "measurement_unit")
     ordering = ("name",)
     empty_value_display = _("empty")
