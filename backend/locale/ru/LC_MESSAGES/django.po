@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-02-14 13:52+0300\n"
-"PO-Revision-Date: 2024-02-14 10:53+0000\n"
+"PO-Revision-Date: 2024-02-17 09:26+0000\n"
 "Last-Translator: Admin Admeenov <admin@foodgram.zapto.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -145,7 +145,7 @@ msgstr "время готовки"
 
 #: recipes/models.py:149
 msgid "Enter now many minutes it needs to cook"
-msgstr "Введите в минутах время приготовления"
+msgstr "Введите время приготовления в минутах "
 
 #: recipes/models.py:157
 msgid "author"
