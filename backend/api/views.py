@@ -9,6 +9,7 @@ from api.serializers import (
     CustomUserSerializer,
     IngredientSerializer,
     RecipeSerializer,
+    RecipeWriteSerializer,
     TagSerializer,
 )
 from recipes.models import Ingredient, Recipe, Tag
@@ -32,10 +33,10 @@ class RecipeViewSet(ModelViewSet):
     # filterset_class = RecipeFilter
     # permission_classes = (IsAuthorOrReadOnly, IsAuthenticatedOrReadOnly)
 
-    # def get_serializer_class(self):
-    #     if self.action in ('list', 'retrieve'):
-    #         return RecipesSerializer
-    #     return RecipesWriteSerializer
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return RecipeSerializer
+        return RecipeWriteSerializer
 
 
 class TagViewSet(ModelViewSet):

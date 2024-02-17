@@ -101,6 +101,7 @@ class RecipeIngredient(models.Model):
         ordering = ("amount",)
         verbose_name = _("recipe ingredient")
         verbose_name_plural = _("recipe ingredients")
+        default_related_name = "recipe_ingredient"
 
     def __str__(self):
         return f"{self.ingredient} -> {self.recipe}"

@@ -106,7 +106,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(read_only=True, many=True)
     image = Base64ImageField(required=True, allow_null=False)
     ingredients = RecipeIngredientSerializer(
-        read_only=True, many=True, source="recipes_ingredient"
+        read_only=True, many=True, source="recipe_ingredient"
     )
     # is_favorited = serializers.SerializerMethodField()
     # is_in_shopping_cart = serializers.SerializerMethodField()
@@ -127,37 +127,37 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
 
-class RecipesWriteSerializer(serializers.ModelSerializer):
+class RecipeWriteSerializer(serializers.ModelSerializer):
     """[summary]
 
     [description]
     """
 
+    #     ingredients = RecipeIngredientWriteSerializer(many=True, required=True)
+    #     tags = serializers.PrimaryKeyRelatedField(
+    #         many=True, required=True, queryset=Tag.objects.all()
+    #     )
+    #     image = Base64ImageField()
+    #     cooking_time = serializers.IntegerField(
+    #         min_value=FIELD_MIN_VALUE,
+    #         max_value=FIELD_MAX_VALUE,
+    #         error_messages={
+    #             "min_value": f"min {FIELD_MIN_VALUE}",
+    #             "max_value": f"max {FIELD_MAX_VALUE}",
+    #         },
+    #     )
 
-#     ingredients = RecipeIngredientWriteSerializer(many=True, required=True)
-#     tags = serializers.PrimaryKeyRelatedField(
-#         many=True, required=True, queryset=Tag.objects.all()
-#     )
-#     image = Base64ImageField()
-#     cooking_time = serializers.IntegerField(
-#         min_value=FIELD_MIN_VALUE,
-#         max_value=FIELD_MAX_VALUE,
-#         error_messages={
-#             "min_value": f"min {FIELD_MIN_VALUE}",
-#             "max_value": f"max {FIELD_MAX_VALUE}",
-#         },
-#     )
+    class Meta:  # Remove later?
+        model = Recipe
+        fields = (
+            "ingredients",
+            "tags",
+            "image",
+            "name",
+            "text",
+            "cooking_time",
+        )
 
-#     class Meta:
-#         model = Recipe
-#         fields = (
-#             "ingredients",
-#             "tags",
-#             "image",
-#             "name",
-#             "text",
-#             "cooking_time",
-#         )
 
 #     def validate(self, attrs):
 #         ingredients = attrs.get("ingredients")
