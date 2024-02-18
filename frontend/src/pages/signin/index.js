@@ -14,7 +14,7 @@ const SignIn = ({ onSignIn }) => {
     {authContext && <Redirect to='/recipes' />}
     <Container>
       <MetaTags>
-        <title>Войти на сайт</title>
+        <title>Sign in</title>
         <meta name="description" content="Foodgram - Sign in" />
         <meta property="og:title" content="Sign in" />
       </MetaTags>
