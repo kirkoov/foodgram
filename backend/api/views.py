@@ -12,6 +12,7 @@ from api.serializers import (
     RecipeWriteSerializer,
     TagSerializer,
 )
+from .permissions import IsAuthorOrReadOnly
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser
 
@@ -26,12 +27,15 @@ class CustomPagination(PageNumberPagination):
 class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
     queryset = Recipe.objects.all()
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    # permission_classes = (
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAuthorOrReadOnly,
+    # )
 
     # filter_backends = (DjangoFilterBackend,)
     # pagination_class = LimitPagination
     # filterset_class = RecipeFilter
-    # permission_classes = (IsAuthorOrReadOnly, IsAuthenticatedOrReadOnly)
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):

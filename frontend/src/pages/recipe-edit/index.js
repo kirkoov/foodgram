@@ -282,7 +282,7 @@ const RecipeEdit = ({ onItemDelete }) => {
             disabled={checkIfDisabled()}
             className={styles.button}
           >
-            Редактировать рецепт
+            Edit
           </Button>
           <div
             className={styles.deleteRecipe}
@@ -294,7 +294,7 @@ const RecipeEdit = ({ onItemDelete }) => {
                 })
             }}
           >
-            Удалить
+            Delete
           </div>
         </div>
       </Form>
