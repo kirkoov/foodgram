@@ -75,9 +75,12 @@ class Tag(models.Model):
         verbose_name=_("slug"),
         help_text=_("Enter a unique slug"),
     )
+    output_order = models.PositiveSmallIntegerField(
+        verbose_name=_("output order")
+    )
 
     class Meta:
-        # ordering = ("name",)
+        ordering = ("output_order",)
         verbose_name = _("mealtime")
         verbose_name_plural = _("mealtimes")
 

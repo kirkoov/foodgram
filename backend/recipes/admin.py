@@ -18,7 +18,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ("id", "name")
+    list_display = ("id", "name", "output_order")
     ordering = ("name",)
     empty_value_display = _("empty")
 
