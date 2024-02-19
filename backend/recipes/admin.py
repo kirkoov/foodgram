@@ -11,8 +11,20 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = _("empty")
 
 
+class RecipeAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "author")
+    ordering = ("name",)
+    empty_value_display = _("empty")
+
+
+class TagAdmin(admin.ModelAdmin):
+    list_display = ("id", "name")
+    ordering = ("name",)
+    empty_value_display = _("empty")
+
+
 admin.site.register(Favorite)
-admin.site.register(Recipe)
-admin.site.register(Tag)
+admin.site.register(Recipe, RecipeAdmin)
+admin.site.register(Tag, TagAdmin)
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(RecipeIngredient)

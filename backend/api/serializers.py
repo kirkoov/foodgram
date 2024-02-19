@@ -80,15 +80,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
-    """[summary]
-
-    [description]
-
-    Attributes:
-        id -- [description]
-        amount -- [description]
-        ) -- [description]
-    """
+    """Add ingredients."""
 
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(
@@ -128,18 +120,15 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
-    """[summary]
-
-    [description]
-    """
+    """Add a recipe."""
 
     ingredients = RecipeIngredientWriteSerializer(many=True, required=True)
     tags = serializers.PrimaryKeyRelatedField(
         many=True, required=True, queryset=Tag.objects.all()
     )
-    image = Base64ImageField()
+    image = Base64ImageField(required=True)
 
-    class Meta:  # Remove later?
+    class Meta:
         model = Recipe
         fields = (
             "ingredients",

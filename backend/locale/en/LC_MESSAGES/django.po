@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-17 13:00+0300\n"
+"POT-Creation-Date: 2024-02-19 10:32+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "empty"
 msgstr ""
 
-#: recipes/apps.py:7 recipes/models.py:183
+#: recipes/apps.py:7 recipes/models.py:184
 msgid "recipes"
 msgstr ""
 
@@ -54,7 +54,7 @@ msgstr ""
 msgid "ingredient"
 msgstr ""
 
-#: recipes/models.py:42 recipes/models.py:175
+#: recipes/models.py:42 recipes/models.py:176
 msgid "ingredients"
 msgstr ""
 
@@ -86,7 +86,7 @@ msgstr ""
 msgid "mealtime"
 msgstr ""
 
-#: recipes/models.py:82 recipes/models.py:164
+#: recipes/models.py:82 recipes/models.py:165
 msgid "mealtimes"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgstr ""
 msgid "Enter a quantity of this to use in cooking"
 msgstr ""
 
-#: recipes/models.py:97 recipes/models.py:120 recipes/models.py:182
+#: recipes/models.py:97 recipes/models.py:121 recipes/models.py:183
 msgid "recipe"
 msgstr ""
 
@@ -110,51 +110,51 @@ msgstr ""
 msgid "recipe ingredients"
 msgstr ""
 
-#: recipes/models.py:114 users/models.py:72
+#: recipes/models.py:115 users/models.py:72
 msgid "custom user"
 msgstr ""
 
-#: recipes/models.py:125
+#: recipes/models.py:126
 msgid "favourite"
 msgstr ""
 
-#: recipes/models.py:126
+#: recipes/models.py:127
 msgid "favourites"
 msgstr ""
 
-#: recipes/models.py:141
+#: recipes/models.py:142
 msgid "recipe name"
 msgstr ""
 
-#: recipes/models.py:142
+#: recipes/models.py:143
 msgid "Enter a name for your recipe"
 msgstr ""
 
-#: recipes/models.py:147
+#: recipes/models.py:148
 msgid "recipe image"
 msgstr ""
 
-#: recipes/models.py:148
+#: recipes/models.py:149
 msgid "Upload a <=3MB image for your recipe"
 msgstr ""
 
-#: recipes/models.py:151
+#: recipes/models.py:152
 msgid "recipe description"
 msgstr ""
 
-#: recipes/models.py:152
+#: recipes/models.py:153
 msgid "Describe how to cook"
 msgstr ""
 
-#: recipes/models.py:159
+#: recipes/models.py:160
 msgid "cooking time"
 msgstr ""
 
-#: recipes/models.py:160
+#: recipes/models.py:161
 msgid "Enter now many minutes it needs to cook"
 msgstr ""
 
-#: recipes/models.py:170
+#: recipes/models.py:171
 msgid "author"
 msgstr ""
 
