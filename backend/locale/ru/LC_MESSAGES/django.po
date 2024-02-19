@@ -8,17 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-19 10:32+0300\n"
-"PO-Revision-Date: 2024-02-17 10:01+0000\n"
+"POT-Creation-Date: 2024-02-19 19:36+0300\n"
+"PO-Revision-Date: 2024-02-19 16:36+0000\n"
 "Last-Translator: Admin Admeenov <admin@foodgram.zapto.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.10.1\n"
 
 #: backend/settings.py:167
@@ -29,11 +27,12 @@ msgstr "русский"
 msgid "English"
 msgstr "английский"
 
-#: recipes/admin.py:11 users/admin.py:21
+#: recipes/admin.py:11 recipes/admin.py:17 recipes/admin.py:23
+#: users/admin.py:21
 msgid "empty"
 msgstr "пусто"
 
-#: recipes/apps.py:7 recipes/models.py:184
+#: recipes/apps.py:7 recipes/models.py:185
 msgid "recipes"
 msgstr "рецепты"
 
@@ -101,7 +100,7 @@ msgstr "количество"
 msgid "Enter a quantity of this to use in cooking"
 msgstr "Введите нужное для приготовления количество"
 
-#: recipes/models.py:97 recipes/models.py:121 recipes/models.py:183
+#: recipes/models.py:97 recipes/models.py:121 recipes/models.py:184
 msgid "recipe"
 msgstr "рецепт"
 
@@ -160,6 +159,10 @@ msgstr "Введите время приготовления в минутах "
 #: recipes/models.py:171
 msgid "author"
 msgstr "автор"
+
+#: recipes/models.py:178
+msgid "published on"
+msgstr "дата публикации"
 
 #: users/apps.py:7
 msgid "users"

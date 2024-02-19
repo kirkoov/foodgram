@@ -57,16 +57,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    """[summary]
-
-    [description]
-
-    Attributes:
-        id -- [description]
-        name -- [description]
-        measurement_unit -- [description]
-        ) -- [description]
-    """
+    """Read ingredients."""
 
     id = serializers.ReadOnlyField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
@@ -80,7 +71,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
-    """Add ingredients."""
+    """Write ingredients."""
 
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(

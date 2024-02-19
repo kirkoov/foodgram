@@ -26,7 +26,12 @@ class CustomPagination(PageNumberPagination):
 
 class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.prefetch_related(
+        "author",
+        "tags",
+        "ingredients",
+        "recipe_ingredient__ingredient",
+    ).all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     # permission_classes = (
     #     permissions.IsAuthenticatedOrReadOnly,

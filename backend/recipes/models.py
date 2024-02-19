@@ -175,11 +175,12 @@ class Recipe(models.Model):
         through=RecipeIngredient,
         verbose_name=_("ingredients"),
     )
+    pub_date = models.DateTimeField(_("published on"), auto_now_add=True)
 
     objects = RecipeQuerySet.as_manager()
 
     class Meta:
-        ordering = ("name",)
+        ordering = ("-pub_date",)
         verbose_name = _("recipe")
         verbose_name_plural = _("recipes")
 
