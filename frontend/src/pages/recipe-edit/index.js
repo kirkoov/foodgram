@@ -282,7 +282,7 @@ const RecipeEdit = ({ onItemDelete }) => {
             disabled={checkIfDisabled()}
             className={styles.button}
           >
-            Edit
+            Update
           </Button>
           <div
             className={styles.deleteRecipe}
