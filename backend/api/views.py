@@ -1,12 +1,12 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import filters, permissions
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.contrib.auth import get_user_model
-from django_filters.rest_framework import DjangoFilterBackend
 
-from api.serializers import (
+from .serializers import (
     CustomUserSerializer,
     IngredientSerializer,
     RecipeSerializer,
@@ -52,6 +52,8 @@ class RecipeViewSet(ModelViewSet):
 class TagViewSet(ModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ("slug",)
     pagination_class = None
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
