@@ -29,12 +29,6 @@ class CustomPagination(PageNumberPagination):
 class RecipeViewSet(ModelViewSet):
     http_method_names = ("get", "post", "patch", "delete")
     serializer_class = RecipeSerializer
-    # queryset = Recipe.objects.prefetch_related(
-    #     "author",
-    #     "tags",
-    #     "ingredients",
-    #     "recipe_ingredient__ingredient",
-    # ).all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     #     IsAuthorOrReadOnly,
     filterset_class = RecipeFilter
@@ -51,6 +45,9 @@ class RecipeViewSet(ModelViewSet):
             queryset = queryset.add_user_annotations(self.request.user.id)
         return queryset
 
+    # def perform_create(self, srlzr):
+    #     srlzr.save(author=self.request.user)
+
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return RecipeSerializer
@@ -59,9 +56,21 @@ class RecipeViewSet(ModelViewSet):
 
 class FavoriteViewSet(ModelViewSet):
     serializer_class = FavoriteSerializer
-    queryset = Favorite.objects.all()
     permission_classes = (permissions.AllowAny,)
     pagination_class = None
+
+    def get_queryset(self):
+        print(self.request.user.id)
+        queryset = Favorite.objects.all()
+        # queryset = Recipe.objects.prefetch_related(
+        #     "author",
+        #     "tags",
+        #     "ingredients",
+        #     "recipe_ingredient__ingredient",
+        # )
+        # if self.request.user.is_authenticated:
+        #     queryset = queryset.add_user_annotations(self.request.user.id)
+        return queryset
 
 
 class TagViewSet(ModelViewSet):

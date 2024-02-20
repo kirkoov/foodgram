@@ -21,7 +21,17 @@ class RecipeQuerySet(models.QuerySet):
                     user_id=user_id, recipe__pk=models.OuterRef("pk")
                 )
             ),
+            # is_in_shopping_cart=models.Exists(
+            #     ShoppingCart.objects.filter(
+            #         user_id=user_id, recipe__pk=models.OuterRef("pk")
+            #     )
+            # ),
         )
+
+    def filter_on_tags(self, tags):
+        if tags:
+            return self.filter(tags__slug__in=tags).distinct()
+        return self
 
 
 class Ingredient(models.Model):

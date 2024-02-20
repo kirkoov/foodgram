@@ -173,6 +173,9 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    user = CustomUserSerializer(read_only=True)
+    recipe = RecipeSerializer(read_only=True)
+
     class Meta:
         model = Favorite
         fields = (

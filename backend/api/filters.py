@@ -22,7 +22,7 @@ class RecipeFilter(FilterSet):
         field_name="tags__slug",
         to_field_name="slug",
     )
-    # is_favorited = BooleanFilter(field_name="is_favorited")
+    is_favorited = BooleanFilter(field_name="is_favorited")
     # is_in_shopping_cart = BooleanFilter(field_name="is_in_shopping_cart")
 
     class Meta:
@@ -30,6 +30,6 @@ class RecipeFilter(FilterSet):
         fields = (
             "author",
             "tags",
-            # "is_favorited",
+            "is_favorited",
             # "is_in_shopping_cart",
         )
