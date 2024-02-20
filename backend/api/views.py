@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.contrib.auth import get_user_model
 
-from .filters import IngredientFilter
+from .filters import IngredientFilter, RecipeFilter
 from .serializers import (
     CustomUserSerializer,
     FavoriteSerializer,
@@ -27,24 +27,29 @@ class CustomPagination(PageNumberPagination):
 
 
 class RecipeViewSet(ModelViewSet):
+    http_method_names = ("get", "post", "patch", "delete")
     serializer_class = RecipeSerializer
-    queryset = Recipe.objects.prefetch_related(
-        "author",
-        "tags",
-        "ingredients",
-        "recipe_ingredient__ingredient",
-    ).all()
-
+    # queryset = Recipe.objects.prefetch_related(
+    #     "author",
+    #     "tags",
+    #     "ingredients",
+    #     "recipe_ingredient__ingredient",
+    # ).all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    # permission_classes = (
-    #     permissions.IsAuthenticatedOrReadOnly,
     #     IsAuthorOrReadOnly,
-    # )
+    filterset_class = RecipeFilter
+    pagination_class = CustomPagination
 
-    filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ("tags", "author")
-    # filterset_class = RecipeFilter
-    # pagination_class = CustomPagination
+    def get_queryset(self):
+        queryset = Recipe.objects.prefetch_related(
+            "author",
+            "tags",
+            "ingredients",
+            "recipe_ingredient__ingredient",
+        )
+        if self.request.user.is_authenticated:
+            queryset = queryset.add_user_annotations(self.request.user.id)
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
@@ -73,8 +78,6 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     pagination_class = None
     filterset_class = IngredientFilter
-    # filter_backends = (filters.SearchFilter,)
-    # search_fields = ("^name",)
     permission_classes = (permissions.AllowAny,)
 
 

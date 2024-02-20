@@ -139,7 +139,6 @@ class Favorite(models.Model):
 
 
 class Recipe(models.Model):
-    # "is_in_shopping_cart": true,
     name = models.CharField(
         max_length=settings.NUM_CHARS_RECIPE_NAME,
         verbose_name=_("recipe name"),

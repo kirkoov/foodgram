@@ -92,6 +92,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         read_only=True, many=True, source="recipe_ingredient"
     )
     # is_favorited = serializers.SerializerMethodField()
+    is_favorited = serializers.BooleanField(default=False)
     # is_in_shopping_cart = serializers.SerializerMethodField()
 
     # def get_is_favorited(self, recipe):
@@ -110,7 +111,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             "tags",
             "author",
             "ingredients",
-            # "is_favorited",
+            "is_favorited",
             # "is_in_shopping_cart",
             "name",
             "image",
