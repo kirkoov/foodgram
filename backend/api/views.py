@@ -40,8 +40,8 @@ class RecipeViewSet(ModelViewSet):
 
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("tags", "author")
-    # pagination_class = LimitPagination
     # filterset_class = RecipeFilter
+    pagination_class = CustomPagination
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
