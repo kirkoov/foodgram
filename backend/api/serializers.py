@@ -5,7 +5,7 @@ from rest_framework import serializers
 from django.conf import settings
 from django.core.files.base import ContentFile
 
-from recipes.models import Ingredient, Recipe, RecipeIngredient, Tag
+from recipes.models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
 from users.models import CustomUser
 
 
@@ -94,6 +94,15 @@ class RecipeSerializer(serializers.ModelSerializer):
     # is_favorited = serializers.SerializerMethodField()
     # is_in_shopping_cart = serializers.SerializerMethodField()
 
+    def get_is_favorited(self, recipe):
+        request = self.context["request"]
+        return (
+            request.user.is_authenticated
+            and Favorite.objects.filter(
+                user=request.user, recipe=recipe.pk
+            ).exist()
+        )
+
     class Meta:
         model = Recipe
         fields = (
@@ -160,3 +169,12 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return RecipeSerializer(instance, context=self.context).data
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = (
+            "user",
+            "recipe",
+        )

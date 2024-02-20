@@ -16,7 +16,7 @@ User = get_user_model()
 class RecipeQuerySet(models.QuerySet):
     def add_user_annotations(self, user_id: Optional[int]):
         return self.annotate(
-            is_favorite=models.Exists(
+            is_favorited=models.Exists(
                 Favorite.objects.filter(
                     user_id=user_id, recipe__pk=models.OuterRef("pk")
                 )
@@ -107,7 +107,7 @@ class RecipeIngredient(models.Model):
         default_related_name = "recipe_ingredient"
 
     def __str__(self):
-        return f"{self.ingredient} -> {self.recipe}"
+        return f"{self.ingredient}->{self.recipe}"
 
 
 class Favorite(models.Model):
@@ -135,7 +135,7 @@ class Favorite(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user} 😋 {self.recipe}"
+        return f"{self.user}@{self.recipe}"
 
 
 class Recipe(models.Model):

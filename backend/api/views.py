@@ -8,12 +8,13 @@ from django.contrib.auth import get_user_model
 
 from .serializers import (
     CustomUserSerializer,
+    FavoriteSerializer,
     IngredientSerializer,
     RecipeSerializer,
     RecipeWriteSerializer,
     TagSerializer,
 )
-from recipes.models import Ingredient, Recipe, Tag
+from recipes.models import Favorite, Ingredient, Recipe, Tag
 from users.models import CustomUser
 
 
@@ -32,6 +33,7 @@ class RecipeViewSet(ModelViewSet):
         "ingredients",
         "recipe_ingredient__ingredient",
     ).all()
+
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     # permission_classes = (
     #     permissions.IsAuthenticatedOrReadOnly,
@@ -41,12 +43,19 @@ class RecipeViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("tags", "author")
     # filterset_class = RecipeFilter
-    pagination_class = CustomPagination
+    # pagination_class = CustomPagination
 
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return RecipeSerializer
         return RecipeWriteSerializer
+
+
+class FavoriteViewSet(ModelViewSet):
+    serializer_class = FavoriteSerializer
+    queryset = Favorite.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = None
 
 
 class TagViewSet(ModelViewSet):

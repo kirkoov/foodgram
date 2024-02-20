@@ -4,6 +4,7 @@ from django.urls import include, re_path
 
 from api.views import (
     CustomUserViewSet,
+    FavoriteViewSet,
     RecipeViewSet,
     IngredientViewSet,
     TagViewSet,
@@ -18,6 +19,11 @@ router_v1.register(r"tags", TagViewSet, basename="tags")
 router_v1.register(r"ingredients", IngredientViewSet, basename="ingredients")
 router_v1.register(r"recipes", RecipeViewSet, basename="recipes")
 router_v1.register(r"users", CustomUserViewSet, basename="users")
+router_v1.register(
+    r"recipes/(?P<recipe_id>\d+)/favorite",
+    FavoriteViewSet,
+    basename="favorite",
+)
 
 urlpatterns = [
     re_path(r"auth/", include("djoser.urls")),

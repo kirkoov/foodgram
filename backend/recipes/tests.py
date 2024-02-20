@@ -36,6 +36,7 @@ class RecipeTests(TestCase):
                 name=f"Tag {index}",
                 color=f"#E26C{index}D",
                 slug=f"-{index}_",
+                output_order=index,
             )
             cls.test_tags.append(tag)
         Tag.objects.bulk_create(cls.test_tags)
@@ -61,6 +62,7 @@ class RecipeTests(TestCase):
             name=settings.NUM_CHARS_MEALTIME_NAME * "s",
             color=None,
             slug=validate_slug_field("a-proper-slug"),
+            output_order=1,
         )
 
     def test_get_taglist(self):
