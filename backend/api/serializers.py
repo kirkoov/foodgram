@@ -94,14 +94,14 @@ class RecipeSerializer(serializers.ModelSerializer):
     # is_favorited = serializers.SerializerMethodField()
     # is_in_shopping_cart = serializers.SerializerMethodField()
 
-    def get_is_favorited(self, recipe):
-        request = self.context["request"]
-        return (
-            request.user.is_authenticated
-            and Favorite.objects.filter(
-                user=request.user, recipe=recipe.pk
-            ).exist()
-        )
+    # def get_is_favorited(self, recipe):
+    #     request = self.context["request"]
+    #     return (
+    #         request.user.is_authenticated
+    #         and Favorite.objects.filter(
+    #             user=request.user, recipe=recipe.pk
+    #         ).exist()
+    #     )
 
     class Meta:
         model = Recipe

@@ -6,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.contrib.auth import get_user_model
 
+from .filters import IngredientFilter
 from .serializers import (
     CustomUserSerializer,
     FavoriteSerializer,
@@ -71,9 +72,10 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
     pagination_class = None
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ("^name",)
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    filterset_class = IngredientFilter
+    # filter_backends = (filters.SearchFilter,)
+    # search_fields = ("^name",)
+    permission_classes = (permissions.AllowAny,)
 
 
 class CustomUserViewSet(UserViewSet):
