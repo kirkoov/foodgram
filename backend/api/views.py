@@ -1,10 +1,12 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import permissions, status
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from django.http import FileResponse
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
@@ -48,13 +50,24 @@ class RecipeViewSet(ModelViewSet):
             queryset = queryset.add_user_annotations(self.request.user.id)
         return queryset
 
-    # def perform_create(self, srlzr):
-    #     srlzr.save(author=self.request.user)
-
     def get_serializer_class(self):
         if self.action in ("list", "retrieve"):
             return RecipeSerializer
         return RecipeWriteSerializer
+
+    @action(methods=["get"], detail=False, url_path="download_shopping_cart")
+    def download_shopping_cart(self, request):
+        shopping_list = self.request.user.shopping.all()
+        # text = "\n".join([f"{recipe.name}..." for recipe in shopping_list])
+        # <QuerySet [<ShoppingCart: yummy:MeatBalls4eva>, <ShoppingCart:
+        # yummy:MyNewLunch>, <ShoppingCart: yummy:PiñaColadaOrYogurt-Up2U>]
+        text = "Test text"
+        return FileResponse(
+            text,
+            content_type="text/plain",
+            as_attachment=True,
+            filename="my_shopping_list.txt",
+        )
 
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):
