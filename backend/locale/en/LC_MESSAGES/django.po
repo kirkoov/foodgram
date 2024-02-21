@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 14:23+0300\n"
+"POT-Creation-Date: 2024-02-21 14:29+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,7 @@ msgstr ""
 msgid "English"
 msgstr ""
 
-#: recipes/admin.py:11 recipes/admin.py:17 recipes/admin.py:23
+#: recipes/admin.py:18 recipes/admin.py:24 recipes/admin.py:30
 #: users/admin.py:21
 msgid "empty"
 msgstr ""
@@ -185,6 +185,14 @@ msgstr ""
 
 #: recipes/models.py:221
 msgid "which author"
+msgstr ""
+
+#: recipes/models.py:226
+msgid "subscription"
+msgstr ""
+
+#: recipes/models.py:227
+msgid "subscriptions"
 msgstr ""
 
 #: users/apps.py:7

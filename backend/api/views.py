@@ -60,10 +60,9 @@ class BaseFavoriteShoppingCartViewSet(ModelViewSet):
     model = Favorite  # None afterwards
     serializer_class = FavoriteSerializer  # None afterwards
 
-    def create(self, request):
+    def create(self, request, **kwargs):
         item_id = self.kwargs.get("id")
-
-        item = get_object_or_404(Recipe.objects.get(id=item_id))
+        item = get_object_or_404(Recipe, id=item_id)
         if self.model.objects.filter(user=request.user, recipe=item).exists():
             return Response(
                 _("This recipe already exists."),
@@ -77,8 +76,8 @@ class BaseFavoriteShoppingCartViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, **kwargs):
-        item_id = kwargs.get("id")
-        item = get_object_or_404(Recipe.objects.get(id=item_id))
+        item_id = self.kwargs.get("id")
+        item = get_object_or_404(Recipe, id=item_id)
         if not self.model.objects.filter(
             user=request.user, recipe=item
         ).exists():
@@ -93,7 +92,6 @@ class BaseFavoriteShoppingCartViewSet(ModelViewSet):
 class FavoriteViewSet(BaseFavoriteShoppingCartViewSet):
     # model = Favorite
     # serializer_class = FavoriteSerializer
-    item_type = "favorite"
     queryset = Favorite.objects.all()
     permission_classes = (permissions.AllowAny,)
     # pagination_class = None

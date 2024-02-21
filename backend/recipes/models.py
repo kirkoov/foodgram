@@ -221,5 +221,14 @@ class Subscription(models.Model):
         help_text=_("which author"),
     )
 
+    class Meta:
+        verbose_name = _("subscription")
+        verbose_name_plural = _("subscriptions")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"], name="unique_user_author_subscribe"
+            ),
+        ]
+
     def __str__(self):
         return f"{self.user}@{self.author}"

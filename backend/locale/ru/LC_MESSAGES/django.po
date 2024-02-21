@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 14:23+0300\n"
-"PO-Revision-Date: 2024-02-21 11:25+0000\n"
+"POT-Creation-Date: 2024-02-21 14:29+0300\n"
+"PO-Revision-Date: 2024-02-21 11:30+0000\n"
 "Last-Translator: Admin Admeenov <admin@foodgram.zapto.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -35,7 +35,7 @@ msgstr "русский"
 msgid "English"
 msgstr "английский"
 
-#: recipes/admin.py:11 recipes/admin.py:17 recipes/admin.py:23
+#: recipes/admin.py:18 recipes/admin.py:24 recipes/admin.py:30
 #: users/admin.py:21
 msgid "empty"
 msgstr "пусто"
@@ -185,9 +185,18 @@ msgid "Who subscribes"
 msgstr "Кто подписывается"
 
 #: recipes/models.py:221
-#| msgid "author"
 msgid "which author"
 msgstr "на какого автора"
+
+#: recipes/models.py:226
+#| msgid "subscriber"
+msgid "subscription"
+msgstr "подписка"
+
+#: recipes/models.py:227
+#| msgid "subscriber"
+msgid "subscriptions"
+msgstr "подписки"
 
 #: users/apps.py:7
 msgid "users"
