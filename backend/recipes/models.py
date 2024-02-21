@@ -205,19 +205,21 @@ class Recipe(models.Model):
         return self.name
 
 
-# class Subscription(models.Model):
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name="subscribed_to",
-#         verbose_name="Подписчик",
-#     )
-#     author = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         related_name="subscribed_by",
-#         verbose_name="Автор",
-#     )
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="subscribed_to",
+        verbose_name=_("subscriber"),
+        help_text=_("Who subscribes"),
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="subscribed_by",
+        verbose_name=_("author"),
+        help_text=_("which author"),
+    )
 
-#     def __str__(self):
-#         return f"Подписка {self.user} на {self.author}"
+    def __str__(self):
+        return f"{self.user}@{self.author}"
