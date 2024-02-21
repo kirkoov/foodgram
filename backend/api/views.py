@@ -1,10 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from rest_framework import filters, permissions
+from rest_framework import permissions, status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 
 from .filters import IngredientFilter, RecipeFilter
 from .serializers import (
@@ -30,7 +33,6 @@ class RecipeViewSet(ModelViewSet):
     http_method_names = ("get", "post", "patch", "delete")
     serializer_class = RecipeSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    #     IsAuthorOrReadOnly,
     filterset_class = RecipeFilter
     pagination_class = CustomPagination
 
@@ -54,23 +56,60 @@ class RecipeViewSet(ModelViewSet):
         return RecipeWriteSerializer
 
 
-class FavoriteViewSet(ModelViewSet):
-    serializer_class = FavoriteSerializer
-    permission_classes = (permissions.AllowAny,)
-    pagination_class = None
+class BaseFavoriteShoppingCartViewSet(ModelViewSet):
+    model = Favorite  # None afterwards
+    serializer_class = FavoriteSerializer  # None afterwards
 
-    def get_queryset(self):
-        print(self.request.user.id)
-        queryset = Favorite.objects.all()
-        # queryset = Recipe.objects.prefetch_related(
-        #     "author",
-        #     "tags",
-        #     "ingredients",
-        #     "recipe_ingredient__ingredient",
-        # )
-        # if self.request.user.is_authenticated:
-        #     queryset = queryset.add_user_annotations(self.request.user.id)
-        return queryset
+    def create(self, request):
+        item_id = self.kwargs.get("id")
+
+        item = get_object_or_404(Recipe.objects.get(id=item_id))
+        if self.model.objects.filter(user=request.user, recipe=item).exists():
+            return Response(
+                _("This recipe already exists."),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        new_item = self.model(user=request.user, recipe=item)
+        new_item.save()
+        serializer = self.serializer_class(
+            new_item, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, **kwargs):
+        item_id = kwargs.get("id")
+        item = get_object_or_404(Recipe.objects.get(id=item_id))
+        if not self.model.objects.filter(
+            user=request.user, recipe=item
+        ).exists():
+            return Response(
+                _("No recipe to delete."),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        self.model.objects.get(user=request.user, recipe=item).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FavoriteViewSet(BaseFavoriteShoppingCartViewSet):
+    # model = Favorite
+    # serializer_class = FavoriteSerializer
+    item_type = "favorite"
+    queryset = Favorite.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    # pagination_class = None
+
+    # def get_queryset(self):
+    #     print(self.request.user.id)
+    #     queryset = Favorite.objects.all()
+    #     # queryset = Recipe.objects.prefetch_related(
+    #     #     "author",
+    #     #     "tags",
+    #     #     "ingredients",
+    #     #     "recipe_ingredient__ingredient",
+    #     # )
+    #     # if self.request.user.is_authenticated:
+    #     #     queryset = queryset.add_user_annotations(self.request.user.id)
+    #     return queryset
 
 
 class TagViewSet(ModelViewSet):

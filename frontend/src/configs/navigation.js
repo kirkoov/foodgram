@@ -12,7 +12,7 @@ export default [
     href: '/recipes/create',
     auth: true
   },{
-    title: 'Избранное',
+    title: 'Favourites',
     href: '/favorites',
     auth: true
   }, {

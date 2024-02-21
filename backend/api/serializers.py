@@ -91,7 +91,6 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientSerializer(
         read_only=True, many=True, source="recipe_ingredient"
     )
-    # is_favorited = serializers.SerializerMethodField()
     is_favorited = serializers.BooleanField(default=False)
     # is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -173,8 +172,11 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    user = CustomUserSerializer(read_only=True)
-    recipe = RecipeSerializer(read_only=True)
+    # recipe = serializers.PrimaryKeyRelatedField(
+    # queryset=Recipe.objects.all())
+    # user = serializers.PrimaryKeyRelatedField(
+    #     queryset=CustomUser.objects.all()
+    # )
 
     class Meta:
         model = Favorite
