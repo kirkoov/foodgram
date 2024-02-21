@@ -116,6 +116,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context.get("request")
+        if request is None or request.user.is_anonymous:
+            return False
+        return ShoppingCart.objects.filter(
+            recipe=obj, user=self.request.user
+        ).exists()
+
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
     """Add a recipe."""
