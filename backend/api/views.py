@@ -1,5 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+import io
+from reportlab.pdfgen import canvas
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -57,17 +59,25 @@ class RecipeViewSet(ModelViewSet):
 
     @action(methods=["get"], detail=False, url_path="download_shopping_cart")
     def download_shopping_cart(self, request):
-        shopping_list = self.request.user.shopping.all()
+        # shopping_list = self.request.user.shopping.all()
         # text = "\n".join([f"{recipe.name}..." for recipe in shopping_list])
         # <QuerySet [<ShoppingCart: yummy:MeatBalls4eva>, <ShoppingCart:
         # yummy:MyNewLunch>, <ShoppingCart: yummy:PiñaColadaOrYogurt-Up2U>]
-        text = "Test text"
-        return FileResponse(
-            text,
-            content_type="text/plain",
-            as_attachment=True,
-            filename="my_shopping_list.txt",
-        )
+        # text = "Test text"
+
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer)
+        p.drawString(100, 100, "Hello world.")
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        # return FileResponse(
+        #     text,
+        #     content_type="text/plain",
+        #     as_attachment=True,
+        #     filename="my_shopping_list.txt",
+        # )
+        return FileResponse(buffer, as_attachment=True, filename="hello.pdf")
 
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):
