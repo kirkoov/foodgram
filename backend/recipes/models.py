@@ -21,11 +21,11 @@ class RecipeQuerySet(models.QuerySet):
                     user_id=user_id, recipe__pk=models.OuterRef("pk")
                 )
             ),
-            # is_in_shopping_cart=models.Exists(
-            #     ShoppingCart.objects.filter(
-            #         user_id=user_id, recipe__pk=models.OuterRef("pk")
-            #     )
-            # ),
+            is_in_shopping_cart=models.Exists(
+                ShoppingCart.objects.filter(
+                    user_id=user_id, recipe__pk=models.OuterRef("pk")
+                )
+            ),
         )
 
     def filter_on_tags(self, tags):
@@ -146,6 +146,35 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user}@{self.recipe}"
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="shopping",
+        verbose_name=_("custom user"),
+    )
+    recipe = models.ForeignKey(
+        "Recipe",
+        on_delete=models.CASCADE,
+        related_name="shopping",
+        verbose_name=_("recipe"),
+    )
+
+    class Meta:
+        ordering = ("user",)
+        verbose_name = _("shopping_cart")
+        verbose_name_plural = _("shopping_carts")
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=["user", "recipe"],
+        # name="unique_shoppping_user_recipe"
+        #     )
+        # ]
+
+    def __str__(self):
+        return f"{self.user}:{self.recipe}"
 
 
 class Recipe(models.Model):

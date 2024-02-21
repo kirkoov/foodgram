@@ -7,6 +7,7 @@ from api.views import (
     FavoriteViewSet,
     RecipeViewSet,
     IngredientViewSet,
+    ShoppingCartViewSet,
     TagViewSet,
 )
 
@@ -23,6 +24,12 @@ router_v1.register(
     FavoriteViewSet,
     basename="favorite",
 )
+router_v1.register(
+    r"recipes/(?P<id>\d+)/shopping_cart",
+    ShoppingCartViewSet,
+    basename="shopping_cart",
+)
+# http://localhost/api/recipes/{id}//
 
 router_v1.register(r"users", CustomUserViewSet, basename="users")
 

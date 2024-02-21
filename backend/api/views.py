@@ -16,9 +16,10 @@ from .serializers import (
     IngredientSerializer,
     RecipeSerializer,
     RecipeWriteSerializer,
+    ShoppingCartSerializer,
     TagSerializer,
 )
-from recipes.models import Favorite, Ingredient, Recipe, Tag
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from users.models import CustomUser
 
 
@@ -57,8 +58,10 @@ class RecipeViewSet(ModelViewSet):
 
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):
-    model = Favorite  # None afterwards
-    serializer_class = FavoriteSerializer  # None afterwards
+    model: type[Favorite] | type[ShoppingCart] | None
+    serializer_class: type[FavoriteSerializer] | type[
+        ShoppingCartSerializer
+    ] | None
 
     def create(self, request, **kwargs):
         item_id = self.kwargs.get("id")
@@ -90,24 +93,19 @@ class BaseFavoriteShoppingCartViewSet(ModelViewSet):
 
 
 class FavoriteViewSet(BaseFavoriteShoppingCartViewSet):
-    # model = Favorite
-    # serializer_class = FavoriteSerializer
+    model = Favorite
+    serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
     permission_classes = (permissions.AllowAny,)
     # pagination_class = None
 
-    # def get_queryset(self):
-    #     print(self.request.user.id)
-    #     queryset = Favorite.objects.all()
-    #     # queryset = Recipe.objects.prefetch_related(
-    #     #     "author",
-    #     #     "tags",
-    #     #     "ingredients",
-    #     #     "recipe_ingredient__ingredient",
-    #     # )
-    #     # if self.request.user.is_authenticated:
-    #     #     queryset = queryset.add_user_annotations(self.request.user.id)
-    #     return queryset
+
+class ShoppingCartViewSet(BaseFavoriteShoppingCartViewSet):
+    model = ShoppingCart
+    serializer_class = ShoppingCartSerializer
+    queryset = ShoppingCart.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    # pagination_class = None
 
 
 class TagViewSet(ModelViewSet):

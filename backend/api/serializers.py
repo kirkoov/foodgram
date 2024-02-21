@@ -5,7 +5,14 @@ from rest_framework import serializers
 from django.conf import settings
 from django.core.files.base import ContentFile
 
-from recipes.models import Favorite, Ingredient, Recipe, RecipeIngredient, Tag
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingCart,
+    Tag,
+)
 from users.models import CustomUser
 
 
@@ -92,16 +99,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         read_only=True, many=True, source="recipe_ingredient"
     )
     is_favorited = serializers.BooleanField(default=False)
-    # is_in_shopping_cart = serializers.SerializerMethodField()
-
-    # def get_is_favorited(self, recipe):
-    #     request = self.context["request"]
-    #     return (
-    #         request.user.is_authenticated
-    #         and Favorite.objects.filter(
-    #             user=request.user, recipe=recipe.pk
-    #         ).exist()
-    #     )
+    is_in_shopping_cart = serializers.BooleanField(default=False)
 
     class Meta:
         model = Recipe
@@ -111,7 +109,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             "author",
             "ingredients",
             "is_favorited",
-            # "is_in_shopping_cart",
+            "is_in_shopping_cart",
             "name",
             "image",
             "text",
@@ -172,14 +170,17 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    # recipe = serializers.PrimaryKeyRelatedField(
-    # queryset=Recipe.objects.all())
-    # user = serializers.PrimaryKeyRelatedField(
-    #     queryset=CustomUser.objects.all()
-    # )
-
     class Meta:
         model = Favorite
+        fields = (
+            "user",
+            "recipe",
+        )
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingCart
         fields = (
             "user",
             "recipe",

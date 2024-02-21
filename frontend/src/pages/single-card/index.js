@@ -55,7 +55,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
     <Container>
       <MetaTags>
         <title>{name}</title>
-        <meta name="description" content={`Foodgram - ${name}`} />
+        <meta name="description" content={`Продуктовый помощник - ${name}`} />
         <meta property="og:title" content={name} />
       </MetaTags>
       <div className={styles['single-card']}>
@@ -74,7 +74,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           </div>
           <TagsContainer tags={tags} />
           <div>
-            <p className={styles['single-card__text']}><Icons.ClockIcon /> {cooking_time} minute(s)</p>
+            <p className={styles['single-card__text']}><Icons.ClockIcon /> {cooking_time} мин.</p>
             <p className={styles['single-card__text_with_link']}>
               <div className={styles['single-card__text']}>
                 <Icons.UserIcon /> <LinkComponent
@@ -85,7 +85,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
               </div>
               {(userContext || {}).id === author.id && <LinkComponent
                 href={`${url}/edit`}
-                title='Edit the recipe'
+                title='Редактировать рецепт'
                 className={styles['single-card__edit']}
               />}
             </p>
