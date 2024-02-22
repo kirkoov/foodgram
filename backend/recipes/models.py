@@ -125,23 +125,25 @@ class BaseFavoriteShoppingCart(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name=_("custom user"),
+        related_name="%(class)s",
     )
     recipe = models.ForeignKey(
         "Recipe",
         on_delete=models.CASCADE,
         verbose_name=_("recipe"),
+        related_name="%(class)s",
     )
 
     class Meta:
         abstract = True
+        ordering = ("user",)
 
     def __str__(self):
         return f"{self.user}@{self.recipe}"
 
 
 class Favorite(BaseFavoriteShoppingCart):
-    class Meta:
-        ordering = ("user",)
+    class Meta(BaseFavoriteShoppingCart.Meta):
         verbose_name = _("favourite")
         verbose_name_plural = _("favourites")
         constraints = [
@@ -152,26 +154,12 @@ class Favorite(BaseFavoriteShoppingCart):
 
 
 class ShoppingCart(BaseFavoriteShoppingCart):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name=_("custom user"),
-        related_name="shopping",
-    )
-    recipe = models.ForeignKey(
-        "Recipe",
-        on_delete=models.CASCADE,
-        verbose_name=_("recipe"),
-        related_name="shopping",
-    )
-
-    class Meta:
-        ordering = ("user",)
+    class Meta(BaseFavoriteShoppingCart.Meta):
         verbose_name = _("shopping_cart")
         verbose_name_plural = _("shopping_carts")
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique_shoppping_user_recipe"
+                fields=["user", "recipe"], name="unique_shopping_user_recipe"
             )
         ]
 

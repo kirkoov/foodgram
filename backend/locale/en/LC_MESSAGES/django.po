@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-22 10:09+0300\n"
+"POT-Creation-Date: 2024-02-22 15:50+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/views.py:89
-msgid "Log in first."
+#: api/views.py:114
+msgid "Shopping list, Foodgram"
 msgstr ""
 
-#: api/views.py:105
+#: api/views.py:153
 msgid "This recipe already exists."
 msgstr ""
 
-#: api/views.py:122
+#: api/views.py:170
 msgid "No recipe to delete."
 msgstr ""
 
@@ -43,7 +43,7 @@ msgstr ""
 msgid "empty"
 msgstr ""
 
-#: recipes/apps.py:7 recipes/models.py:212
+#: recipes/apps.py:7 recipes/models.py:213
 msgid "recipes"
 msgstr ""
 
@@ -67,7 +67,7 @@ msgstr ""
 msgid "ingredient"
 msgstr ""
 
-#: recipes/models.py:52 recipes/models.py:203
+#: recipes/models.py:52 recipes/models.py:204
 msgid "ingredients"
 msgstr ""
 
@@ -103,7 +103,7 @@ msgstr ""
 msgid "mealtime"
 msgstr ""
 
-#: recipes/models.py:95 recipes/models.py:192
+#: recipes/models.py:95 recipes/models.py:193
 msgid "mealtimes"
 msgstr ""
 
@@ -115,7 +115,7 @@ msgstr ""
 msgid "Enter a quantity of this to use in cooking"
 msgstr ""
 
-#: recipes/models.py:110 recipes/models.py:132 recipes/models.py:211
+#: recipes/models.py:110 recipes/models.py:133 recipes/models.py:212
 msgid "recipe"
 msgstr ""
 
@@ -131,79 +131,79 @@ msgstr ""
 msgid "custom user"
 msgstr ""
 
-#: recipes/models.py:145
+#: recipes/models.py:147
 msgid "favourite"
 msgstr ""
 
-#: recipes/models.py:146
+#: recipes/models.py:148
 msgid "favourites"
 msgstr ""
 
-#: recipes/models.py:157
+#: recipes/models.py:158
 msgid "shopping_cart"
 msgstr ""
 
-#: recipes/models.py:158
+#: recipes/models.py:159
 msgid "shopping_carts"
 msgstr ""
 
-#: recipes/models.py:169
+#: recipes/models.py:170
 msgid "recipe name"
 msgstr ""
 
-#: recipes/models.py:170
+#: recipes/models.py:171
 msgid "Enter a name for your recipe"
 msgstr ""
 
-#: recipes/models.py:175
+#: recipes/models.py:176
 msgid "recipe image"
 msgstr ""
 
-#: recipes/models.py:176
+#: recipes/models.py:177
 msgid "Upload a <=3MB image for your recipe"
 msgstr ""
 
-#: recipes/models.py:179
+#: recipes/models.py:180
 msgid "recipe description"
 msgstr ""
 
-#: recipes/models.py:180
+#: recipes/models.py:181
 msgid "Describe how to cook"
 msgstr ""
 
-#: recipes/models.py:187
+#: recipes/models.py:188
 msgid "cooking time"
 msgstr ""
 
-#: recipes/models.py:188
+#: recipes/models.py:189
 msgid "Enter now many minutes it needs to cook"
 msgstr ""
 
-#: recipes/models.py:198 recipes/models.py:235
+#: recipes/models.py:199 recipes/models.py:236
 msgid "author"
 msgstr ""
 
-#: recipes/models.py:205
+#: recipes/models.py:206
 msgid "published on"
 msgstr ""
 
-#: recipes/models.py:228
+#: recipes/models.py:229
 msgid "subscriber"
 msgstr ""
 
-#: recipes/models.py:229
+#: recipes/models.py:230
 msgid "Who subscribes"
 msgstr ""
 
-#: recipes/models.py:236
+#: recipes/models.py:237
 msgid "which author"
 msgstr ""
 
-#: recipes/models.py:240
+#: recipes/models.py:241
 msgid "subscription"
 msgstr ""
 
-#: recipes/models.py:241
+#: recipes/models.py:242
 msgid "subscriptions"
 msgstr ""
 

@@ -1,16 +1,29 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 import io
+
+
+from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import cm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.rl_config import TTFSearchPath  # type: ignore[import-untyped]
+
+
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
+from django.conf import settings
+from django.db.models import Sum
 from django.http import FileResponse
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404, get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from .filters import IngredientFilter, RecipeFilter
@@ -23,7 +36,14 @@ from .serializers import (
     ShoppingCartSerializer,
     TagSerializer,
 )
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingCart,
+    Tag,
+)
 from users.models import CustomUser
 
 
@@ -57,38 +77,69 @@ class RecipeViewSet(ModelViewSet):
             return RecipeSerializer
         return RecipeWriteSerializer
 
-    @action(methods=["get"], detail=False, url_path="download_shopping_cart")
+    @action(
+        methods=["get"],
+        detail=False,
+        url_path="download_shopping_cart",
+        permission_classes=[permissions.IsAuthenticated],
+    )
     def download_shopping_cart(self, request):
-        shopping_list = self.request.user.shopping.all()
-        # text = "\n".join([f"{recipe.name}..." for recipe in shopping_list])
-        # <QuerySet [<ShoppingCart: yummy:MeatBalls4eva>, <ShoppingCart:
-        # yummy:MyNewLunch>, <ShoppingCart: yummy:PiñaColadaOrYogurt-Up2U>]
-        # text = "Test text"
+        try:
+            shopping_totals = (
+                RecipeIngredient.objects.filter(
+                    recipe__shoppingcart__user=self.request.user
+                )
+                .values("ingredient__name", "ingredient__measurement_unit")
+                .annotate(quantity=Sum("amount"))
+            )
+            shoppings = {
+                item["ingredient__name"]: [
+                    item["quantity"],
+                    item["ingredient__measurement_unit"],
+                ]
+                for item in shopping_totals
+            }
+        except Exception as e:
+            return Response(
+                f"Some error occurred: {e}",
+                status=status.HTTP_204_NO_CONTENT,
+            )
 
-        if self.request.user.is_authenticated:
-            for recipe in shopping_list:
-                print(recipe.__dict__)
+        X_ITEM = 30
+        X_QNTY = 380
+        X_UNITS = 450
 
-            # buffer = io.BytesIO()
-            # p = canvas.Canvas(buffer)
-            # p.drawRightString(550, 800, "My Foodgram shopping list")
-            # p.drawCentredString(300, 780, "We gotta buy:")
-            # p.drawString(120, 750, "Item")
-            # p.drawString(380, 750, "Qnty")
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=A4)
+        TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts")
+        pdfmetrics.registerFont(TTFont("Fira", "FiraCode-Regular.ttf"))
+        p.setFont("Fira", 12)
+        p.drawRightString(550, 800, "Shopping list, Foodgram")
+        p.drawString(X_ITEM, 750, "Item")
+        p.drawString(X_QNTY, 750, "Qnty")
+        p.drawString(X_UNITS, 750, "Units")
 
-            # p.showPage()
-            # p.save()
-            # buffer.seek(0)
+        i = 15
+        y = 730
+        for item, details in shoppings.items():
+            p.drawString(X_ITEM, y, item)
+            p.drawString(X_QNTY, y, str(details[0]))
+            p.drawString(X_UNITS, y, details[1])
+            y -= i
 
-            # return FileResponse(
-            #     buffer,
-            #     as_attachment=True,
-            #     filename="my-Foodgram_shopping-list.pdf",
-            # )
-        return Response(
-            _("Log in first."),
-            status=status.HTTP_204_NO_CONTENT,
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+
+        return FileResponse(
+            buffer,
+            as_attachment=True,
+            filename="my-Foodgram_shopping-list.pdf",
         )
+        # return Response(
+        #     _("Log in first."),
+        #     status=status.HTTP_204_NO_CONTENT,
+        # )
 
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):
