@@ -59,25 +59,36 @@ class RecipeViewSet(ModelViewSet):
 
     @action(methods=["get"], detail=False, url_path="download_shopping_cart")
     def download_shopping_cart(self, request):
-        # shopping_list = self.request.user.shopping.all()
+        shopping_list = self.request.user.shopping.all()
         # text = "\n".join([f"{recipe.name}..." for recipe in shopping_list])
         # <QuerySet [<ShoppingCart: yummy:MeatBalls4eva>, <ShoppingCart:
         # yummy:MyNewLunch>, <ShoppingCart: yummy:PiñaColadaOrYogurt-Up2U>]
         # text = "Test text"
 
-        buffer = io.BytesIO()
-        p = canvas.Canvas(buffer)
-        p.drawString(100, 100, "Hello world.")
-        p.showPage()
-        p.save()
-        buffer.seek(0)
-        # return FileResponse(
-        #     text,
-        #     content_type="text/plain",
-        #     as_attachment=True,
-        #     filename="my_shopping_list.txt",
-        # )
-        return FileResponse(buffer, as_attachment=True, filename="hello.pdf")
+        if self.request.user.is_authenticated:
+            for recipe in shopping_list:
+                print(recipe.__dict__)
+
+            # buffer = io.BytesIO()
+            # p = canvas.Canvas(buffer)
+            # p.drawRightString(550, 800, "My Foodgram shopping list")
+            # p.drawCentredString(300, 780, "We gotta buy:")
+            # p.drawString(120, 750, "Item")
+            # p.drawString(380, 750, "Qnty")
+
+            # p.showPage()
+            # p.save()
+            # buffer.seek(0)
+
+            # return FileResponse(
+            #     buffer,
+            #     as_attachment=True,
+            #     filename="my-Foodgram_shopping-list.pdf",
+            # )
+        return Response(
+            _("Log in first."),
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):

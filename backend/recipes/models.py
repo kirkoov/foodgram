@@ -166,12 +166,11 @@ class ShoppingCart(models.Model):
         ordering = ("user",)
         verbose_name = _("shopping_cart")
         verbose_name_plural = _("shopping_carts")
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=["user", "recipe"],
-        # name="unique_shoppping_user_recipe"
-        #     )
-        # ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique_shoppping_user_recipe"
+            )
+        ]
 
     def __str__(self):
         return f"{self.user}:{self.recipe}"

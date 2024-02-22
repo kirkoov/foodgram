@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 20:05+0300\n"
-"PO-Revision-Date: 2024-02-21 17:09+0000\n"
+"POT-Creation-Date: 2024-02-22 09:36+0300\n"
+"PO-Revision-Date: 2024-02-22 06:36+0000\n"
 "Last-Translator: Admin Admeenov <admin@foodgram.zapto.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,11 +19,15 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.10.1\n"
 
-#: api/views.py:71
+#: api/views.py:89
+msgid "Log in first."
+msgstr "Сначала войдите в свою учетную запись."
+
+#: api/views.py:105
 msgid "This recipe already exists."
 msgstr "Такой рецепт уже есть."
 
-#: api/views.py:88
+#: api/views.py:122
 msgid "No recipe to delete."
 msgstr "Не найден рецепт для удаления."
 
@@ -35,7 +39,7 @@ msgstr "русский"
 msgid "English"
 msgstr "английский"
 
-#: recipes/admin.py:18 recipes/admin.py:24 recipes/admin.py:30
+#: recipes/admin.py:19 recipes/admin.py:25 recipes/admin.py:31
 #: users/admin.py:21
 msgid "empty"
 msgstr "пусто"
@@ -228,3 +232,9 @@ msgstr "фамилия"
 #: users/models.py:73
 msgid "custom users"
 msgstr "наши пользователи"
+
+#~ msgid "My Foodgram shopping list"
+#~ msgstr "Список покупок \"Продуктового помощника\""
+
+#~ msgid "We otta buy:"
+#~ msgstr "Нам надо закупить:"

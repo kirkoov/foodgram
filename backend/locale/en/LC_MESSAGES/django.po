@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-21 20:05+0300\n"
+"POT-Creation-Date: 2024-02-22 09:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,11 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/views.py:71
+#: api/views.py:89
+msgid "Log in first."
+msgstr ""
+
+#: api/views.py:105
 msgid "This recipe already exists."
 msgstr ""
 
-#: api/views.py:88
+#: api/views.py:122
 msgid "No recipe to delete."
 msgstr ""
 
@@ -34,7 +38,7 @@ msgstr ""
 msgid "English"
 msgstr ""
 
-#: recipes/admin.py:18 recipes/admin.py:24 recipes/admin.py:30
+#: recipes/admin.py:19 recipes/admin.py:25 recipes/admin.py:31
 #: users/admin.py:21
 msgid "empty"
 msgstr ""
