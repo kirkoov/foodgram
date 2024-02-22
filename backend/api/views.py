@@ -1,18 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 import io
-
-
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib.units import cm
+from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.rl_config import TTFSearchPath  # type: ignore[import-untyped]
-
-
 from rest_framework import permissions, status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -23,7 +16,7 @@ from django.conf import settings
 from django.db.models import Sum
 from django.http import FileResponse
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_list_or_404, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from .filters import IngredientFilter, RecipeFilter
@@ -77,6 +70,37 @@ class RecipeViewSet(ModelViewSet):
             return RecipeSerializer
         return RecipeWriteSerializer
 
+    def create_shopping_list_pdf(self, shoppings):
+        X_ITEM = 30
+        X_QNTY = 380
+        X_UNITS = 450
+        try:
+            buffer = io.BytesIO()
+            p = canvas.Canvas(buffer, pagesize=A4)
+            TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts")
+            pdfmetrics.registerFont(TTFont("Fira", "FiraCode-Regular.ttf"))
+            p.setFont("Fira", 12)
+            p.drawRightString(550, 800, "Shopping list, Foodgram")
+            p.drawString(X_ITEM, 750, "Item")
+            p.drawString(X_QNTY, 750, "Qnty")
+            p.drawString(X_UNITS, 750, "Units")
+            i = 15
+            y = 730
+            for item, details in shoppings.items():
+                p.drawString(X_ITEM, y, item)
+                p.drawString(X_QNTY, y, str(details[0]))
+                p.drawString(X_UNITS, y, details[1])
+                y -= i
+            p.showPage()
+            p.save()
+            buffer.seek(0)
+            return buffer
+        except Exception as e:
+            return Response(
+                f"Some error occurred while creating your shoppings list: {e}",
+                status=status.HTTP_204_NO_CONTENT,
+            )
+
     @action(
         methods=["get"],
         detail=False,
@@ -101,45 +125,15 @@ class RecipeViewSet(ModelViewSet):
             }
         except Exception as e:
             return Response(
-                f"Some error occurred: {e}",
+                f"Some error occurred in extracting your shopping data: {e}",
                 status=status.HTTP_204_NO_CONTENT,
             )
 
-        X_ITEM = 30
-        X_QNTY = 380
-        X_UNITS = 450
-
-        buffer = io.BytesIO()
-        p = canvas.Canvas(buffer, pagesize=A4)
-        TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts")
-        pdfmetrics.registerFont(TTFont("Fira", "FiraCode-Regular.ttf"))
-        p.setFont("Fira", 12)
-        p.drawRightString(550, 800, "Shopping list, Foodgram")
-        p.drawString(X_ITEM, 750, "Item")
-        p.drawString(X_QNTY, 750, "Qnty")
-        p.drawString(X_UNITS, 750, "Units")
-
-        i = 15
-        y = 730
-        for item, details in shoppings.items():
-            p.drawString(X_ITEM, y, item)
-            p.drawString(X_QNTY, y, str(details[0]))
-            p.drawString(X_UNITS, y, details[1])
-            y -= i
-
-        p.showPage()
-        p.save()
-        buffer.seek(0)
-
         return FileResponse(
-            buffer,
+            self.create_shopping_list_pdf(shoppings),
             as_attachment=True,
             filename="my-Foodgram_shopping-list.pdf",
         )
-        # return Response(
-        #     _("Log in first."),
-        #     status=status.HTTP_204_NO_CONTENT,
-        # )
 
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):
