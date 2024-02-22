@@ -182,7 +182,7 @@ const RecipeCreate = ({ onEdit }) => {
                     })
                     setRecipeIngredients(recipeIngredientsUpdated)
                   }}
-                >Удалить</span>
+                >Delete</span>
               </div>
             })}
           </div>

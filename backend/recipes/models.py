@@ -152,6 +152,19 @@ class Favorite(BaseFavoriteShoppingCart):
 
 
 class ShoppingCart(BaseFavoriteShoppingCart):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_("custom user"),
+        related_name="shopping",
+    )
+    recipe = models.ForeignKey(
+        "Recipe",
+        on_delete=models.CASCADE,
+        verbose_name=_("recipe"),
+        related_name="shopping",
+    )
+
     class Meta:
         ordering = ("user",)
         verbose_name = _("shopping_cart")

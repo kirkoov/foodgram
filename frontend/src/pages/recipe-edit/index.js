@@ -225,7 +225,7 @@ const RecipeEdit = ({ onItemDelete }) => {
                     })
                     setRecipeIngredients(recipeIngredientsUpdated)
                   }}
-                >Удалить</span>
+                >Delete</span>
               </div>
             })}
           </div>
