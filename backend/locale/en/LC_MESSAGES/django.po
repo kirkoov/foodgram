@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-22 15:50+0300\n"
+"POT-Creation-Date: 2024-02-22 20:22+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/views.py:114
-msgid "Shopping list, Foodgram"
-msgstr ""
-
-#: api/views.py:153
+#: api/views.py:150
 msgid "This recipe already exists."
 msgstr ""
 
-#: api/views.py:170
+#: api/views.py:167
 msgid "No recipe to delete."
 msgstr ""
 
@@ -179,7 +175,7 @@ msgstr ""
 msgid "Enter now many minutes it needs to cook"
 msgstr ""
 
-#: recipes/models.py:199 recipes/models.py:236
+#: recipes/models.py:199
 msgid "author"
 msgstr ""
 
@@ -195,8 +191,12 @@ msgstr ""
 msgid "Who subscribes"
 msgstr ""
 
+#: recipes/models.py:236
+msgid "subscribed author"
+msgstr ""
+
 #: recipes/models.py:237
-msgid "which author"
+msgid "which recipe author"
 msgstr ""
 
 #: recipes/models.py:241

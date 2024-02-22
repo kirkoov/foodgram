@@ -233,8 +233,8 @@ class Subscription(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="subscribed_by",
-        verbose_name=_("author"),
-        help_text=_("which author"),
+        verbose_name=_("subscribed author"),
+        help_text=_("which recipe author"),
     )
 
     class Meta:
