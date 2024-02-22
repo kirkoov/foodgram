@@ -120,20 +120,26 @@ class RecipeIngredient(models.Model):
         return f"{self.ingredient}->{self.recipe}"
 
 
-class Favorite(models.Model):
+class BaseFavoriteShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="favorites",
         verbose_name=_("custom user"),
     )
     recipe = models.ForeignKey(
         "Recipe",
         on_delete=models.CASCADE,
-        related_name="favorites",
         verbose_name=_("recipe"),
     )
 
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f"{self.user}@{self.recipe}"
+
+
+class Favorite(BaseFavoriteShoppingCart):
     class Meta:
         ordering = ("user",)
         verbose_name = _("favourite")
@@ -144,24 +150,8 @@ class Favorite(models.Model):
             )
         ]
 
-    def __str__(self):
-        return f"{self.user}@{self.recipe}"
 
-
-class ShoppingCart(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="shopping",
-        verbose_name=_("custom user"),
-    )
-    recipe = models.ForeignKey(
-        "Recipe",
-        on_delete=models.CASCADE,
-        related_name="shopping",
-        verbose_name=_("recipe"),
-    )
-
+class ShoppingCart(BaseFavoriteShoppingCart):
     class Meta:
         ordering = ("user",)
         verbose_name = _("shopping_cart")
@@ -171,9 +161,6 @@ class ShoppingCart(models.Model):
                 fields=["user", "recipe"], name="unique_shoppping_user_recipe"
             )
         ]
-
-    def __str__(self):
-        return f"{self.user}:{self.recipe}"
 
 
 class Recipe(models.Model):
