@@ -45,7 +45,7 @@ const SignIn = ({ onSignIn }) => {
           type='submit'
           className={styles.button}
         >
-          Sign in
+          OK
         </Button>
       </Form>
     </Container>

@@ -110,14 +110,14 @@ const RecipeCreate = ({ onEdit }) => {
         }}
       >
         <Input
-          label='Название рецепта'
+          label='Recipe name'
           onChange={e => {
             const value = e.target.value
             setRecipeName(value)
           }}
         />
         <CheckboxGroup
-          label='Теги'
+          label='Mealtime(s)'
           values={value}
           className={styles.checkboxGroup}
           labelClassName={styles.checkboxGroupLabel}
@@ -128,7 +128,7 @@ const RecipeCreate = ({ onEdit }) => {
         <div className={styles.ingredients}>
           <div className={styles.ingredientsInputs}>
             <Input
-              label='Ингредиенты'
+              label='Ingredients'
               className={styles.ingredientsNameInput}
               inputClassName={styles.ingredientsInput}
               labelClassName={styles.ingredientsLabel}
@@ -204,7 +204,7 @@ const RecipeCreate = ({ onEdit }) => {
         </div>
         <div className={styles.cookingTime}>
           <Input
-            label='Время приготовления'
+            label='Cooking time'
             className={styles.ingredientsTimeInput}
             labelClassName={styles.cookingTimeLabel}
             inputClassName={styles.ingredientsTimeValue}
@@ -217,7 +217,7 @@ const RecipeCreate = ({ onEdit }) => {
           <div className={styles.cookingTimeUnit}>minute(s)</div>
         </div>
         <Textarea
-          label='Описание рецепта'
+          label='Instructions'
           onChange={e => {
             const value = e.target.value
             setRecipeText(value)
@@ -228,7 +228,7 @@ const RecipeCreate = ({ onEdit }) => {
             setRecipeFile(file)
           }}
           className={styles.fileInput}
-          label='Загрузить фото'
+          label='Upload a pic'
         />
         <Button
           modifier='style_dark-blue'

@@ -104,11 +104,11 @@ const RecipeEdit = ({ onItemDelete }) => {
   return <Main>
     <Container>
       <MetaTags>
-        <title>Редактирование рецепта</title>
-        <meta name="description" content="Foodgram - Редактирование рецепта" />
-        <meta property="og:title" content="Редактирование рецепта" />
+        <title>Recipe editing</title>
+        <meta name="description" content="Foodgram - Recipe editing" />
+        <meta property="og:title" content="Recipe editing" />
       </MetaTags>
-      <Title title='Редактирование рецепта' />
+      <Title title='Recipe editing' />
       <Form
         className={styles.form}
         onSubmit={e => {
@@ -153,7 +153,7 @@ const RecipeEdit = ({ onItemDelete }) => {
         }}
       >
         <Input
-          label='Название рецепта'
+          label='Recipe name'
           onChange={e => {
             const value = e.target.value
             setRecipeName(value)
@@ -161,7 +161,7 @@ const RecipeEdit = ({ onItemDelete }) => {
           value={recipeName}
         />
         <CheckboxGroup
-          label='Теги'
+          label='Mealtime(s)'
           values={value}
           className={styles.checkboxGroup}
           labelClassName={styles.checkboxGroupLabel}
@@ -172,7 +172,7 @@ const RecipeEdit = ({ onItemDelete }) => {
         <div className={styles.ingredients}>
           <div className={styles.ingredientsInputs}>
             <Input
-              label='Ингредиенты'
+              label='Ingredients'
               className={styles.ingredientsNameInput}
               inputClassName={styles.ingredientsInput}
               labelClassName={styles.ingredientsLabel}
@@ -247,7 +247,7 @@ const RecipeEdit = ({ onItemDelete }) => {
         </div>
         <div className={styles.cookingTime}>
           <Input
-            label='Время приготовления'
+            label='Cooking time'
             className={styles.ingredientsTimeInput}
             labelClassName={styles.cookingTimeLabel}
             inputClassName={styles.ingredientsTimeValue}
@@ -260,7 +260,7 @@ const RecipeEdit = ({ onItemDelete }) => {
           <div className={styles.cookingTimeUnit}>minute(s)</div>
         </div>
         <Textarea
-          label='Описание рецепта'
+          label='Instructions'
           onChange={e => {
             const value = e.target.value
             setRecipeText(value)
@@ -273,7 +273,7 @@ const RecipeEdit = ({ onItemDelete }) => {
             setRecipeFile(file)
           }}
           className={styles.fileInput}
-          label='Загрузить фото'
+          label='Upload a pic'
           file={recipeFile}
         />
         <div className={styles.actions}>
