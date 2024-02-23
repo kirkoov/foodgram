@@ -11,6 +11,7 @@ from recipes.models import (
     Recipe,
     RecipeIngredient,
     ShoppingCart,
+    Subscription,
     Tag,
 )
 from users.models import CustomUser
@@ -30,14 +31,13 @@ class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     def get_is_subscribed(self, obj):
-        # request = self.context.get("request")
-        # return (
-        #     request.user.is_authenticated
-        #     and Subscribe.objects.filter(
-        #         user=request.user, author=obj
-        #     ).exists()
-        # )
-        return False
+        request = self.context.get("request")
+        return (
+            request.user.is_authenticated
+            and Subscription.objects.filter(
+                user=request.user, author=obj
+            ).exists()
+        )
 
     class Meta:
         model = CustomUser
