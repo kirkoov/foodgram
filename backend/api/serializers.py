@@ -34,9 +34,7 @@ class CustomUserSerializer(UserSerializer):
         request = self.context.get("request")
         return (
             request.user.is_authenticated
-            and Subscription.objects.filter(
-                user=request.user, author=obj
-            ).exists()
+            and request.user.subscribed_to.all().exists()
         )
 
     class Meta:

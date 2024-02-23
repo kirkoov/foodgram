@@ -37,7 +37,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
-    """Use a custom user class to tweak more options later if needed."""
+    """Use a custom user class."""
 
     email = models.EmailField(
         max_length=settings.NUM_CHARS_EMAIL,
