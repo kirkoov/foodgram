@@ -28,6 +28,7 @@ from .serializers import (
     RecipeSerializer,
     RecipeWriteSerializer,
     ShoppingCartSerializer,
+    SubscriptionSerializer,
     SubscriptionWriteSerializer,
     TagSerializer,
 )
@@ -40,7 +41,6 @@ from recipes.models import (
     Subscription,
     Tag,
 )
-from users.models import CustomUser
 
 
 User = get_user_model()
@@ -209,7 +209,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
-    queryset = CustomUser.objects.all()
+    queryset = User.objects.all()
     pagination_class = CustomPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
@@ -217,6 +217,25 @@ class CustomUserViewSet(UserViewSet):
         if self.action == "me":
             self.permission_classes = [permissions.IsAuthenticated]
         return super().get_permissions()
+
+    @action(
+        methods=["get"],
+        detail=False,
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def subscriptions(self, request):
+        curr_user = request.user
+        subscriptions = User.objects.filter(is_subscribed__user=curr_user)
+        paginator = self.paginate_queryset(subscriptions)
+        serializer = SubscriptionSerializer(
+            paginator, many=True, context={"request": request}
+        )
+        # serializer.data
+        # return Response(
+        #     "Checking",
+        #     status=status.HTTP_204_NO_CONTENT,
+        # )
+        return self.get_paginated_response(serializer.data)
 
 
 @api_view(["POST", "DELETE"])

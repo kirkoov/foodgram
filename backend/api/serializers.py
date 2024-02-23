@@ -220,15 +220,21 @@ class SubscriptionSerializer(CustomUserSerializer):
         )
 
     def get_recipes(self, obj):
-        pass
+        request = self.context.get("request")
+        recipes_limit = request.query_params.get("recipes_limit")
+        recipes = obj.recipes.all()
+        if recipes_limit and recipes_limit.isdigit():
+            recipes = recipes[: int(recipes_limit)]
+        serializer = AbridgedRecipeSerializer(
+            recipes, many=True, context={"request": request}
+        )
+        return serializer.data
 
     def get_is_subscribed(self, obj):
-        request = self.context.get("request")
-        if request is None or request.user.is_anonymous:
-            return False
+        user = self.context.get("request").user
         return (
-            request.user.is_authenticated
-            and request.user.is_subscriber.all().exists()
+            user.is_authenticated
+            and user.is_subscriber.all().filter(author=obj.pk).exists()
         )
 
 
