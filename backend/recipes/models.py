@@ -225,14 +225,14 @@ class Subscription(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="subscribed_to",
+        related_name="is_subscriber",
         verbose_name=_("subscriber"),
         help_text=_("Who subscribes"),
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="subscribed_by",
+        related_name="is_subscribed",
         verbose_name=_("subscribed author"),
         help_text=_("which recipe author"),
     )
@@ -247,4 +247,4 @@ class Subscription(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user}@{self.author}"
+        return f"{self.user}:{self.author}"

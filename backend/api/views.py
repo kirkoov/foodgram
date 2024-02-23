@@ -7,26 +7,28 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.rl_config import TTFSearchPath  # type: ignore[import-untyped]
 from rest_framework import permissions, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from django.conf import settings
 from django.db.models import Sum
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from .filters import IngredientFilter, RecipeFilter
 from .serializers import (
+    AbridgedRecipeSerializer,
     CustomUserSerializer,
     FavoriteSerializer,
     IngredientSerializer,
     RecipeSerializer,
     RecipeWriteSerializer,
     ShoppingCartSerializer,
+    SubscriptionSerializer,
     TagSerializer,
 )
 from recipes.models import (
@@ -35,6 +37,7 @@ from recipes.models import (
     Recipe,
     RecipeIngredient,
     ShoppingCart,
+    Subscription,
     Tag,
 )
 from users.models import CustomUser
@@ -210,19 +213,48 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    # @action(
-    #     methods=["get"],
-    #     url_path="me",
-    #     detail=False,
-    #     permission_classes=(permissions.IsAuthenticated,),
-    # )
-    # def me(self, request):
-    #     serializer = CustomUserSerializer(request.user)
-    #     if request.user.is_authenticated:
-    #         return Response(serializer.data)
-    #     return Response(status=status.HTTP_401_UNAUTHORIZED)
-
     def get_permissions(self):
         if self.action == "me":
             self.permission_classes = [permissions.IsAuthenticated]
         return super().get_permissions()
+
+
+@api_view(["POST", "DELETE"])
+@permission_classes([permissions.IsAuthenticated])
+def subscribe_user(request, id):
+    user = request.user
+    author = get_object_or_404(User, id=id)
+    if request.method == "DELETE":
+        try:
+            subscription = get_object_or_404(
+                Subscription, user=user, author=author
+            )
+            subscription.delete()
+            return Response(
+                {"success": _("Subscription deleted.")},
+                status=status.HTTP_204_NO_CONTENT,
+            )
+        except Http404:
+            return Response(
+                {"errors": _("No subscription to delete.")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    recipes_limit = request.query_params.get("recipes_limit")
+    serializer = SubscriptionSerializer(
+        data={"user": user.id, "author": author.id},
+        context={"request": request},
+    )
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    recipes = Recipe.objects.filter(author=author)
+    if recipes_limit:
+        recipes = recipes[: int(recipes_limit)]
+    serializer = CustomUserSerializer(user, context={"request": request})
+    data = serializer.data
+    data["recipes"] = AbridgedRecipeSerializer(recipes, many=True).data
+    data["recipes_count"] = len(recipes)
+
+    return Response(
+        data,
+        status=status.HTTP_201_CREATED,
+    )

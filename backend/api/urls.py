@@ -8,6 +8,7 @@ from api.views import (
     RecipeViewSet,
     IngredientViewSet,
     ShoppingCartViewSet,
+    subscribe_user,
     TagViewSet,
 )
 
@@ -29,12 +30,14 @@ router_v1.register(
     ShoppingCartViewSet,
     basename="shopping_cart",
 )
-# http://localhost/api/recipes/{id}//
-
 router_v1.register(r"users", CustomUserViewSet, basename="users")
+
 
 urlpatterns = [
     re_path(r"auth/", include("djoser.urls")),
     re_path(r"auth/", include("djoser.urls.authtoken")),
+    re_path(
+        r"users/(?P<id>\d+)/subscribe", subscribe_user, name="subscribe_user"
+    ),
     re_path(r"", include(router_v1.urls)),
 ]

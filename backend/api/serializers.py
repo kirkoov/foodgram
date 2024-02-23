@@ -1,9 +1,10 @@
 import base64
 from djoser.serializers import UserSerializer
-from rest_framework import serializers
+from rest_framework import serializers, status
 
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.utils.translation import gettext_lazy as _
 
 from recipes.models import (
     Favorite,
@@ -30,13 +31,6 @@ class Base64ImageField(serializers.ImageField):
 class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
-    def get_is_subscribed(self, obj):
-        request = self.context.get("request")
-        return (
-            request.user.is_authenticated
-            and request.user.subscribed_to.all().exists()
-        )
-
     class Meta:
         model = CustomUser
         fields = (
@@ -46,6 +40,15 @@ class CustomUserSerializer(UserSerializer):
             "first_name",
             "last_name",
             "is_subscribed",
+        )
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get("request")
+        if request is None or request.user.is_anonymous:
+            return False
+        return (
+            request.user.is_authenticated
+            and request.user.is_subscriber.all().exists()
         )
 
 
@@ -87,6 +90,13 @@ class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeIngredient
         fields = ("id", "amount")
+
+
+class AbridgedRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ("id", "name", "image", "cooking_time")
+        read_only_fields = fields
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -191,3 +201,32 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             "user",
             "recipe",
         )
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ("user", "author")
+
+    def validate(self, data):
+        try:
+            user_id = data.get("user").id
+            author_id = data.get("author").id
+        except AttributeError:
+            raise serializers.ValidationError(
+                detail=_("Wrong user or author details."),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if Subscription.objects.filter(
+            author=author_id, user=user_id
+        ).exists():
+            raise serializers.ValidationError(
+                detail=_("This subscription exists already."),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if user_id == author_id:
+            raise serializers.ValidationError(
+                detail=_("You can't subscribe to yourself."),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return data
