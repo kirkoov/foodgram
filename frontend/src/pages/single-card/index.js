@@ -108,7 +108,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
                 handleSubscribe({ author_id: author.id, toSubscribe: !author.is_subscribed })
               }}
             >
-              {author.is_subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
+              {author.is_subscribed ? 'Unsubscribe me' : 'Subscribe me'}
             </Button>}
           </div>
           <Ingredients ingredients={ingredients} />

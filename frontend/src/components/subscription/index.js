@@ -52,7 +52,7 @@ const Subscription = ({ email, first_name, last_name, username, removeSubscripti
           removeSubscription({ id })
         }}
       >
-        Отписаться
+        Ubsubscribe
       </Button>
     </div>
   </div>

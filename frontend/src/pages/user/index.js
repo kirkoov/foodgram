@@ -109,7 +109,7 @@ const UserPage = ({ updateOrders }) => {
             })
         }}
       >
-        {subscribed ? 'Отписаться от автора' : 'Подписаться на автора'}
+        {subscribed ? 'Unsubscribe me' : 'Subscribe me'}
       </Button>}
       <CardList>
         {recipes.map(card => <Card

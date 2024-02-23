@@ -32,6 +32,7 @@ router_v1.register(
 )
 router_v1.register(r"users", CustomUserViewSet, basename="users")
 
+
 urlpatterns = [
     re_path(r"auth/", include("djoser.urls")),
     re_path(r"auth/", include("djoser.urls.authtoken")),
