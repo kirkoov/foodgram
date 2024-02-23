@@ -244,6 +244,10 @@ class Subscription(models.Model):
             models.UniqueConstraint(
                 fields=["user", "author"], name="unique_user_author_subscribe"
             ),
+            models.CheckConstraint(
+                check=~models.Q(author=models.F("user")),
+                name="user_cannot_subscribe_to_themselves",
+            ),
         ]
 
     def __str__(self):

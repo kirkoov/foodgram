@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-22 20:22+0300\n"
+"POT-Creation-Date: 2024-02-23 19:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,12 +18,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: api/views.py:150
+#: api/serializers.py:246
+msgid "Wrong user or author details."
+msgstr ""
+
+#: api/serializers.py:253
+msgid "This subscription exists already."
+msgstr ""
+
+#: api/serializers.py:258
+msgid "You can't subscribe to yourself."
+msgstr ""
+
+#: api/views.py:153
 msgid "This recipe already exists."
 msgstr ""
 
-#: api/views.py:167
+#: api/views.py:170
 msgid "No recipe to delete."
+msgstr ""
+
+#: api/views.py:234
+msgid "Subscription deleted."
+msgstr ""
+
+#: api/views.py:239
+msgid "No subscription to delete."
 msgstr ""
 
 #: backend/settings.py:169

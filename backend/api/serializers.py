@@ -203,7 +203,36 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         )
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
+class SubscriptionSerializer(CustomUserSerializer):
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.ReadOnlyField(source="recipes.count")
+
+    class Meta(CustomUserSerializer.Meta):
+        fields = (  # type: ignore[assignment]
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+            "recipes",
+            "recipes_count",
+        )
+
+    def get_recipes(self, obj):
+        pass
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get("request")
+        if request is None or request.user.is_anonymous:
+            return False
+        return (
+            request.user.is_authenticated
+            and request.user.is_subscriber.all().exists()
+        )
+
+
+class SubscriptionWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = ("user", "author")
@@ -215,18 +244,18 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         except AttributeError:
             raise serializers.ValidationError(
                 detail=_("Wrong user or author details."),
-                status=status.HTTP_400_BAD_REQUEST,
+                code=status.HTTP_400_BAD_REQUEST,
             )
         if Subscription.objects.filter(
             author=author_id, user=user_id
         ).exists():
             raise serializers.ValidationError(
                 detail=_("This subscription exists already."),
-                status=status.HTTP_400_BAD_REQUEST,
+                code=status.HTTP_400_BAD_REQUEST,
             )
         if user_id == author_id:
             raise serializers.ValidationError(
                 detail=_("You can't subscribe to yourself."),
-                status=status.HTTP_400_BAD_REQUEST,
+                code=status.HTTP_400_BAD_REQUEST,
             )
         return data

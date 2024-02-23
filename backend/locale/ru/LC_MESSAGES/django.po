@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-22 20:22+0300\n"
-"PO-Revision-Date: 2024-02-23 13:44+0000\n"
+"POT-Creation-Date: 2024-02-23 19:36+0300\n"
+"PO-Revision-Date: 2024-02-23 16:38+0000\n"
 "Last-Translator: Admin Admeenov <admin@foodgram.zapto.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,13 +19,36 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.10.1\n"
 
-#: api/views.py:150
+#: api/serializers.py:246
+msgid "Wrong user or author details."
+msgstr "Неверные данные польователя или автора."
+
+#: api/serializers.py:253
+#| msgid "This recipe already exists."
+msgid "This subscription exists already."
+msgstr "Уже подписаны."
+
+#: api/serializers.py:258
+msgid "You can't subscribe to yourself."
+msgstr "На себя подписаться нельзя."
+
+#: api/views.py:153
 msgid "This recipe already exists."
 msgstr "Такой рецепт уже есть."
 
-#: api/views.py:167
+#: api/views.py:170
 msgid "No recipe to delete."
 msgstr "Не найден рецепт для удаления."
+
+#: api/views.py:234
+#| msgid "subscription"
+msgid "Subscription deleted."
+msgstr "Подписка удалена."
+
+#: api/views.py:239
+#| msgid "No recipe to delete."
+msgid "No subscription to delete."
+msgstr "Такой подписки и не было."
 
 #: backend/settings.py:169
 msgid "Russian"
@@ -193,12 +216,10 @@ msgid "Who subscribes"
 msgstr "Кто подписывается"
 
 #: recipes/models.py:236
-#| msgid "subscriber"
 msgid "subscribed author"
 msgstr "подписываемый автор"
 
 #: recipes/models.py:237
-#| msgid "which author"
 msgid "which recipe author"
 msgstr "на какого автора рецептов"
 

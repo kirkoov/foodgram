@@ -28,7 +28,7 @@ from .serializers import (
     RecipeSerializer,
     RecipeWriteSerializer,
     ShoppingCartSerializer,
-    SubscriptionSerializer,
+    SubscriptionWriteSerializer,
     TagSerializer,
 )
 from recipes.models import (
@@ -240,7 +240,7 @@ def subscribe_user(request, id):
                 status=status.HTTP_400_BAD_REQUEST,
             )
     recipes_limit = request.query_params.get("recipes_limit")
-    serializer = SubscriptionSerializer(
+    serializer = SubscriptionWriteSerializer(
         data={"user": user.id, "author": author.id},
         context={"request": request},
     )
