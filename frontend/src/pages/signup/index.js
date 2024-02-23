@@ -61,7 +61,7 @@ const SignUp = ({ onSignUp }) => {
           className={styles.button}
           disabled={!isValid}
         >
-          Add me
+          OK
         </Button>
       </Form>
     </Container>
