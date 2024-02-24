@@ -230,11 +230,6 @@ class CustomUserViewSet(UserViewSet):
         serializer = SubscriptionSerializer(
             paginator, many=True, context={"request": request}
         )
-        # serializer.data
-        # return Response(
-        #     "Checking",
-        #     status=status.HTTP_204_NO_CONTENT,
-        # )
         return self.get_paginated_response(serializer.data)
 
 

@@ -5,7 +5,7 @@ chardet==5.2.0
 charset-normalizer==3.3.2 
 click==8.1.7 
 colorama==0.4.6 
-cryptography==42.0.4 
+cryptography==42.0.5 
 defusedxml==0.7.1 
 django-cors-headers==4.3.1 
 django-debug-toolbar==4.3.0 
@@ -31,7 +31,7 @@ nltk==3.8.1
 numpy==1.26.4 
 oauthlib==3.2.2 
 packaging==23.2 
-pandas==2.2.0 
+pandas==2.2.1 
 pillow==10.2.0 
 pluggy==1.4.0 
 polib==1.2.0 
