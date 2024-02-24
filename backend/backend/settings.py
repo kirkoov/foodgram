@@ -22,7 +22,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
-# For DjDT
+# DjDT
 INTERNAL_IPS = ["127.0.0.1"]
 
 DEBUG_TOOLBAR_CONFIG = {
@@ -92,13 +92,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -112,12 +105,8 @@ DATABASES = {
 
 # DATABASES = {
 #     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.getenv(),
-#         "USER":
-#         "PASSWORD":
-#         "HOST":
-#         "PORT":
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
 
@@ -195,7 +184,8 @@ DJOSER = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-NUM_CHARS_FIRSTNAME = NUM_CHARS_LASTNAME = 150
+NUM_CHARS_FIRSTNAME = 150
+NUM_CHARS_LASTNAME = 150
 NUM_CHARS_EMAIL = 254
 
 NUM_CHARS_MEALTIME_NAME = (
