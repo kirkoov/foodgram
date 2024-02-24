@@ -77,10 +77,14 @@ class RecipeViewSet(ModelViewSet):
         X_ITEM = 30
         X_QNTY = 380
         X_UNITS = 450
+
         try:
+            TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts")
             buffer = io.BytesIO()
             p = canvas.Canvas(buffer, pagesize=A4)
-            TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts")
+            p.drawImage(
+                "fg_logo_for_shopping_list.png", 30, 790, width=20, height=20
+            )
             pdfmetrics.registerFont(TTFont("Fira", "FiraCode-Regular.ttf"))
             p.setFont("Fira", 12)
             p.drawRightString(550, 800, "Shopping list, Foodgram")
