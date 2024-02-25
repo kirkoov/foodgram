@@ -194,7 +194,7 @@ class ShoppingCartViewSet(BaseFavoriteShoppingCartViewSet):
     # pagination_class = None
 
 
-class TagViewSet(ModelViewSet):
+class TagViewSet(ReadOnlyModelViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
     filter_backends = (DjangoFilterBackend,)
