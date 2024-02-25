@@ -9,7 +9,7 @@ from django.db.utils import DataError, IntegrityError
 from django.test import TestCase
 
 from .models import Ingredient, Tag
-from .validators import validate_hex_color, validate_slug_field
+from .validators import validate_hex_color
 from api.views import IngredientViewSet, TagViewSet
 
 
@@ -53,15 +53,15 @@ class RecipeTests(TestCase):
         with pytest.raises(ValidationError):
             Tag.objects.create(
                 name=settings.NUM_CHARS_MEALTIME_NAME * "s",
-                color=validate_hex_color("E26C2D"),
-                slug=None,
+                color=validate_hex_color("non-HEx"),
+                slug="cool-mealtime",
             )
 
     def test_create_tag_slug(self):
         Tag.objects.create(
             name=settings.NUM_CHARS_MEALTIME_NAME * "s",
-            color=None,
-            slug=validate_slug_field("a-proper-slug"),
+            color="#6495ED",
+            slug="breakfast",
             # output_order=1,
         )
 

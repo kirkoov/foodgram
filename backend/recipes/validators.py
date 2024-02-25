@@ -13,4 +13,6 @@ def validate_hex_color(value):
 def validate_slug_field(value):
     slug_reg = re.compile(settings.SLUG_FIELD_REQ)
     if not re.search(slug_reg, value):
-        raise ValidationError("See the ReDoc for the slug field requirements.")
+        raise ValidationError(
+            "Check the ReDoc for the slug field requirements."
+        )

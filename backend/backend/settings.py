@@ -1,5 +1,4 @@
 import os
-from sys import maxsize
 
 from pathlib import Path
 from dotenv import load_dotenv
@@ -160,10 +159,13 @@ LOCALE_PATHS = [
     BASE_DIR / "locale/",
 ]
 
+# MEDIA_ROOT = "/app/media/"
+# STATIC_URL = "/static/django/"
+# STATIC_ROOT = "/app/static_django/"
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/app/media/"
-STATIC_URL = "/static/django/"
-STATIC_ROOT = "/app/static_django/"
+MEDIA_ROOT = BASE_DIR / "media"
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "collected_static"
 
 
 DJOSER = {
@@ -197,5 +199,5 @@ SLUG_FIELD_REQ = "^[-a-zA-Z0-9_]+$"
 MIN_COOKING_TIME_MINS = 1
 MAX_COOKING_TIME_MINS = 525960  # = 365.25 days in min (e.g., for a cheese)
 
-MIN_INGREDIENT_AMOUNT = 0
-MAX_INGREDIENT_AMOUNT = maxsize
+MIN_INGREDIENT_AMOUNT = 1
+MAX_INGREDIENT_AMOUNT = 1000

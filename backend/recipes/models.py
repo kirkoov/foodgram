@@ -70,16 +70,13 @@ class Tag(models.Model):
     color = models.CharField(
         max_length=settings.NUM_CHARS_MEALTIME_HEX,
         validators=[validators.validate_hex_color],
-        null=True,
-        blank=True,
         unique=True,
         verbose_name=_("colour"),
         help_text=_("Enter a unique HEX value with the #"),
     )
     slug = models.SlugField(
         max_length=settings.NUM_CHARS_MEALTIME_SLUG,
-        null=True,
-        blank=True,
+        validators=[validators.validate_slug_field],
         unique=True,
         verbose_name=_("slug"),
         help_text=_("Enter a unique slug"),
@@ -98,25 +95,34 @@ class Tag(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    amount = models.PositiveIntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name=_("quantity"),
         help_text=_("Enter a quantity of this to use in cooking"),
+        validators=[
+            MinValueValidator(settings.MIN_INGREDIENT_AMOUNT),
+            MaxValueValidator(settings.MAX_INGREDIENT_AMOUNT),
+        ],
     )
     ingredient = models.ForeignKey(
-        Ingredient, on_delete=models.CASCADE, verbose_name=_("ingredient")
+        Ingredient, on_delete=models.RESTRICT, verbose_name=_("ingredient")
     )
     recipe = models.ForeignKey(
         "Recipe", on_delete=models.CASCADE, verbose_name=_("recipe")
     )
 
     class Meta:
-        ordering = ("amount",)
         verbose_name = _("recipe ingredient")
         verbose_name_plural = _("recipe ingredients")
         default_related_name = "recipe_ingredient"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["recipe", "ingredient"],
+                name="unique_recipe_ingredient",
+            )
+        ]
 
     def __str__(self):
-        return f"{self.ingredient}->{self.recipe}"
+        return f"{self.recipe.name}:{self.ingredient.name}"
 
 
 class BaseFavoriteShoppingCart(models.Model):
@@ -145,11 +151,6 @@ class Favorite(BaseFavoriteShoppingCart):
     class Meta(BaseFavoriteShoppingCart.Meta):
         verbose_name = _("favourite")
         verbose_name_plural = _("favourites")
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique_favorite_user_recipe"
-            )
-        ]
 
 
 class ShoppingCart(BaseFavoriteShoppingCart):
@@ -171,9 +172,8 @@ class Recipe(models.Model):
     )
     image = models.ImageField(
         upload_to="recipes/",
-        default=None,
         verbose_name=_("recipe image"),
-        help_text=_("Upload a <=3MB image for your recipe"),
+        help_text=_("Upload an image<=1MB for your recipe"),
     )
     text = models.TextField(
         verbose_name=_("recipe description"),
@@ -210,11 +210,12 @@ class Recipe(models.Model):
         ordering = ("-pub_date",)
         verbose_name = _("recipe")
         verbose_name_plural = _("recipes")
-        constraints = [
-            models.UniqueConstraint(
-                fields=["author", "name"], name="unique_name_user_recipe"
-            )
-        ]
+        default_related_name = "recipes"
+        # constraints = [
+        #     models.UniqueConstraint(
+        #         fields=["author", "name"], name="unique_name_user_recipe"
+        #     )
+        # ]
 
     def __str__(self):
         return self.name
