@@ -6,7 +6,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-
 from recipes import validators
 
 
@@ -219,36 +218,3 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Subscription(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="is_subscriber",
-        verbose_name=_("subscriber"),
-        help_text=_("Who subscribes"),
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="is_subscribed",
-        verbose_name=_("subscribed author"),
-        help_text=_("which recipe author"),
-    )
-
-    class Meta:
-        verbose_name = _("subscription")
-        verbose_name_plural = _("subscriptions")
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "author"], name="unique_user_author_subscribe"
-            ),
-            models.CheckConstraint(
-                check=~models.Q(author=models.F("user")),
-                name="user_cannot_subscribe_to_themselves",
-            ),
-        ]
-
-    def __str__(self):
-        return f"{self.user}:{self.author}"

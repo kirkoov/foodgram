@@ -38,9 +38,9 @@ from recipes.models import (
     Recipe,
     RecipeIngredient,
     ShoppingCart,
-    Subscription,
     Tag,
 )
+from users.models import Subscription
 
 
 User = get_user_model()

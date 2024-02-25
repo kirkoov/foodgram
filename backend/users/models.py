@@ -58,19 +58,52 @@ class CustomUser(AbstractUser):
     )
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["first_name", "last_name", "username"]
 
     objects = CustomUserManager()  # type: ignore[assignment, misc]
 
     class Meta:
+        ordering = ("email",)
+        verbose_name = _("custom user")
+        verbose_name_plural = _("custom users")
         constraints = [
             models.UniqueConstraint(
                 fields=["username", "email"], name="unique_username_email"
             )
         ]
-        ordering = ("last_name", "first_name")
-        verbose_name = _("custom user")
-        verbose_name_plural = _("custom users")
 
     def __str__(self):
         return self.username
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="is_subscriber",
+        verbose_name=_("subscriber"),
+        help_text=_("Who subscribes"),
+    )
+    author = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name="is_subscribed",
+        verbose_name=_("subscribed author"),
+        help_text=_("which recipe author"),
+    )
+
+    class Meta:
+        verbose_name = _("subscription")
+        verbose_name_plural = _("subscriptions")
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "author"], name="unique_user_author_subscribe"
+            ),
+            models.CheckConstraint(
+                check=~models.Q(author=models.F("user")),
+                name="user_cannot_subscribe_to_themselves",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.user}:{self.author}"

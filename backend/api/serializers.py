@@ -12,10 +12,9 @@ from recipes.models import (
     Recipe,
     RecipeIngredient,
     ShoppingCart,
-    Subscription,
     Tag,
 )
-from users.models import CustomUser
+from users.models import CustomUser, Subscription
 
 
 class Base64ImageField(serializers.ImageField):

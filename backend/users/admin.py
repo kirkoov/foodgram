@@ -1,12 +1,11 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from .models import CustomUser
+from .models import CustomUser, Subscription
 
 
-class CustomUserAdmin(UserAdmin):
-    model = CustomUser  # type: ignore[assignment]
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
     list_display = (
         "pk",
         "email",
@@ -17,8 +16,13 @@ class CustomUserAdmin(UserAdmin):
         "is_superuser",
     )
     list_filter = ("email", "username")
-    # ordering = ("email",)
     empty_value_display = _("empty")
 
 
-admin.site.register(CustomUser, CustomUserAdmin)
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = (
+        "pk",
+        "user",
+        "author",
+    )
