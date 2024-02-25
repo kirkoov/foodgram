@@ -1,8 +1,13 @@
+import os
 from sys import maxsize
 
 from pathlib import Path
+from dotenv import load_dotenv
 
 from django.utils.translation import gettext_lazy as _
+
+
+load_dotenv()
 
 
 def show_toolbar(request):
@@ -11,16 +16,9 @@ def show_toolbar(request):
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = (
-    "django-insecure-tzt1(#hb_0%wb!!12@1$h#-4a36=)d4=(a3cyt%+hgf$x7o$hc"
-)
-
-DEBUG = True
-
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-]
+SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split()
 
 # DjDT
 INTERNAL_IPS = ["127.0.0.1"]
@@ -95,11 +93,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "foodgram_password",
-        "HOST": "localhost",
-        "PORT": 5432,
+        "NAME": os.getenv("POSTGRES_DB", "foodgram"),
+        "USER": os.getenv("POSTGRES_USER", "foodgram_user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "foodgram_password"),
+        "HOST": os.getenv("DB_HOST", ""),
+        "PORT": os.getenv("DB_PORT", 1234),
     }
 }
 
@@ -132,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 LANGUAGE_CODE = "ru"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Moscow"
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -162,11 +160,10 @@ LOCALE_PATHS = [
     BASE_DIR / "locale/",
 ]
 
-
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "collected_static"
+MEDIA_ROOT = "/app/media/"
+STATIC_URL = "/static/django/"
+STATIC_ROOT = "/app/static_django/"
 
 
 DJOSER = {
