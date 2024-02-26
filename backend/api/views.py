@@ -22,7 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from .filters import IngredientFilter, RecipeFilter
 from .serializers import (
     AbridgedRecipeSerializer,
-    CustomUserSerializer,
+    UserSerializer,
     FavoriteSerializer,
     IngredientSerializer,
     RecipeSerializer,
@@ -46,7 +46,7 @@ from users.models import Subscription
 User = get_user_model()
 
 
-class CustomPagination(PageNumberPagination):
+class LimitPagination(PageNumberPagination):
     page_size_query_param = "limit"
 
 
@@ -55,7 +55,7 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filterset_class = RecipeFilter
-    pagination_class = CustomPagination
+    pagination_class = LimitPagination
 
     def get_queryset(self):
         queryset = Recipe.objects.prefetch_related(
@@ -211,10 +211,10 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
 
-class CustomUserViewSet(UserViewSet):
-    serializer_class = CustomUserSerializer
+class UsersViewSet(UserViewSet):
+    serializer_class = UserSerializer
     queryset = User.objects.all()
-    pagination_class = CustomPagination
+    pagination_class = LimitPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_permissions(self):
@@ -267,7 +267,7 @@ def subscribe_user(request, id):
     recipes = Recipe.objects.filter(author=author)
     if recipes_limit:
         recipes = recipes[: int(recipes_limit)]
-    serializer = CustomUserSerializer(user, context={"request": request})
+    serializer = UserSerializer(user, context={"request": request})
     data = serializer.data
     data["recipes"] = AbridgedRecipeSerializer(recipes, many=True).data
     data["recipes_count"] = len(recipes)

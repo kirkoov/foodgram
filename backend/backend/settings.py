@@ -135,7 +135,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
@@ -170,8 +170,8 @@ DJOSER = {
     "HIDE_USERS": False,
     "LOGIN_FIELD": "email",
     "SERIALIZERS": {
-        "user": "api.serializers.CustomUserSerializer",
-        "current_user": "api.serializers.CustomUserSerializer",
+        "user": "api.serializers.UserSerializer",
+        "current_user": "api.serializers.UserSerializer",
     },
     "PERMISSIONS": {
         "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],

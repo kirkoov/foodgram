@@ -10,7 +10,7 @@ from backend.constants import (
 )
 
 
-class CustomUserManager(BaseUserManager):
+class UserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         """
         Create and save a User with the given email and password.
@@ -39,7 +39,7 @@ class CustomUserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     """Use a custom user class."""
 
     email = models.EmailField(
@@ -63,7 +63,7 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name", "username"]
 
-    objects = CustomUserManager()  # type: ignore[assignment, misc]
+    objects = UserManager()  # type: ignore[assignment, misc]
 
     class Meta:
         ordering = ("email",)
@@ -81,14 +81,14 @@ class CustomUser(AbstractUser):
 
 class Subscription(models.Model):
     user = models.ForeignKey(
-        CustomUser,
+        User,
         on_delete=models.CASCADE,
         related_name="is_subscriber",
         verbose_name=_("subscriber"),
         help_text=_("Who subscribes"),
     )
     author = models.ForeignKey(
-        CustomUser,
+        User,
         on_delete=models.CASCADE,
         related_name="is_subscribed",
         verbose_name=_("subscribed author"),

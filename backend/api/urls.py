@@ -3,7 +3,7 @@ from rest_framework import routers
 from django.urls import include, re_path
 
 from api.views import (
-    CustomUserViewSet,
+    UsersViewSet,
     FavoriteViewSet,
     RecipeViewSet,
     IngredientViewSet,
@@ -30,7 +30,7 @@ router_v1.register(
     ShoppingCartViewSet,
     basename="shopping_cart",
 )
-router_v1.register(r"users", CustomUserViewSet, basename="users")
+router_v1.register(r"users", UsersViewSet, basename="users")
 
 
 urlpatterns = [

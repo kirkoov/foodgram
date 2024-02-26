@@ -6,19 +6,19 @@ from django.db.utils import DataError
 from django.test import TestCase
 from rest_framework.test import APIClient, APIRequestFactory
 
-from api.views import CustomUserViewSet
+from api.views import UsersViewSet
 
 
 User = get_user_model()
 
 
-class CustomUserTests(TestCase):
+class UserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = APIRequestFactory()
         cls.client = APIClient()
-        cls.view = CustomUserViewSet.as_view({"get": "list"})
-        cls.view_detail = CustomUserViewSet.as_view({"get": "retrieve"})
+        cls.view = UsersViewSet.as_view({"get": "list"})
+        cls.view_detail = UsersViewSet.as_view({"get": "retrieve"})
         cls.test_users = []
         for index in range(3):
             user = User(
