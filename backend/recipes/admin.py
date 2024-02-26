@@ -3,7 +3,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from recipes.models import (
+from .forms import TagForm
+from .models import (
     Favorite,
     Ingredient,
     Recipe,
@@ -19,7 +20,8 @@ class RecipeIngredientsShowInLine(admin.TabularInline):
     min_num = 1
 
 
-class IngredientAdmin(admin.ModelAdmin):
+@admin.register(Ingredient)
+class Ingredients(admin.ModelAdmin):
     list_display = ("id", "name", "measurement_unit")
     list_filter = ("name", "measurement_unit")
     ordering = ("name",)
@@ -27,7 +29,8 @@ class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = _("empty")
 
 
-class RecipeAdmin(admin.ModelAdmin):
+@admin.register(Recipe)
+class Recipes(admin.ModelAdmin):
     list_display = ("id", "pic_preview", "name", "author", "pub_date")
     list_filter = ("name", "author", "tags")
     ordering = ("name",)
@@ -47,7 +50,8 @@ class RecipeAdmin(admin.ModelAdmin):
         return format_html("")
 
 
-class ShoppingCartAdmin(admin.ModelAdmin):
+@admin.register(ShoppingCart)
+class ShoppingCarts(admin.ModelAdmin):
     ordering = ("recipe__pub_date",)
     list_display = ("id", "user", "recipe")
     list_filter = ("user",)
@@ -55,7 +59,8 @@ class ShoppingCartAdmin(admin.ModelAdmin):
     empty_value_display = _("empty")
 
 
-class RecipeIngredientAdmin(admin.ModelAdmin):
+@admin.register(RecipeIngredient)
+class RecipeIngredients(admin.ModelAdmin):
     ordering = ("recipe__id",)
     list_display = ("id", "recipe", "ingredient", "amount")
     list_filter = ("ingredient", "recipe")
@@ -63,7 +68,8 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
     empty_value_display = _("empty")
 
 
-class FavoriteAdmin(admin.ModelAdmin):
+@admin.register(Favorite)
+class Favorites(admin.ModelAdmin):
     list_display = ("user", "recipe")
     list_filter = ("user", "recipe__tags")
     ordering = ("recipe__pub_date",)
@@ -71,16 +77,10 @@ class FavoriteAdmin(admin.ModelAdmin):
     empty_value_display = _("empty")
 
 
-class TagAdmin(admin.ModelAdmin):
+@admin.register(Tag)
+class Tags(admin.ModelAdmin):
+    form = TagForm
     list_display = ("id", "name", "color", "slug")
     ordering = ("name",)
     search_fields = ("name",)
     empty_value_display = _("empty")
-
-
-admin.site.register(Favorite, FavoriteAdmin)
-admin.site.register(ShoppingCart, ShoppingCartAdmin)
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
