@@ -185,20 +185,36 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    is_favorited = serializers.SerializerMethodField()
+
     class Meta:
         model = Favorite
-        fields = (
-            "user",
-            "recipe",
+        fields = ("user", "recipe", "is_favorited")
+
+    def get_is_favorited(self, obj):
+        request = self.context["request"]
+        return (
+            request.user.is_authenticated
+            and Favorite.objects.filter(
+                user=request.user, recipe=obj.pk
+            ).exists()
         )
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
+    is_in_shopping_cart = serializers.SerializerMethodField()
+
     class Meta:
         model = ShoppingCart
-        fields = (
-            "user",
-            "recipe",
+        fields = ("user", "recipe", "is_in_shopping_cart")
+
+    def get_is_in_shopping_cart(self, obj):
+        request = self.context["request"]
+        return (
+            request.user.is_authenticated
+            and ShoppingCart.objects.filter(
+                user=request.user, recipe=obj.pk
+            ).exists()
         )
 
 

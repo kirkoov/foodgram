@@ -179,7 +179,6 @@ class FavoriteViewSet(BaseFavoriteShoppingCartViewSet):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
     permission_classes = (permissions.AllowAny,)
-    # pagination_class = None
 
 
 class ShoppingCartViewSet(BaseFavoriteShoppingCartViewSet):
@@ -187,7 +186,6 @@ class ShoppingCartViewSet(BaseFavoriteShoppingCartViewSet):
     serializer_class = ShoppingCartSerializer
     queryset = ShoppingCart.objects.all()
     permission_classes = (permissions.AllowAny,)
-    # pagination_class = None
 
 
 class TagViewSet(ReadOnlyModelViewSet):
