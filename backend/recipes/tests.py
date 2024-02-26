@@ -3,11 +3,15 @@ import pytest
 from rest_framework.test import APIRequestFactory
 from sys import maxsize
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.utils import DataError, IntegrityError
 from django.test import TestCase
 
+from backend.constants import (
+    NUM_CHARS_INGREDIENT_NAME,
+    NUM_CHARS_MEASUREMENT_UNIT,
+    NUM_CHARS_MEALTIME_NAME,
+)
 from .models import Ingredient, Tag
 from .validators import validate_hex_color
 from api.views import IngredientViewSet, TagViewSet
@@ -23,7 +27,7 @@ class RecipeTests(TestCase):
         for index in range(3):
             ingredient = Ingredient(
                 name=f"{cls.test_name}{index}",
-                measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+                measurement_unit=NUM_CHARS_MEASUREMENT_UNIT * "s",
             )
             cls.test_ingredients.append(ingredient)
         Ingredient.objects.bulk_create(cls.test_ingredients)
@@ -42,9 +46,9 @@ class RecipeTests(TestCase):
         Tag.objects.bulk_create(cls.test_tags)
 
     def test_create_tag_name(self):
-        with pytest.raises(DataError):
+        with pytest.raises(IntegrityError):
             Tag.objects.create(
-                name=settings.NUM_CHARS_MEALTIME_NAME * "s" + "more",
+                name=NUM_CHARS_MEALTIME_NAME * "s" + "more",
                 color=None,
                 slug=None,
             )
@@ -52,14 +56,14 @@ class RecipeTests(TestCase):
     def test_create_tag_color(self):
         with pytest.raises(ValidationError):
             Tag.objects.create(
-                name=settings.NUM_CHARS_MEALTIME_NAME * "s",
+                name=NUM_CHARS_MEALTIME_NAME * "s",
                 color=validate_hex_color("non-HEx"),
                 slug="cool-mealtime",
             )
 
     def test_create_tag_slug(self):
         Tag.objects.create(
-            name=settings.NUM_CHARS_MEALTIME_NAME * "s",
+            name=NUM_CHARS_MEALTIME_NAME * "s",
             color="#6495ED",
             slug="breakfast",
             # output_order=1,
@@ -98,19 +102,19 @@ class RecipeTests(TestCase):
 
     def test_create_valid_ingredient(self):
         Ingredient.objects.create(
-            name=settings.NUM_CHARS_INGREDIENT_NAME,
-            measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+            name=NUM_CHARS_INGREDIENT_NAME,
+            measurement_unit=NUM_CHARS_MEASUREMENT_UNIT * "s",
         )
 
     def test_create_same_ingredients(self):
         with pytest.raises(IntegrityError):
             Ingredient.objects.create(
-                name=settings.NUM_CHARS_INGREDIENT_NAME,
-                measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+                name=NUM_CHARS_INGREDIENT_NAME,
+                measurement_unit=NUM_CHARS_MEASUREMENT_UNIT * "s",
             )
             Ingredient.objects.create(
-                name=settings.NUM_CHARS_INGREDIENT_NAME,
-                measurement_unit=settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+                name=NUM_CHARS_INGREDIENT_NAME,
+                measurement_unit=NUM_CHARS_MEASUREMENT_UNIT * "s",
             )
 
     def test_get_ingredientlist(self):
@@ -134,7 +138,7 @@ class RecipeTests(TestCase):
             {
                 "id": 2,
                 "name": "Ingredient1",
-                "measurement_unit": settings.NUM_CHARS_MEASUREMENT_UNIT * "s",
+                "measurement_unit": NUM_CHARS_MEASUREMENT_UNIT * "s",
             },
         )
 

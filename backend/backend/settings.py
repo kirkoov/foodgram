@@ -19,7 +19,6 @@ SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split()
 
-# DjDT
 INTERNAL_IPS = ["127.0.0.1"]
 
 DEBUG_TOOLBAR_CONFIG = {
@@ -89,23 +88,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": os.getenv("POSTGRES_DB", "foodgram"),
-#         "USER": os.getenv("POSTGRES_USER", "foodgram_user"),
-#         "PASSWORD": os.getenv("POSTGRES_PASSWORD", "foodgram_password"),
-#         "HOST": os.getenv("DB_HOST", ""),
-#         "PORT": os.getenv("DB_PORT", 1234),
-#     }
-# }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db-test.sqlite3",
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": os.getenv("POSTGRES_DB", "foodgram"),
+            "USER": os.getenv("POSTGRES_USER", "foodgram_user"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "foodgram_password"),
+            "HOST": os.getenv("DB_HOST", ""),
+            "PORT": os.getenv("DB_PORT", 1234),
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -159,9 +160,6 @@ LOCALE_PATHS = [
     BASE_DIR / "locale/",
 ]
 
-# MEDIA_ROOT = "/app/media/"
-# STATIC_URL = "/static/django/"
-# STATIC_ROOT = "/app/static_django/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 STATIC_URL = "static/"
@@ -182,22 +180,3 @@ DJOSER = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-NUM_CHARS_FIRSTNAME = 150
-NUM_CHARS_LASTNAME = 150
-NUM_CHARS_EMAIL = 254
-
-NUM_CHARS_MEALTIME_NAME = (
-    NUM_CHARS_INGREDIENT_NAME
-) = NUM_CHARS_RECIPE_NAME = 200
-NUM_CHARS_MEALTIME_HEX = 7
-NUM_CHARS_MEALTIME_SLUG = NUM_CHARS_MEASUREMENT_UNIT = 200
-
-HEX_FIELD_REQ = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
-SLUG_FIELD_REQ = "^[-a-zA-Z0-9_]+$"
-
-MIN_COOKING_TIME_MINS = 1
-MAX_COOKING_TIME_MINS = 525960  # = 365.25 days in min (e.g., for a cheese)
-
-MIN_INGREDIENT_AMOUNT = 1
-MAX_INGREDIENT_AMOUNT = 1000

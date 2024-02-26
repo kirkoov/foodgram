@@ -1,10 +1,13 @@
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-
-from django.contrib.auth.base_user import BaseUserManager
+from backend.constants import (
+    NUM_CHARS_EMAIL,
+    NUM_CHARS_FIRSTNAME,
+    NUM_CHARS_LASTNAME,
+)
 
 
 class CustomUserManager(BaseUserManager):
@@ -40,19 +43,19 @@ class CustomUser(AbstractUser):
     """Use a custom user class."""
 
     email = models.EmailField(
-        max_length=settings.NUM_CHARS_EMAIL,
+        max_length=NUM_CHARS_EMAIL,
         blank=False,
         unique=True,
         verbose_name=_("email"),
         help_text=_("Enter the preferred email here"),
     )
     first_name = models.CharField(
-        max_length=settings.NUM_CHARS_FIRSTNAME,
+        max_length=NUM_CHARS_FIRSTNAME,
         blank=False,
         verbose_name=_("first name"),
     )
     last_name = models.CharField(
-        max_length=settings.NUM_CHARS_LASTNAME,
+        max_length=NUM_CHARS_LASTNAME,
         blank=False,
         verbose_name=_("last name"),
     )

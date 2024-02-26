@@ -1,11 +1,22 @@
 from typing import Optional
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from backend.constants import (
+    MAX_COOKING_TIME_MINS,
+    MIN_COOKING_TIME_MINS,
+    MAX_INGREDIENT_AMOUNT,
+    MIN_INGREDIENT_AMOUNT,
+    NUM_CHARS_INGREDIENT_NAME,
+    NUM_CHARS_MEASUREMENT_UNIT,
+    NUM_CHARS_MEALTIME_NAME,
+    NUM_CHARS_MEALTIME_HEX,
+    NUM_CHARS_MEALTIME_SLUG,
+    NUM_CHARS_RECIPE_NAME,
+)
 from recipes import validators
 
 
@@ -35,12 +46,12 @@ class RecipeQuerySet(models.QuerySet):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        max_length=settings.NUM_CHARS_INGREDIENT_NAME,
+        max_length=NUM_CHARS_INGREDIENT_NAME,
         verbose_name=_("ingredient name"),
         help_text=_("Enter a unique ingredient name"),
     )
     measurement_unit = models.CharField(
-        max_length=settings.NUM_CHARS_MEASUREMENT_UNIT,
+        max_length=NUM_CHARS_MEASUREMENT_UNIT,
         verbose_name=_("measurement unit"),
         help_text=_("In grams, pieces, to taste, etc"),
     )
@@ -62,20 +73,20 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=settings.NUM_CHARS_MEALTIME_NAME,
+        max_length=NUM_CHARS_MEALTIME_NAME,
         unique=True,
         verbose_name=_("occasion name"),
         help_text=_("Enter an occasion to eat on, e.g. breakfast, etc."),
     )
     color = models.CharField(
-        max_length=settings.NUM_CHARS_MEALTIME_HEX,
+        max_length=NUM_CHARS_MEALTIME_HEX,
         validators=[validators.validate_hex_color],
         unique=True,
         verbose_name=_("colour"),
         help_text=_("Enter a unique HEX value with the #"),
     )
     slug = models.SlugField(
-        max_length=settings.NUM_CHARS_MEALTIME_SLUG,
+        max_length=NUM_CHARS_MEALTIME_SLUG,
         validators=[validators.validate_slug_field],
         unique=True,
         verbose_name=_("slug"),
@@ -99,8 +110,8 @@ class RecipeIngredient(models.Model):
         verbose_name=_("quantity"),
         help_text=_("Enter a quantity of this to use in cooking"),
         validators=[
-            MinValueValidator(settings.MIN_INGREDIENT_AMOUNT),
-            MaxValueValidator(settings.MAX_INGREDIENT_AMOUNT),
+            MinValueValidator(MIN_INGREDIENT_AMOUNT),
+            MaxValueValidator(MAX_INGREDIENT_AMOUNT),
         ],
     )
     ingredient = models.ForeignKey(
@@ -166,7 +177,7 @@ class ShoppingCart(BaseFavoriteShoppingCart):
 
 class Recipe(models.Model):
     name = models.CharField(
-        max_length=settings.NUM_CHARS_RECIPE_NAME,
+        max_length=NUM_CHARS_RECIPE_NAME,
         verbose_name=_("recipe name"),
         help_text=_("Enter a name for your recipe"),
     )
@@ -181,8 +192,8 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         validators=[
-            MinValueValidator(settings.MIN_COOKING_TIME_MINS),
-            MaxValueValidator(settings.MAX_COOKING_TIME_MINS),
+            MinValueValidator(MIN_COOKING_TIME_MINS),
+            MaxValueValidator(MAX_COOKING_TIME_MINS),
         ],
         verbose_name=_("cooking time"),
         help_text=_("Enter now many minutes it needs to cook"),

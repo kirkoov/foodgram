@@ -2,10 +2,10 @@ import base64
 from djoser.serializers import UserSerializer
 from rest_framework import serializers, status
 
-from django.conf import settings
 from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
+from backend.constants import MIN_INGREDIENT_AMOUNT, MAX_INGREDIENT_AMOUNT
 from recipes.models import (
     Favorite,
     Ingredient,
@@ -82,8 +82,8 @@ class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
 
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(
-        min_value=settings.MIN_INGREDIENT_AMOUNT,
-        max_value=settings.MAX_INGREDIENT_AMOUNT,
+        min_value=MIN_INGREDIENT_AMOUNT,
+        max_value=MAX_INGREDIENT_AMOUNT,
     )
 
     class Meta:
