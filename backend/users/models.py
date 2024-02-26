@@ -44,19 +44,16 @@ class User(AbstractUser):
 
     email = models.EmailField(
         max_length=NUM_CHARS_EMAIL,
-        blank=False,
         unique=True,
         verbose_name=_("email"),
         help_text=_("Enter the preferred email here"),
     )
     first_name = models.CharField(
         max_length=NUM_CHARS_FIRSTNAME,
-        blank=False,
         verbose_name=_("first name"),
     )
     last_name = models.CharField(
         max_length=NUM_CHARS_LASTNAME,
-        blank=False,
         verbose_name=_("last name"),
     )
 
