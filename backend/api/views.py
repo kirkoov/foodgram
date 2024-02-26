@@ -8,7 +8,6 @@ from reportlab.pdfgen import canvas
 from reportlab.rl_config import TTFSearchPath  # type: ignore[import-untyped]
 from rest_framework import permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
@@ -20,9 +19,10 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from .filters import IngredientFilter, RecipeFilter
+from .paginations import LimitPagination
 from .serializers import (
     AbridgedRecipeSerializer,
-    UserSerializer,
+    UsersSerializer,
     FavoriteSerializer,
     IngredientSerializer,
     RecipeSerializer,
@@ -44,10 +44,6 @@ from users.models import Subscription
 
 
 User = get_user_model()
-
-
-class LimitPagination(PageNumberPagination):
-    page_size_query_param = "limit"
 
 
 class RecipeViewSet(ModelViewSet):
@@ -212,7 +208,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 
 class UsersViewSet(UserViewSet):
-    serializer_class = UserSerializer
+    serializer_class = UsersSerializer
     queryset = User.objects.all()
     pagination_class = LimitPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -267,7 +263,7 @@ def subscribe_user(request, id):
     recipes = Recipe.objects.filter(author=author)
     if recipes_limit:
         recipes = recipes[: int(recipes_limit)]
-    serializer = UserSerializer(user, context={"request": request})
+    serializer = UsersSerializer(user, context={"request": request})
     data = serializer.data
     data["recipes"] = AbridgedRecipeSerializer(recipes, many=True).data
     data["recipes_count"] = len(recipes)

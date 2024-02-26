@@ -92,12 +92,8 @@ class Tag(models.Model):
         verbose_name=_("slug"),
         help_text=_("Enter a unique slug"),
     )
-    # output_order = models.PositiveSmallIntegerField(
-    #     verbose_name=_("output order")
-    # )
 
     class Meta:
-        # ordering = ("output_order",)
         verbose_name = _("mealtime")
         verbose_name_plural = _("mealtimes")
 
@@ -222,11 +218,6 @@ class Recipe(models.Model):
         verbose_name = _("recipe")
         verbose_name_plural = _("recipes")
         default_related_name = "recipes"
-        # constraints = [
-        #     models.UniqueConstraint(
-        #         fields=["author", "name"], name="unique_name_user_recipe"
-        #     )
-        # ]
 
     def __str__(self):
         return self.name
