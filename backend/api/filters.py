@@ -1,12 +1,15 @@
 import django_filters
-from django_filters import rest_framework
-from rest_framework import filters
+from django_filters import CharFilter, FilterSet, rest_framework
 
-from recipes.models import Recipe
+from recipes.models import Ingredient, Recipe
 
 
-class IngredientFilter(filters.SearchFilter):
-    search_param = "name"
+class IngredientFilter(FilterSet):
+    name = CharFilter(lookup_expr="startswith")
+
+    class Meta:
+        model = Ingredient
+        fields = ("name",)
 
 
 class RecipeFilter(django_filters.FilterSet):
@@ -41,3 +44,23 @@ class RecipeFilter(django_filters.FilterSet):
             "is_favorited",
             "is_in_shopping_cart",
         )
+
+
+# from django_filters import (
+#     CharFilter,
+#     FilterSet,
+#     ModelMultipleChoiceFilter,
+# )
+# from django_filters.rest_framework.filters import BooleanFilter
+
+# from recipes.models import Ingredient, Recipe, Tag
+
+
+# class RecipeFilter(FilterSet):
+#     tags = ModelMultipleChoiceFilter(
+#         queryset=Tag.objects.all(),
+#         field_name="tags__slug",
+#         to_field_name="slug",
+#     )
+#     is_favorited = BooleanFilter(field_name="is_favorited")
+#     is_in_shopping_cart = BooleanFilter(field_name="is_in_shopping_cart")
