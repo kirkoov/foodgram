@@ -273,7 +273,7 @@ const RecipeEdit = ({ onItemDelete }) => {
             setRecipeFile(file)
           }}
           className={styles.fileInput}
-          label='Upload a pic'
+          label='Upload a pic<=1Mb'
           file={recipeFile}
         />
         <div className={styles.actions}>

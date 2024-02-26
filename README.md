@@ -1,1 +1,2 @@
-# Yandex Practicum graduation project (to do)
+# Yandex Practicum graduation project
+Will be filled in soon.

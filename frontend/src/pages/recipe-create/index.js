@@ -228,7 +228,7 @@ const RecipeCreate = ({ onEdit }) => {
             setRecipeFile(file)
           }}
           className={styles.fileInput}
-          label='Upload a pic'
+          label='Upload a pic<=1Mb'
         />
         <Button
           modifier='style_dark-blue'
