@@ -6,7 +6,6 @@ from api.views import (
     UsersViewSet,
     RecipeViewSet,
     IngredientViewSet,
-    ShoppingCartViewSet,
     subscribe_user,
     TagViewSet,
 )
@@ -19,11 +18,6 @@ router_v1 = routers.DefaultRouter()
 router_v1.register(r"tags", TagViewSet, basename="tags")
 router_v1.register(r"ingredients", IngredientViewSet, basename="ingredients")
 router_v1.register(r"recipes", RecipeViewSet, basename="recipes")
-router_v1.register(
-    r"recipes/(?P<id>\d+)/shopping_cart",
-    ShoppingCartViewSet,
-    basename="shopping_cart",
-)
 router_v1.register(r"users", UsersViewSet, basename="users")
 
 
