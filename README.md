@@ -8,7 +8,7 @@ A website for registered users to post their recipes, add others' as their favou
 <span style="color:black;">Admin pwd</span>
 <span style="color:red;">goeshere</span></br>
 
-##### Technology stack: React Python Django DRF PostgreSQL Poetry
+###### Technology stack: React Python Django DRF PostgreSQL Poetry
 
 ### Installations
 #### Local install
