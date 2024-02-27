@@ -1,8 +1,7 @@
-import base64
 from djoser.serializers import UserSerializer
+from drf_extra_fields.fields import Base64ImageField  # type: ignore[import-untyped]  # noqa: E501
 from rest_framework import serializers, status
 
-from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
 from backend.constants import MIN_INGREDIENT_AMOUNT, MAX_INGREDIENT_AMOUNT
@@ -15,16 +14,6 @@ from recipes.models import (
     Tag,
 )
 from users.models import User, Subscription
-
-
-class Base64ImageField(serializers.ImageField):
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith("data:image"):
-            format, imgstr = data.split(";base64,")
-            ext = format.split("/")[-1]
-            data = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
-
-        return super().to_internal_value(data)
 
 
 class UsersSerializer(UserSerializer):
@@ -101,7 +90,8 @@ class AbridgedRecipeSerializer(serializers.ModelSerializer):
 class RecipeSerializer(serializers.ModelSerializer):
     author = UsersSerializer(read_only=True)
     tags = TagSerializer(read_only=True, many=True)
-    image = Base64ImageField(required=True, allow_null=False)
+    image = Base64ImageField(required=True)
+    # image = Base64ImageField(required=True, allow_null=False)
     ingredients = RecipeIngredientSerializer(
         read_only=True, many=True, source="recipe_ingredient"
     )
