@@ -105,6 +105,23 @@ class RecipeViewSet(ModelViewSet):
             )
 
     @action(
+        methods=["post", "delete"],
+        detail=False,
+        url_path=r"(?P<id>\d+)/favorite",
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def favorite(self, request, **kwargs):
+        item_id = self.kwargs.get("id")
+        item = get_object_or_404(Recipe, id=item_id)
+        if Favorite.objects.filter(user=request.user, recipe=item).exists():
+            Favorite.objects.get(user=request.user, recipe=item).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        new_item = Favorite(user=request.user, recipe=item)
+        new_item.save()
+        serializer = FavoriteSerializer(new_item, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
         methods=["get"],
         detail=False,
         url_path="download_shopping_cart",
@@ -172,13 +189,6 @@ class BaseFavoriteShoppingCartViewSet(ModelViewSet):
             )
         self.model.objects.get(user=request.user, recipe=item).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class FavoriteViewSet(BaseFavoriteShoppingCartViewSet):
-    model = Favorite
-    serializer_class = FavoriteSerializer
-    queryset = Favorite.objects.all()
-    permission_classes = (permissions.AllowAny,)
 
 
 class ShoppingCartViewSet(BaseFavoriteShoppingCartViewSet):
