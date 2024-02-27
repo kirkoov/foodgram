@@ -80,7 +80,7 @@ class Favorites(admin.ModelAdmin):
 @admin.register(Tag)
 class Tags(admin.ModelAdmin):
     form = TagForm
-    list_display = ("id", "name", "colored_mealtime", "slug")
+    list_display = ("id", "name", "coloured_mealtime", "slug")
     ordering = ("name",)
     search_fields = ("name",)
     empty_value_display = _("empty")
@@ -88,7 +88,7 @@ class Tags(admin.ModelAdmin):
     @admin.display(
         description=_("colour"),
     )
-    def colored_mealtime(self, obj):
+    def coloured_mealtime(self, obj):
         if obj.color:
             return format_html(
                 f'<span style="color: {obj.color};">{obj.color}</span>'
