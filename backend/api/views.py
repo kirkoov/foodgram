@@ -110,7 +110,7 @@ class RecipeViewSet(ModelViewSet):
         url_path=r"(?P<id>\d+)/favorite",
         permission_classes=[permissions.IsAuthenticated],
     )
-    def favorite(self, request, **kwargs):
+    def favorite_toggle(self, request, **kwargs):
         item_id = self.kwargs.get("id")
         item = get_object_or_404(Recipe, id=item_id)
         if Favorite.objects.filter(user=request.user, recipe=item).exists():
@@ -119,6 +119,27 @@ class RecipeViewSet(ModelViewSet):
         new_item = Favorite(user=request.user, recipe=item)
         new_item.save()
         serializer = FavoriteSerializer(new_item, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        methods=["post", "delete"],
+        detail=False,
+        url_path=r"(?P<id>\d+)/shopping_cart",
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def shop_toggle(self, request, **kwargs):
+        item_id = self.kwargs.get("id")
+        item = get_object_or_404(Recipe, id=item_id)
+        if ShoppingCart.objects.filter(
+            user=request.user, recipe=item
+        ).exists():
+            ShoppingCart.objects.get(user=request.user, recipe=item).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        new_item = ShoppingCart(user=request.user, recipe=item)
+        new_item.save()
+        serializer = ShoppingCartSerializer(
+            new_item, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
