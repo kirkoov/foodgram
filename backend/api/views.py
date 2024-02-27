@@ -6,7 +6,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.rl_config import TTFSearchPath  # type: ignore[import-untyped]
-from rest_framework import permissions, status
+from rest_framework import permissions, serializers, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
@@ -104,43 +104,63 @@ class RecipeViewSet(ModelViewSet):
                 status=status.HTTP_204_NO_CONTENT,
             )
 
-    @action(
-        methods=["post", "delete"],
-        detail=False,
-        url_path=r"(?P<id>\d+)/favorite",
-        permission_classes=[permissions.IsAuthenticated],
-    )
-    def favorite_toggle(self, request, **kwargs):
-        item_id = self.kwargs.get("id")
-        item = get_object_or_404(Recipe, id=item_id)
-        if Favorite.objects.filter(user=request.user, recipe=item).exists():
-            Favorite.objects.get(user=request.user, recipe=item).delete()
+    def add_recipe(self, serializer, user, recipe):
+        srlzr = serializer(
+            data={"user": user.id, "recipe": recipe.id},
+            context={"request": self.request},
+        )
+        srlzr.is_valid(raise_exception=True)
+        srlzr.save()
+        return Response(srlzr.data, status=status.HTTP_201_CREATED)
+
+    def remove_recipe(self, model, user, recipe):
+        obj = model.objects.filter(user=user, recipe=recipe)
+        if obj:
+            obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        new_item = Favorite(user=request.user, recipe=item)
-        new_item.save()
-        serializer = FavoriteSerializer(new_item, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        raise serializers.ValidationError(
+            _("Not found."), code=status.HTTP_400_BAD_REQUEST
+        )
+
+    def favorite_shop_toggle(self, pk, model, serializer):
+        try:
+            recipe = get_object_or_404(Recipe, pk=pk)
+        except Http404:
+            return Response(
+                {"errors": _("Not found.")},
+                status=(
+                    status.HTTP_400_BAD_REQUEST
+                    if self.request.method == "POST"
+                    else status.HTTP_404_NOT_FOUND
+                ),
+            )
+        if self.request.method == "POST":
+            return self.add_recipe(serializer, self.request.user, recipe)
+        elif self.request.method == "DELETE":
+            return self.remove_recipe(model, self.request.user, recipe)
+        else:
+            return Response(
+                {"errors": _("Method not allowed.")},
+                status=status.HTTP_405_METHOD_NOT_ALLOWED,
+            )
 
     @action(
         methods=["post", "delete"],
-        detail=False,
-        url_path=r"(?P<id>\d+)/shopping_cart",
+        detail=True,
         permission_classes=[permissions.IsAuthenticated],
     )
-    def shop_toggle(self, request, **kwargs):
-        item_id = self.kwargs.get("id")
-        item = get_object_or_404(Recipe, id=item_id)
-        if ShoppingCart.objects.filter(
-            user=request.user, recipe=item
-        ).exists():
-            ShoppingCart.objects.get(user=request.user, recipe=item).delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        new_item = ShoppingCart(user=request.user, recipe=item)
-        new_item.save()
-        serializer = ShoppingCartSerializer(
-            new_item, context={"request": request}
+    def favorite(self, request, pk):
+        return self.favorite_shop_toggle(pk, Favorite, FavoriteSerializer)
+
+    @action(
+        methods=["post", "delete"],
+        detail=True,
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def shopping_cart(self, request, pk):
+        return self.favorite_shop_toggle(
+            pk, ShoppingCart, ShoppingCartSerializer
         )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
         methods=["get"],
