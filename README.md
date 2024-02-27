@@ -1,4 +1,3 @@
-[![Main Foodgram workflow](https://github.com/CrockoMan/foodgram-project-react/actions/workflows/main.yml/badge.svg)](https://github.com/CrockoMan/foodgram-project-react/actions/workflows/main.yml)
 # Foodgram
 A website for registered users to post their recipes, add others' as their favourites, subscribe to recipe authors & generate downloadable shopping lists (pdf) in line with the cooking instructions under the recipes they'd like to try.
 
