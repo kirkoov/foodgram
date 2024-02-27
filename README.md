@@ -34,6 +34,6 @@ DB_HOST
 DB_PORT
 DOCKER_USERNAME
 ```
-#### Authors</br>
-##### Frontend YandexPracticum</br>
-##### Backend kirkoov</br>
+#### Authors
+###### Frontend YandexPracticum
+###### Backend kirkoov
