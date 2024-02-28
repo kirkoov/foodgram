@@ -114,13 +114,9 @@ class RecipeViewSet(ModelViewSet):
         return Response(srlzr.data, status=status.HTTP_201_CREATED)
 
     def remove_recipe(self, model, user, recipe):
-        obj = model.objects.filter(user=user, recipe=recipe)
-        if obj:
-            obj.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        raise serializers.ValidationError(
-            _("Not found."), code=status.HTTP_400_BAD_REQUEST
-        )
+        obj = get_object_or_404(model, user=user, recipe=recipe)
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def favorite_shop_toggle(self, pk, model, serializer):
         try:
