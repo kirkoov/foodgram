@@ -6,7 +6,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.rl_config import TTFSearchPath  # type: ignore[import-untyped]
-from rest_framework import permissions, serializers, status
+from rest_framework import permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
@@ -127,21 +127,35 @@ class RecipeViewSet(ModelViewSet):
             )
 
     @action(
-        methods=["post", "delete"],
+        methods=["post"],
         detail=True,
         permission_classes=[permissions.IsAuthenticated],
     )
     def favorite(self, request, pk):
-        return self.favorite_shop_toggle(pk, Favorite, FavoriteSerializer)
+        return self.add_recipe(
+            FavoriteSerializer, request, get_object_or_404(Recipe, pk=pk)
+        )
+
+    @favorite.mapping.delete
+    def delete_favorite(self, request, pk):
+        return self.remove_recipe(
+            Favorite, request.user, get_object_or_404(Recipe, pk=pk)
+        )
 
     @action(
-        methods=["post", "delete"],
+        methods=["post"],
         detail=True,
         permission_classes=[permissions.IsAuthenticated],
     )
     def shopping_cart(self, request, pk):
-        return self.favorite_shop_toggle(
-            pk, ShoppingCart, ShoppingCartSerializer
+        return self.add_recipe(
+            ShoppingCartSerializer, request, get_object_or_404(Recipe, pk=pk)
+        )
+
+    @shopping_cart.mapping.delete
+    def delete_shopping_cart(self, request, pk):
+        return self.remove_recipe(
+            ShoppingCart, request.user, get_object_or_404(Recipe, pk=pk)
         )
 
     @action(
