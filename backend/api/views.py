@@ -104,20 +104,6 @@ class RecipeViewSet(ModelViewSet):
                 status=status.HTTP_204_NO_CONTENT,
             )
 
-    def add_recipe(self, serializer, user, recipe):
-        srlzr = serializer(
-            data={"user": user.id, "recipe": recipe.id},
-            context={"request": self.request},
-        )
-        srlzr.is_valid(raise_exception=True)
-        srlzr.save()
-        return Response(srlzr.data, status=status.HTTP_201_CREATED)
-
-    def remove_recipe(self, model, user, recipe):
-        obj = get_object_or_404(model, user=user, recipe=recipe)
-        obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
     def favorite_shop_toggle(self, pk, model, serializer):
         try:
             recipe = get_object_or_404(Recipe, pk=pk)
@@ -131,7 +117,7 @@ class RecipeViewSet(ModelViewSet):
                 ),
             )
         if self.request.method == "POST":
-            return self.add_recipe(serializer, self.request.user, recipe)
+            return self.add_recipe(serializer, self.request, recipe)
         elif self.request.method == "DELETE":
             return self.remove_recipe(model, self.request.user, recipe)
         else:
@@ -191,6 +177,21 @@ class RecipeViewSet(ModelViewSet):
             as_attachment=True,
             filename="my-Foodgram_shopping-list.pdf",
         )
+
+    @staticmethod
+    def add_recipe(serializer, request, recipe):
+        srlzr = serializer(
+            data={"user": request.user.id, "recipe": recipe.id},
+            context={"request": request},
+        )
+        srlzr.is_valid(raise_exception=True)
+        srlzr.save()
+        return Response(srlzr.data, status=status.HTTP_201_CREATED)
+
+    @staticmethod
+    def remove_recipe(model, user, recipe):
+        get_object_or_404(model, user=user, recipe=recipe).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):
