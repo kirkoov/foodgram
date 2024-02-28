@@ -104,28 +104,6 @@ class RecipeViewSet(ModelViewSet):
                 status=status.HTTP_204_NO_CONTENT,
             )
 
-    def favorite_shop_toggle(self, pk, model, serializer):
-        try:
-            recipe = get_object_or_404(Recipe, pk=pk)
-        except Http404:
-            return Response(
-                {"errors": _("Not found.")},
-                status=(
-                    status.HTTP_400_BAD_REQUEST
-                    if self.request.method == "POST"
-                    else status.HTTP_404_NOT_FOUND
-                ),
-            )
-        if self.request.method == "POST":
-            return self.add_recipe(serializer, self.request, recipe)
-        elif self.request.method == "DELETE":
-            return self.remove_recipe(model, self.request.user, recipe)
-        else:
-            return Response(
-                {"errors": _("Method not allowed.")},
-                status=status.HTTP_405_METHOD_NOT_ALLOWED,
-            )
-
     @action(
         methods=["post"],
         detail=True,

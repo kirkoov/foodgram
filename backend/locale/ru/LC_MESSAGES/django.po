@@ -8,218 +8,228 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-25 20:41+0300\n"
-"PO-Revision-Date: 2024-02-25 20:41+0300\n"
+"POT-Creation-Date: 2024-02-28 11:23+0300\n"
+"PO-Revision-Date: 2024-02-28 11:23+0300\n"
 "Last-Translator: Admin Admeenov <admin@foodgram.zapto.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.10.1\n"
 
-#: api/serializers.py:251
+#: api/serializers.py:257
 msgid "Wrong user or author details."
 msgstr "Неверные данные польователя или автора."
 
-#: api/serializers.py:258
+#: api/serializers.py:264
 msgid "This subscription exists already."
 msgstr "Уже подписаны."
 
-#: api/serializers.py:263
+#: api/serializers.py:269
 msgid "You can't subscribe to yourself."
 msgstr "На себя подписаться нельзя."
 
-#: api/views.py:157
+#: api/views.py:112
+msgid "Not found."
+msgstr "Не найдено."
+
+#: api/views.py:125
+msgid "Method not allowed."
+msgstr "Метод не разрешен."
+
+#: api/views.py:222
 msgid "This recipe already exists."
 msgstr "Такой рецепт уже есть."
 
-#: api/views.py:174
+#: api/views.py:239
 msgid "No recipe to delete."
 msgstr "Не найден рецепт для удаления."
 
-#: api/views.py:252
+#: api/views.py:308
 msgid "Subscription deleted."
 msgstr "Подписка удалена."
 
-#: api/views.py:257
+#: api/views.py:313
 msgid "No subscription to delete."
 msgstr "Такой подписки и не было."
 
-#: backend/settings.py:155
+#: backend/settings.py:156
 msgid "Russian"
 msgstr "русский"
 
-#: backend/settings.py:156
+#: backend/settings.py:157
 msgid "English"
 msgstr "английский"
 
-#: recipes/admin.py:27 recipes/admin.py:37 recipes/admin.py:55
-#: recipes/admin.py:63 recipes/admin.py:71 recipes/admin.py:78
-#: users/admin.py:19
+#: recipes/admin.py:29 recipes/admin.py:40 recipes/admin.py:59
+#: recipes/admin.py:68 recipes/admin.py:77 recipes/admin.py:86
+#: users/admin.py:22
 msgid "empty"
 msgstr "пусто"
 
-#: recipes/admin.py:40
+#: recipes/admin.py:43
 msgid "pic"
 msgstr "изобр."
 
-#: recipes/apps.py:7 recipes/models.py:212
-msgid "recipes"
-msgstr "рецепты"
-
-#: recipes/models.py:39
-msgid "ingredient name"
-msgstr "название ингредиента"
-
-#: recipes/models.py:40
-msgid "Enter a unique ingredient name"
-msgstr "Введите уникальное название ингредиента"
-
-#: recipes/models.py:44
-msgid "measurement unit"
-msgstr "единица измерения"
-
-#: recipes/models.py:45
-msgid "In grams, pieces, to taste, etc"
-msgstr "В грамах, штуках, по вкусу и проч."
-
-#: recipes/models.py:50 recipes/models.py:107
-msgid "ingredient"
-msgstr "ингредиент"
-
-#: recipes/models.py:51 recipes/models.py:203
-msgid "ingredients"
-msgstr "ингредиенты"
-
-#: recipes/models.py:67
-msgid "occasion name"
-msgstr "название приема пищи"
-
-#: recipes/models.py:68
-msgid "Enter an occasion to eat on, e.g. breakfast, etc."
-msgstr "Введите название приема пищи: завтрак, обед или ужин"
-
-#: recipes/models.py:74
+#: recipes/admin.py:89 recipes/models.py:85
 msgid "colour"
 msgstr "цвет"
 
-#: recipes/models.py:75
+#: recipes/apps.py:7 recipes/models.py:219 users/admin.py:25
+msgid "recipes"
+msgstr "рецепты"
+
+#: recipes/models.py:50
+msgid "ingredient name"
+msgstr "название ингредиента"
+
+#: recipes/models.py:51
+msgid "Enter a unique ingredient name"
+msgstr "Введите уникальное название ингредиента"
+
+#: recipes/models.py:55
+msgid "measurement unit"
+msgstr "единица измерения"
+
+#: recipes/models.py:56
+msgid "In grams, pieces, to taste, etc"
+msgstr "В грамах, штуках, по вкусу и проч."
+
+#: recipes/models.py:61 recipes/models.py:114
+msgid "ingredient"
+msgstr "ингредиент"
+
+#: recipes/models.py:62 recipes/models.py:210
+msgid "ingredients"
+msgstr "ингредиенты"
+
+#: recipes/models.py:78
+msgid "occasion name"
+msgstr "название приема пищи"
+
+#: recipes/models.py:79
+msgid "Enter an occasion to eat on, e.g. breakfast, etc."
+msgstr "Введите название приема пищи: завтрак, обед или ужин"
+
+#: recipes/models.py:86
 msgid "Enter a unique HEX value with the #"
 msgstr "Введите уникальное значение HEX c #"
 
-#: recipes/models.py:81
+#: recipes/models.py:92
 msgid "slug"
 msgstr "сокращенное название"
 
-#: recipes/models.py:82
+#: recipes/models.py:93
 msgid "Enter a unique slug"
 msgstr "Введите уникальное сокращение"
 
-#: recipes/models.py:90
+#: recipes/models.py:97
 msgid "mealtime"
 msgstr "название приема пищи"
 
-#: recipes/models.py:91 recipes/models.py:192
+#: recipes/models.py:98 recipes/models.py:199
 msgid "mealtimes"
 msgstr "названия приема пищи"
 
-#: recipes/models.py:99
+#: recipes/models.py:106
 msgid "quantity"
 msgstr "количество"
 
-#: recipes/models.py:100
+#: recipes/models.py:107
 msgid "Enter a quantity of this to use in cooking"
 msgstr "Введите нужное для приготовления количество"
 
-#: recipes/models.py:110 recipes/models.py:138 recipes/models.py:211
+#: recipes/models.py:117 recipes/models.py:145 recipes/models.py:218
 msgid "recipe"
 msgstr "рецепт"
 
-#: recipes/models.py:114
+#: recipes/models.py:121
 msgid "recipe ingredient"
 msgstr "ингредиент рецепта"
 
-#: recipes/models.py:115
+#: recipes/models.py:122
 msgid "recipe ingredients"
 msgstr "ингредиенты рецепта"
 
-#: recipes/models.py:132 users/models.py:67
+#: recipes/models.py:139 users/models.py:67
 msgid "custom user"
 msgstr "\"наш пользователь\""
 
-#: recipes/models.py:152
+#: recipes/models.py:159
 msgid "favourite"
 msgstr "объект избранного"
 
-#: recipes/models.py:153
+#: recipes/models.py:160
 msgid "favourites"
 msgstr "объекты избранного"
 
-#: recipes/models.py:158
+#: recipes/models.py:165
 msgid "shopping_cart"
 msgstr "корзина"
 
-#: recipes/models.py:159
+#: recipes/models.py:166
 msgid "shopping_carts"
 msgstr "корзины"
 
-#: recipes/models.py:170
+#: recipes/models.py:177
 msgid "recipe name"
 msgstr "название рецепта"
 
-#: recipes/models.py:171
+#: recipes/models.py:178
 msgid "Enter a name for your recipe"
 msgstr "Дайте название своему рецепту"
 
-#: recipes/models.py:175
+#: recipes/models.py:182
 msgid "recipe image"
 msgstr "изображение для рецепта"
 
-#: recipes/models.py:176
+#: recipes/models.py:183
 msgid "Upload an image<=1MB for your recipe"
 msgstr "Загрузите изобр. для рецепта (не более 1 мб)"
 
-#: recipes/models.py:179
+#: recipes/models.py:186
 msgid "recipe description"
 msgstr "описание рецепта"
 
-#: recipes/models.py:180
+#: recipes/models.py:187
 msgid "Describe how to cook"
 msgstr "Опишите процесс приготовления"
 
-#: recipes/models.py:187
+#: recipes/models.py:194
 msgid "cooking time"
 msgstr "время готовки"
 
-#: recipes/models.py:188
+#: recipes/models.py:195
 msgid "Enter now many minutes it needs to cook"
 msgstr "Введите время приготовления в минутах "
 
-#: recipes/models.py:198
+#: recipes/models.py:205
 msgid "author"
 msgstr "автор"
 
-#: recipes/models.py:205
+#: recipes/models.py:212
 msgid "published on"
 msgstr "дата публикации"
+
+#: users/admin.py:31 users/models.py:97
+msgid "subscriptions"
+msgstr "подписки"
 
 #: users/apps.py:7
 msgid "users"
 msgstr "пользователи"
 
-#: users/models.py:46
+#: users/models.py:48
 msgid "email"
 msgstr "эл.почта"
 
-#: users/models.py:47
+#: users/models.py:49
 msgid "Enter the preferred email here"
 msgstr "Введите предпочитаемую эл.почту"
 
-#: users/models.py:52
+#: users/models.py:53
 msgid "first name"
 msgstr "имя"
 
@@ -250,10 +260,6 @@ msgstr "на какого автора рецептов"
 #: users/models.py:96
 msgid "subscription"
 msgstr "подписка"
-
-#: users/models.py:97
-msgid "subscriptions"
-msgstr "подписки"
 
 #~ msgid "output order"
 #~ msgstr "порядок отображения"
