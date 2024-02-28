@@ -20,7 +20,9 @@ djangorestframework-simplejwt==5.3.1
 djangorestframework-stubs==3.14.5 
 djangorestframework==3.14.0 
 djoser==2.2.2 
+drf-extra-fields==3.7.0
 exceptiongroup==1.2.0 
+filetype==1.2.0
 gunicorn==21.2.0 
 idna==3.6 
 iniconfig==2.0.0 
