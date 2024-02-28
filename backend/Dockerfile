@@ -10,5 +10,5 @@ WORKDIR /app
 
 COPY . .
 
-CMD ["python", "manage.py", "runserver", "0:9080"]
+CMD ["python", "manage.py", "runserver", "0:8000"]
 
