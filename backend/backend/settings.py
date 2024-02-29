@@ -93,7 +93,7 @@ if DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": "/data/db.sqlite3",
         }
     }
 else:
@@ -104,7 +104,7 @@ else:
             "USER": os.getenv("POSTGRES_USER", "foodgram_user"),
             "PASSWORD": os.getenv("POSTGRES_PASSWORD", "foodgram_password"),
             "HOST": os.getenv("DB_HOST", ""),
-            "PORT": os.getenv("DB_PORT", 1234),
+            "PORT": os.getenv("DB_PORT", "1234"),
         }
     }
 
