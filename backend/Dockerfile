@@ -2,7 +2,9 @@ FROM python:3.10
 
 WORKDIR /app
 
-RUN pip install --upgrade pip
+RUN python -m ensurepip --upgrade
+
+RUN pip install gunicorn
 
 COPY requirements.txt .
 
