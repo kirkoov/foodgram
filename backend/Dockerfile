@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN python -m ensurepip --upgrade
 
+RUN python -m pip install --upgrade pip
+
 RUN pip install gunicorn
 
 COPY requirements.txt .

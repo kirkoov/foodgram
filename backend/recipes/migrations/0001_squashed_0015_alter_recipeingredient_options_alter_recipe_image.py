@@ -12,10 +12,16 @@ class Migration(migrations.Migration):
     replaces = [
         ("recipes", "0001_initial"),
         ("recipes", "0002_shoppingcart_unique_shoppping_user_recipe"),
-        ("recipes", "0003_remove_favorite_unique_favorite_user_recipe_and_more"),
+        (
+            "recipes",
+            "0003_remove_favorite_unique_favorite_user_recipe_and_more",
+        ),
         ("recipes", "0004_favorite_unique_favorite_user_recipe_and_more"),
         ("recipes", "0005_alter_shoppingcart_recipe_alter_shoppingcart_user"),
-        ("recipes", "0006_remove_shoppingcart_unique_shoppping_user_recipe_and_more"),
+        (
+            "recipes",
+            "0006_remove_shoppingcart_unique_shoppping_user_recipe_and_more",
+        ),
         ("recipes", "0007_alter_favorite_recipe_alter_favorite_user_and_more"),
         ("recipes", "0008_alter_subscription_author"),
         ("recipes", "0009_alter_subscription_user"),
@@ -239,7 +245,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "output_order",
-                    models.PositiveSmallIntegerField(verbose_name="output order"),
+                    models.PositiveSmallIntegerField(
+                        verbose_name="output order"
+                    ),
                 ),
             ],
             options={
@@ -375,7 +383,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="recipe",
             name="tags",
-            field=models.ManyToManyField(to="recipes.tag", verbose_name="mealtimes"),
+            field=models.ManyToManyField(
+                to="recipes.tag", verbose_name="mealtimes"
+            ),
         ),
         migrations.AddConstraint(
             model_name="favorite",
@@ -598,7 +608,10 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name="tag",
-            options={"verbose_name": "mealtime", "verbose_name_plural": "mealtimes"},
+            options={
+                "verbose_name": "mealtime",
+                "verbose_name_plural": "mealtimes",
+            },
         ),
         migrations.RemoveField(
             model_name="tag",
@@ -683,7 +696,8 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="recipeingredient",
             constraint=models.UniqueConstraint(
-                fields=("recipe", "ingredient"), name="unique_recipe_ingredient"
+                fields=("recipe", "ingredient"),
+                name="unique_recipe_ingredient",
             ),
         ),
         migrations.AlterModelOptions(

@@ -93,7 +93,8 @@ if DEBUG:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": "/data/db.sqlite3",
+            # "NAME": "/data/db.sqlite3",
+            "NAME": "db.sqlite3",
         }
     }
 else:
