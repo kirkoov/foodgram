@@ -2,9 +2,9 @@ FROM python:3.10
 
 WORKDIR /app
 
-RUN python -m ensurepip --upgrade
+ENV PIP_ROOT_USER_ACTION=ignore
 
-RUN python -m pip install --upgrade pip
+RUN pip install --upgrade pip
 
 RUN pip install gunicorn
 
