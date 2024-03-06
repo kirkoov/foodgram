@@ -393,12 +393,12 @@ class Migration(migrations.Migration):
                 fields=("user", "recipe"), name="unique_favorite_user_recipe"
             ),
         ),
-        migrations.AddConstraint(
-            model_name="subscription",
-            constraint=models.UniqueConstraint(
-                fields=("user", "author"), name="unique_user_author_subscribe"
-            ),
-        ),
+        # migrations.AddConstraint(
+        #     model_name="subscription",
+        #     constraint=models.UniqueConstraint(
+        #         fields=("user", "author"), name="unique_user_author_subscribe"
+        #     ),
+        # ),
         migrations.AddConstraint(
             model_name="recipe",
             constraint=models.UniqueConstraint(
