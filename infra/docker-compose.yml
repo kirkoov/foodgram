@@ -1,29 +1,17 @@
-version: '3'
-
-volumes:
-  foodgram_data:
-
-# Перечень контейнеров
+version: '3.3'
 services:
-  # Имя и описание первого контейнера; имя выбирает разработчик.
-  # Это контейнер БД
-  db:
-    # Из какого образа запустить контейнер:
-    image: postgres:14.11
-    # Файл (или список файлов) с переменными окружения
-    env_file: ../.env
-    # Какой volume подключить для этого контейнера
-    volumes:
-      - foodgram_data:/var/lib/postgresql/data
-  # Имя и описание контейнера с бэкендом
-  backend:
-    # Из какого Dockerfile собирать образ для этого контейнера:
-    build: ../backend/
-    env_file: ../.env
-    # Какие контейнеры нужно запустить до старта этого контейнера:
-    depends_on:
-      - db
-  # Имя третьего контейнера. Это контейнер с фронтендом
+
   frontend:
-    env_file: ../.env
-    build: ../frontend/
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ../frontend/:/app/result_build/
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
