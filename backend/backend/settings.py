@@ -25,7 +25,7 @@ DEBUG_TOOLBAR_CONFIG = {
     "SHOW_TOOLBAR_CALLBACK": show_toolbar,
 }
 
-if DEBUG:
+if not DEBUG:
     import mimetypes
 
     mimetypes.add_type("application/javascript", ".js", True)
@@ -91,38 +91,38 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 MEDIA_URL = "/media/"
 
-if DEBUG:
-    # Local dev
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": "db.sqlite3",
-        }
+# if DEBUG:
+#     # Local dev case
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": "db.sqlite3",
+#         }
+#     }
+#     MEDIA_ROOT = BASE_DIR / "media"
+#     STATIC_URL = "static/"
+#     STATIC_ROOT = BASE_DIR / "collected_static"
+# else:
+# Docker/orchestration case
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        # Local legacy
+        # "ENGINE": "django.db.backends.postgresql_psycopg2" :
+        # POSTGRES_DB=postgres
+        # POSTGRES_USER=postgres
+        # POSTGRES_PASSWORD=foodgram_password
+        # DB_NAME=postgres
+        "NAME": os.getenv("POSTGRES_DB", "foodgram"),
+        "USER": os.getenv("POSTGRES_USER", "foodgram_user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "foodgram_password"),
+        "HOST": os.getenv("DB_HOST", ""),
+        "PORT": os.getenv("DB_PORT", "1234"),
     }
-    MEDIA_ROOT = BASE_DIR / "media"
-    STATIC_URL = "static/"
-    STATIC_ROOT = BASE_DIR / "collected_static"
-else:
-    # Docker case
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            # Local legacy
-            # "ENGINE": "django.db.backends.postgresql_psycopg2" :
-            # POSTGRES_DB=postgres
-            # POSTGRES_USER=postgres
-            # POSTGRES_PASSWORD=foodgram_password
-            # DB_NAME=postgres
-            "NAME": os.getenv("POSTGRES_DB", "foodgram"),
-            "USER": os.getenv("POSTGRES_USER", "foodgram_user"),
-            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "foodgram_password"),
-            "HOST": os.getenv("DB_HOST", ""),
-            "PORT": os.getenv("DB_PORT", "1234"),
-        }
-    }
-    MEDIA_ROOT = "/app/media/"  # type: ignore[assignment]
-    STATIC_URL = "/static/django/"
-    STATIC_ROOT = "/app/static_django/"  # type: ignore[assignment]
+}
+MEDIA_ROOT = "/app/media/"  # type: ignore[assignment]
+STATIC_URL = "/static/django/"
+STATIC_ROOT = "/app/static_django/"  # type: ignore[assignment]
 
 
 AUTH_PASSWORD_VALIDATORS = [
