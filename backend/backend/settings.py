@@ -89,17 +89,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "backend.wsgi.application"
 
 
+MEDIA_URL = "/media/"
+
 if DEBUG:
+    # Local dev
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": "db.sqlite3",
         }
     }
+    MEDIA_ROOT = BASE_DIR / "media"
+    STATIC_URL = "static/"
+    STATIC_ROOT = BASE_DIR / "collected_static"
 else:
+    # Docker case
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
+            # Local legacy
             # "ENGINE": "django.db.backends.postgresql_psycopg2" :
             # POSTGRES_DB=postgres
             # POSTGRES_USER=postgres
@@ -112,6 +120,9 @@ else:
             "PORT": os.getenv("DB_PORT", "1234"),
         }
     }
+    MEDIA_ROOT = "/app/media/"  # type: ignore[assignment]
+    STATIC_URL = "/static/django/"
+    STATIC_ROOT = "/app/static_django/"  # type: ignore[assignment]
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -164,11 +175,6 @@ LANGUAGES = (
 LOCALE_PATHS = [
     BASE_DIR / "locale/",
 ]
-
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "collected_static"
 
 
 DJOSER = {
