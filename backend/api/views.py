@@ -97,7 +97,7 @@ class RecipeViewSet(ModelViewSet):
             p.showPage()
             p.save()
             buffer.seek(0)
-            return buffer.render()
+            return buffer
         except Exception as e:
             return Response(
                 f"Some error occurred while creating your shoppings list: {e}",

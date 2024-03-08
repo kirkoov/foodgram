@@ -14,7 +14,7 @@ urlpatterns = i18n_patterns(
     prefix_default_language=False,
 )
 
-if not settings.DEBUG:
+if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns += static(
