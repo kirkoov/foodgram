@@ -74,35 +74,29 @@ class RecipeViewSet(ModelViewSet):
         X_QNTY = 380
         X_UNITS = 450
 
-        try:
-            TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts")
-            buffer = io.BytesIO()
-            p = canvas.Canvas(buffer, pagesize=A4)
-            p.drawImage(
-                "fg_logo_for_shopping_list.png", 30, 790, width=20, height=20
-            )
-            pdfmetrics.registerFont(TTFont("Fira", "FiraCode-Regular.ttf"))
-            p.setFont("Fira", 12)
-            p.drawRightString(550, 800, "Shopping list, Foodgram")
-            p.drawString(X_ITEM, 750, "Item")
-            p.drawString(X_QNTY, 750, "Qnty")
-            p.drawString(X_UNITS, 750, "Units")
-            i = 15
-            y = 730
-            for item, details in shoppings.items():
-                p.drawString(X_ITEM, y, item)
-                p.drawString(X_QNTY, y, str(details[0]))
-                p.drawString(X_UNITS, y, details[1])
-                y -= i
-            p.showPage()
-            p.save()
-            buffer.seek(0)
-            return buffer
-        except Exception as e:
-            return Response(
-                f"Some error occurred while creating your shoppings list: {e}",
-                status=status.HTTP_204_NO_CONTENT,
-            )
+        TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts/")
+        buffer = io.BytesIO()
+        p = canvas.Canvas(buffer, pagesize=A4)
+        p.drawImage(
+            "fg_logo_for_shopping_list.png", 30, 790, width=20, height=20
+        )
+        pdfmetrics.registerFont(TTFont("DejaVuSans", "DejaVuSans.ttf"))
+        p.setFont("DejaVuSans", 12)
+        p.drawRightString(550, 800, "Shopping list, Foodgram")
+        p.drawString(X_ITEM, 750, "Item")
+        p.drawString(X_QNTY, 750, "Qnty")
+        p.drawString(X_UNITS, 750, "Units")
+        i = 15
+        y = 730
+        for item, details in shoppings.items():
+            p.drawString(X_ITEM, y, item)
+            p.drawString(X_QNTY, y, str(details[0]))
+            p.drawString(X_UNITS, y, details[1])
+            y -= i
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        return buffer
 
     @action(
         methods=["post"],
@@ -163,7 +157,6 @@ class RecipeViewSet(ModelViewSet):
                 f"Some error occurred in extracting your shopping data: {e}",
                 status=status.HTTP_204_NO_CONTENT,
             )
-
         return FileResponse(
             self.create_shopping_list_pdf(shoppings),
             as_attachment=True,
