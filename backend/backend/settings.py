@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "rosetta",
     "debug_toolbar",
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
