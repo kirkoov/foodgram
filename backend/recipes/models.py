@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from .validators import validate_img_size
 from backend.constants import (
     MAX_COOKING_TIME_MINS,
     MIN_COOKING_TIME_MINS,
@@ -178,6 +179,7 @@ class Recipe(models.Model):
         help_text=_("Enter a name for your recipe"),
     )
     image = models.ImageField(
+        validators=[validate_img_size],
         upload_to="recipes/",
         verbose_name=_("recipe image"),
         help_text=_("Upload an image<=1MB for your recipe"),

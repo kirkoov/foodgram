@@ -121,9 +121,9 @@ else:
             "PORT": os.getenv("DB_PORT", "1234"),
         }
     }
-MEDIA_ROOT = "/app/media/"  # type: ignore[assignment]
-STATIC_URL = "/static/django/"
-STATIC_ROOT = "/app/static_django/"  # type: ignore[assignment]
+    MEDIA_ROOT = "/app/media/"  # type: ignore[assignment]
+    STATIC_URL = "/static/django/"
+    STATIC_ROOT = "/app/static_django/"  # type: ignore[assignment]
 
 
 AUTH_PASSWORD_VALIDATORS = [
