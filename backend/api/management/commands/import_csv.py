@@ -7,6 +7,7 @@ populated ingredients table.
 
 """
 import csv
+import sys
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError, OperationalError
@@ -21,15 +22,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         lang = options["lang"].lower()
         if lang not in ["eng", "rus"]:
-            print(
+            sys.exit(
                 "To choose an ingredient language for this import, append "
                 "either 'eng' or 'rus' to the command, with no quotes."
             )
         print("\tImporting the ingredients csv...")
         try:
-            f_path = "../data/ingredients.csv"
+            f_path = "ingredients.csv"  # For a local, non-Docker dev
             if lang == "eng":
-                f_path = "../data/ingredients_eng_alphasorted.csv"
+                f_path = "ingredients_eng_alphasorted.csv"
             with open(f_path, newline="") as csvfile:
                 reader = csv.reader(csvfile)
                 Ingredient.objects.bulk_create(
@@ -44,7 +45,7 @@ class Command(BaseCommand):
                     self.style.SUCCESS("<*>Data imported successfully<*>\n")
                 )
         except IntegrityError as integ_err:
-            print(f"<!>IntegrityError: {integ_err}. Duplicate values<!>\n")
+            print(f"<!>IntegrityError: {integ_err} Duplicate values<!>\n")
         except OperationalError as op_err:
             print(f"<!>OperationalError: {op_err}<!>\n")
         except CommandError as cmd_err:
