@@ -15,11 +15,22 @@ from recipes.models import Ingredient
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument("lang", type=str, help="Choose an ingredient lang")
+
     def handle(self, *args, **options):
+        lang = options["lang"].lower()
+        if lang not in ["eng", "rus"]:
+            print(
+                "To choose an ingredient language for this import, append "
+                "either 'eng' or 'rus' to the command, with no quotes."
+            )
         print("\tImporting the ingredients csv...")
         try:
-            # ingredients_eng_alphasorted.csv
-            with open("../data/ingredients.csv", newline="") as csvfile:
+            f_path = "../data/ingredients.csv"
+            if lang == "eng":
+                f_path = "../data/ingredients_eng_alphasorted.csv"
+            with open(f_path, newline="") as csvfile:
                 reader = csv.reader(csvfile)
                 Ingredient.objects.bulk_create(
                     Ingredient(
@@ -33,7 +44,7 @@ class Command(BaseCommand):
                     self.style.SUCCESS("<*>Data imported successfully<*>\n")
                 )
         except IntegrityError as integ_err:
-            print(f"<!>IntegrityError: {integ_err}<!>\n")
+            print(f"<!>IntegrityError: {integ_err}. Duplicate values<!>\n")
         except OperationalError as op_err:
             print(f"<!>OperationalError: {op_err}<!>\n")
         except CommandError as cmd_err:
