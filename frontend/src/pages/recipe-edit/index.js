@@ -242,7 +242,7 @@ const RecipeEdit = ({ onItemDelete }) => {
               })
             }}
           >
-            Добавить ингредиент
+            Add ingredient
           </div>
         </div>
         <div className={styles.cookingTime}>
