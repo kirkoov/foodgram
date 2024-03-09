@@ -88,7 +88,7 @@ class RecipeViewSet(ModelViewSet):
         p.drawString(X_UNITS, 750, "Units")
         i = 15
         y = 730
-        for item, details in shoppings.items():
+        for item, details in sorted(shoppings.items()):
             p.drawString(X_ITEM, y, item)
             p.drawString(X_QNTY, y, str(details[0]))
             p.drawString(X_UNITS, y, details[1])

@@ -74,7 +74,7 @@ const SingleCard = ({ loadItem, updateOrders }) => {
           </div>
           <TagsContainer tags={tags} />
           <div>
-            <p className={styles['single-card__text']}><Icons.ClockIcon /> {cooking_time} мин.</p>
+            <p className={styles['single-card__text']}><Icons.ClockIcon /> {cooking_time} min.</p>
             <p className={styles['single-card__text_with_link']}>
               <div className={styles['single-card__text']}>
                 <Icons.UserIcon /> <LinkComponent
