@@ -81,11 +81,16 @@ class RecipeViewSet(ModelViewSet):
             "fg_logo_for_shopping_list.png", 30, 790, width=20, height=20
         )
         pdfmetrics.registerFont(TTFont("DejaVuSans", "DejaVuSans.ttf"))
+        pdfmetrics.registerFont(
+            TTFont("DejaVuSansBold", "DejaVuSans-Bold.ttf")
+        )
         p.setFont("DejaVuSans", 12)
         p.drawRightString(550, 800, "Shopping list, Foodgram")
+        p.setFont("DejaVuSansBold", 10)
         p.drawString(X_ITEM, 750, "Item")
         p.drawString(X_QNTY, 750, "Qnty")
         p.drawString(X_UNITS, 750, "Units")
+        p.setFont("DejaVuSans", 12)
         i = 15
         y = 730
         for item, details in sorted(shoppings.items()):
