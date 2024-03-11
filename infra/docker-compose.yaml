@@ -30,7 +30,7 @@ services:
       - static_frontend:/app/result_build/
 
   nginx:
-    image: nginx:1.19.3
+    image: nginx:1.22.1
     ports:
       # Live server
       # - "8090:80"
