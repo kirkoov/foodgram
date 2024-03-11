@@ -33,9 +33,9 @@ services:
     image: nginx:1.19.3
     ports:
       # Live server
-      - "8090:80"
+      # - "8090:80"
       # Loc dev
-      # - "8091:80"  # See the backend's Dockerfile
+      - "8091:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static:/static_django/
