@@ -68,7 +68,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
-CORS_URLS_REGEX = r"^/api/.*$"
+CORS_URLS_REGEX = r"^/api/.*$", r"^/admin/.*$"
 
 ROOT_URLCONF = "backend.urls"
 
