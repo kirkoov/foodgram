@@ -4,4 +4,4 @@ venv
 .idea
 .vscode
 .env
-*.sqlite3
+.sqlite3
