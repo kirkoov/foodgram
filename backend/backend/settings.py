@@ -70,7 +70,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8090",
 ]
 # CORS_URLS_REGEX = r"^/api/.*$", r"^/admin/.*$"
-CORS_URLS_REGEX = r"^/api/.*$"
+CORS_URLS_REGEXES = [r"^/api/.*$", r"^/admin/.*$"]
 
 ROOT_URLCONF = "backend.urls"
 
