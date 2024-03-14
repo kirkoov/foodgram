@@ -68,9 +68,12 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+# For a Docker deploy, GitHub-based
 CSRF_TRUSTED_ORIGINS = [
     "https://foodgram.zapto.org",
 ]
+
 CORS_URLS_REGEX = r"^/api/.*$"
 
 ROOT_URLCONF = "backend.urls"
