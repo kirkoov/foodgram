@@ -20,7 +20,7 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localHHost").split()
 
 
-if DEBUG:
+if not DEBUG:
     # For DjDT
     import mimetypes
 
@@ -67,8 +67,6 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "http://127.0.0.1:8090",
-    "https://foodgram.zapto.org",
 ]
 CORS_URLS_REGEX = r"^/api/.*$"
 
