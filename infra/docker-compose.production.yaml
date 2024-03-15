@@ -14,7 +14,8 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   backend:
-    image: foodgram_backend  # if pre-built locally with a name you chose
+    # image: foodgram_backend  # if pre-built locally with a name you chose
+    image: kirkoov/foodgram_backend
     env_file: ../.env
     volumes:
       - static:/app/static_django/
@@ -23,7 +24,8 @@ services:
       - db
 
   frontend:
-    image: foodgram_frontend  # if pre-built locally with a name you chose
+    # image: foodgram_frontend  # if pre-built locally with a name you chose
+    image: kirkoov/foodgram_frontend
     volumes:
       - static_frontend:/app/result_build/
 
