@@ -3,8 +3,6 @@
 ## Description
 A website for registered users to post their recipes, add others' as their favourites, subscribe to recipe authors & generate downloadable shopping lists (pdf) in line with the cooking instructions under the recipes they'd like to try.
 
-
-
 - This Django+Postgre+Docker+GitHubActions+yaml+TelegramBot for CI/CD project is based on YandexPracticum's template (inc. React) & serves for your favourite cats to be added & boasted of online
 - The motivation behind is better learn this backend dev stack & include it in my CV
 - Once modified locally & pushed to its GitHub repo, this project moves on along the yaml-based orchestration lines to Actions-rebuild the docker images accordingly & auto-redeploy the project to the live server; the associated Telegram bot will notify me about the deploy
@@ -123,9 +121,7 @@ If some testing is welcome, pls run e.g. 'poetry run pytest' from the backend fo
 
 8. Navigate, do/undo favourites/sunscriptions, try the PDF shopping list download
 
-test users: yule.neverknow@me.ir        2h5wJ;S%!w.SZDN
-            jam.serious@awesome.org     JzvDvNvvc2+a)w4
-            juicy.ham@gorgeous.org      U996vS#mHCV87B@
+
 
 
 
@@ -234,7 +230,7 @@ Should there occur any untranslated fields, stop & down the containers, check th
 sudo docker compose exec backend python manage.py createsuperuser)
 Документация (изначально на рус) находится по адресу: http://127.0.0.1/api/docs/
 
-10. Удалить проект = остановить контейнеры (ctl+c), удалить их (sudo docker compose down), удалить его образы и связянные тома (см. документацию к Докеру) + удалить корневую папку проекта
+10. Удалить проект = остановить контейнеры (ctl+c), удалить их вместе с томами (sudo docker compose down -v), удалить образы и пр. + удалить корневую папку проекта
 
 
 Запуск проекта в контейнерах на боевом сервере, через репу from GitHub
@@ -319,10 +315,10 @@ save, close & run
 7. Then, if ok, run
 the same commands as from the Запуск проекта в контейнерах локально, с готовыми образами от Docker Hub's para 2. Otherwise, stop & run without the -d flag to see the output
 
-
-
-
-
+8. Проект будут доступен - в зависимости от выбранного порта - по адресу: https://<yourDomainOrIPaddress>
+(логины и пароли тестовых пользователей см выше)
+Админка: https:/<yourDomainOrIPaddress>/admin/
+The docs are not there, but if needed, copy the doc folder manually & indicate its path in the docker-compose.production.yaml before taking step 6 hereof.
 
 
 
