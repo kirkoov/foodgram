@@ -6,6 +6,7 @@ When in the folder containing the manage.py, run in your virtual env
 populated ingredients table.
 
 """
+
 import csv
 import sys
 

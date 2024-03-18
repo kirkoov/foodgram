@@ -1,16 +1,16 @@
-name: Main Foodgram workflow
+# name: Main Foodgram workflow
 
-on:
-  push:
-    # branches:
-    #   - master
+# on:
+#   push:
+#     # branches:
+#     #   - master
 
-jobs:
-  checkout-and-print-tree:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out repo code
-        # uses: actions/checkout@v3
-        uses: actions/checkout@v4
-      - name: Print project tree
-        run: tree .
+# jobs:
+#   checkout-and-print-tree:
+#     runs-on: ubuntu-22.04
+#     steps:
+#       - name: Check out repo code
+#         # uses: actions/checkout@v3  # Gives a Node 16 deprecation warning
+#         uses: actions/checkout@v4
+#       - name: Print project tree
+#         run: tree .

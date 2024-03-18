@@ -8,7 +8,6 @@ from rest_framework.test import APIClient, APIRequestFactory
 
 from api.views import UsersViewSet
 
-
 User = get_user_model()
 
 
@@ -68,9 +67,7 @@ class UserTests(TestCase):
 
     def test_list_clients_limited(self):
         limit = 1
-        request = self.factory.get(
-            f"http://127.0.0.1:8000/api/users/?limit={limit}"
-        )
+        request = self.factory.get(f"http://127.0.0.1:8000/api/users/?limit={limit}")
         response = self.view(request)
         data = response.__dict__.get("data")
         if data is not None:
@@ -81,9 +78,7 @@ class UserTests(TestCase):
 
     def test_list_client_detail(self):
         id_ = 2
-        request_detail = self.factory.get(
-            f"http://127.0.0.1:8000/api/users/{id_}/"
-        )
+        request_detail = self.factory.get(f"http://127.0.0.1:8000/api/users/{id_}/")
         response = self.view_detail(request_detail, id=id_)
         if response.render():
             self.assertEqual(
@@ -98,21 +93,15 @@ class UserTests(TestCase):
                 },
             )
         else:
-            raise DataError(
-                "No rendered content from the test_list_client_detail()."
-            )
+            raise DataError("No rendered content from the test_list_client_detail().")
 
     def test_get_userdetail_status200(self):
         id_ = 1
-        request_detail = self.factory.get(
-            f"http://127.0.0.1:8000/api/users/{id_}/"
-        )
+        request_detail = self.factory.get(f"http://127.0.0.1:8000/api/users/{id_}/")
         response = self.view_detail(request_detail, id=id_)
         assert response.status_code == 200
 
     def test_get_userdetail_status404(self):
-        request_detail = self.factory.get(
-            f"http://127.0.0.1:8000/api/users/{maxsize}/"
-        )
+        request_detail = self.factory.get(f"http://127.0.0.1:8000/api/users/{maxsize}/")
         response = self.view_detail(request_detail, id=maxsize)
         assert response.status_code == 404

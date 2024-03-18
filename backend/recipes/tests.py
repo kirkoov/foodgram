@@ -1,20 +1,19 @@
 import json
-import pytest
-from rest_framework.test import APIRequestFactory
 from sys import maxsize
 
+import pytest
 from django.core.exceptions import ValidationError
 from django.db.utils import DataError, IntegrityError
 from django.test import TestCase
+from rest_framework.test import APIRequestFactory
 
-from backend.constants import (
-    NUM_CHARS_INGREDIENT_NAME,
-    NUM_CHARS_MEASUREMENT_UNIT,
-    NUM_CHARS_MEALTIME_NAME,
-)
+from api.views import IngredientViewSet, TagViewSet
+from backend.constants import (NUM_CHARS_INGREDIENT_NAME,
+                               NUM_CHARS_MEALTIME_NAME,
+                               NUM_CHARS_MEASUREMENT_UNIT)
+
 from .models import Ingredient, Tag
 from .validators import validate_hex_color
-from api.views import IngredientViewSet, TagViewSet
 
 
 class RecipeTests(TestCase):
@@ -141,9 +140,7 @@ class RecipeTests(TestCase):
         )
 
     def test_ingredient_search(self):
-        request = self.factory.get(
-            f"/api/ingredients/?search={self.test_name}"
-        )
+        request = self.factory.get(f"/api/ingredients/?search={self.test_name}")
         response = self.view(request)
         data = response.__dict__.get("data")
         self.assertEqual(len(data), len(self.test_ingredients))
