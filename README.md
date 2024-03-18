@@ -121,7 +121,9 @@ If some testing is welcome, pls run e.g. 'poetry run pytest' from the backend fo
 
 8. Navigate, do/undo favourites/sunscriptions, try the PDF shopping list download
 
-
+test users: yule.neverknow@me.ir        2h5wJ;S%!w.SZDN
+            jam.serious@awesome.org     JzvDvNvvc2+a)w4
+            juicy.ham@gorgeous.org      U996vS#mHCV87B@
 
 
 
