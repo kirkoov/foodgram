@@ -66,7 +66,7 @@ jobs:
   build_and_push_to_docker_hub:
     name: Build & push FG backend Docker img to DockerHub
     runs-on: ubuntu-22.04
-    needs: backend_tests
+    needs: [backend_tests, frontend_tests]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
