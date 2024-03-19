@@ -47,7 +47,7 @@ jobs:
           python manage.py test
 
   build_and_push_to_docker_hub:
-    name: Build&Push FG backend Docker img to DockerHub
+    name: Build & push FG backend Docker img to DockerHub
     runs-on: ubuntu-22.04
     needs: tests
     steps:
