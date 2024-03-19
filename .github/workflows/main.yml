@@ -13,7 +13,7 @@ jobs:
     - name: Set up nodeJS
       uses: actions/setup-node@v4
       with:
-        node-version: 13.12.0-alpine
+        node-version: 16
     - name: Install dependencies
       run: |
         cd frontend/
