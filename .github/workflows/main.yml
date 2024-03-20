@@ -160,6 +160,7 @@ jobs:
           cp infra/nginx.conf .
           docker compose -f docker-compose.production.yaml --progress=quiet pull
           docker compose -f docker-compose.production.yaml --progress=quiet down -v
+          docker system prune -af
           docker compose -f docker-compose.production.yaml --progress=quiet up -d
     - name: Execute remote ssh commands to deploy(2)
       uses: appleboy/ssh-action@master
@@ -172,6 +173,7 @@ jobs:
         script: |
           cd foodgram
           docker compose -f docker-compose.production.yaml exec backend python manage.py migrate
+          docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic
 
 
 
