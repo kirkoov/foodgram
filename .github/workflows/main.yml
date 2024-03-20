@@ -158,6 +158,6 @@ jobs:
           cd foodgram
           cp infra/docker-compose.production.yaml .
           cp infra/nginx.conf .
-          sudo docker compose -f docker-compose.production.yaml pull 2>/dev/null
+          docker compose -f docker-compose.production.yaml --progress=quiet pull
 
 
