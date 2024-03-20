@@ -41,7 +41,7 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static:/static_django/
       - media:/media/
-      # - ../docs/:/usr/share/nginx/html/api/docs/
+      - ../docs/:/usr/share/nginx/html/api/docs/
       - static_frontend:/static_frontend/
     depends_on:
       - backend
