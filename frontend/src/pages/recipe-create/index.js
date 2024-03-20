@@ -64,10 +64,10 @@ const RecipeCreate = ({ onEdit }) => {
     <Container>
       <MetaTags>
         <title>Создание рецепта</title>
-        <meta name="description" content="Продуктовый помощник - Создание рецепта" />
-        <meta property="og:title" content="Создание рецепта" />
+        <meta name="description" content="Foodgram - Add a recipe" />
+        <meta property="og:title" content="Add a recipe" />
       </MetaTags>
-      <Title title='Создание рецепта' />
+      <Title title='Add a recipe' />
       <Form
         className={styles.form}
         onSubmit={e => {
@@ -94,7 +94,7 @@ const RecipeCreate = ({ onEdit }) => {
               return alert(non_field_errors.join(', '))
             }
             if (ingredients) {
-              return alert(`Ингредиенты: ${ingredients.filter(item => Object.keys(item).length).map(item => {
+              return alert(`Ingredients ${ingredients.filter(item => Object.keys(item).length).map(item => {
                 const error = item[Object.keys(item)[0]]
                 return error && error.join(' ,')
               })[0]}`)
@@ -110,14 +110,14 @@ const RecipeCreate = ({ onEdit }) => {
         }}
       >
         <Input
-          label='Название рецепта'
+          label='Recipe name'
           onChange={e => {
             const value = e.target.value
             setRecipeName(value)
           }}
         />
         <CheckboxGroup
-          label='Теги'
+          label='Mealtime(s)'
           values={value}
           className={styles.checkboxGroup}
           labelClassName={styles.checkboxGroupLabel}
@@ -128,7 +128,7 @@ const RecipeCreate = ({ onEdit }) => {
         <div className={styles.ingredients}>
           <div className={styles.ingredientsInputs}>
             <Input
-              label='Ингредиенты'
+              label='Ingredients'
               className={styles.ingredientsNameInput}
               inputClassName={styles.ingredientsInput}
               labelClassName={styles.ingredientsLabel}
@@ -182,7 +182,7 @@ const RecipeCreate = ({ onEdit }) => {
                     })
                     setRecipeIngredients(recipeIngredientsUpdated)
                   }}
-                >Удалить</span>
+                >Delete</span>
               </div>
             })}
           </div>
@@ -199,12 +199,12 @@ const RecipeCreate = ({ onEdit }) => {
               })
             }}
           >
-            Добавить ингредиент
+            Add ingredient
           </div>
         </div>
         <div className={styles.cookingTime}>
           <Input
-            label='Время приготовления'
+            label='Cooking time'
             className={styles.ingredientsTimeInput}
             labelClassName={styles.cookingTimeLabel}
             inputClassName={styles.ingredientsTimeValue}
@@ -214,10 +214,10 @@ const RecipeCreate = ({ onEdit }) => {
             }}
             value={recipeTime}
           />
-          <div className={styles.cookingTimeUnit}>мин.</div>
+          <div className={styles.cookingTimeUnit}>minute(s)</div>
         </div>
         <Textarea
-          label='Описание рецепта'
+          label='Instructions'
           onChange={e => {
             const value = e.target.value
             setRecipeText(value)
@@ -228,14 +228,14 @@ const RecipeCreate = ({ onEdit }) => {
             setRecipeFile(file)
           }}
           className={styles.fileInput}
-          label='Загрузить фото'
+          label='Upload a pic<=1Mb'
         />
         <Button
           modifier='style_dark-blue'
           disabled={checkIfDisabled()}
           className={styles.button}
         >
-          Создать рецепт
+          Add
         </Button>
       </Form>
     </Container>

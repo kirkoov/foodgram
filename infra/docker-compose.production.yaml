@@ -45,7 +45,9 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static:/static_django/
       - media:/media/
-      - ../docs/:/usr/share/nginx/html/api/docs/
+      # For other cases # env_file: ../docs/:/usr/share/nginx/html/api/docs/
+      # For CI/CD
+      - ./docs/:/usr/share/nginx/html/api/docs/
       - static_frontend:/static_frontend/
     depends_on:
       - backend

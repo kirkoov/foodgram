@@ -17,7 +17,7 @@ const Purchase = ({ image, name, cooking_time, id, handleRemoveFromCart, is_in_s
         <LinkComponent className={styles.recipeLink} title={name} href={`/recipes/${id}`} />
       </h3>
       <p className={styles.purchaseText}>
-        <Icons.ClockIcon />{cooking_time} мин.
+        <Icons.ClockIcon />{cooking_time} minute(s)
       </p>
     </div>
     <a
@@ -25,7 +25,7 @@ const Purchase = ({ image, name, cooking_time, id, handleRemoveFromCart, is_in_s
       className={styles.purchaseDelete}
       onClick={_ => handleRemoveFromCart({ id, toAdd: false, callback: updateOrders })}
     >
-      Удалить
+      Remove
     </a>
   </li>
 }

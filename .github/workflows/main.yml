@@ -158,11 +158,5 @@ jobs:
           cd foodgram
           cp infra/docker-compose.production.yaml .
           cp infra/nginx.conf .
-          rm -r infra
-          docker compose -f docker-compose.production.yaml pull
-          docker compose -f docker-compose.production.yaml down -v
-          docker compose -f docker-compose.production.yaml up -d
-          docker compose -f docker-compose.production.yaml exec backend python manage.py migrate
-          docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic
-          rm -r docs
-          rm nginx.conf
+
+
