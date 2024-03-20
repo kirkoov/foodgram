@@ -159,5 +159,10 @@ jobs:
           cp infra/docker-compose.production.yaml .
           cp infra/nginx.conf .
           docker compose -f docker-compose.production.yaml --progress=quiet pull
+          docker compose -f docker-compose.production.yaml --progress=quiet down -v
+          docker compose -f docker-compose.production.yaml --progress=quiet up -d
+          docker compose -f docker-compose.production.yaml exec backend python manage.py migrate
+
+
 
 
