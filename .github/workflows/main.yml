@@ -145,7 +145,7 @@ jobs:
         source: "./docs"
         target: "foodgram"
 
-    - name: Execute remote ssh commands to deploy
+    - name: Execute remote ssh commands to deploy(1)
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -161,6 +161,16 @@ jobs:
           docker compose -f docker-compose.production.yaml --progress=quiet pull
           docker compose -f docker-compose.production.yaml --progress=quiet down -v
           docker compose -f docker-compose.production.yaml --progress=quiet up -d
+    - name: Execute remote ssh commands to deploy(2)
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        # key: ${{ secrets.SSH_KEY }}
+        password: ${{ secrets.SSH_PWD }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd foodgram
           docker compose -f docker-compose.production.yaml exec backend python manage.py migrate
 
 
