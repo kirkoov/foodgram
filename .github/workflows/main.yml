@@ -177,7 +177,6 @@ jobs:
           docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json
           docker compose -f docker-compose.production.yaml exec backend python manage.py import_csv eng
           rm -r infra
-          rm -r docs
           rm nginx.conf
 
 
