@@ -120,7 +120,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        # password: ${{ secrets.SSH_PWD }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "./infra/docker-compose.production.yaml"
         target: "foodgram"
@@ -130,7 +129,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        # password: ${{ secrets.SSH_PWD }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "./infra/nginx.conf"
         target: "foodgram"
@@ -140,7 +138,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        # password: ${{ secrets.SSH_PWD }}
+
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "./docs"
         target: "foodgram"
@@ -151,7 +149,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        # password: ${{ secrets.SSH_PWD }}
+
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         # In addition, see the README for details on other imports if needed
         script: |
@@ -168,7 +166,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        # password: ${{ secrets.SSH_PWD }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd foodgram
@@ -179,6 +176,13 @@ jobs:
           rm -r infra
           rm nginx.conf
 
-
-
-
+  send_telegram:
+    runs-on: ubuntu-22.04
+    needs: deploy
+    steps:
+    - name: Send a telegram
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: Foodgram deployed OK
