@@ -142,7 +142,7 @@ jobs:
         # key: ${{ secrets.SSH_KEY }}
         password: ${{ secrets.SSH_PWD }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "../docs"
+        source: "./docs"
         target: "foodgram"
 
     # - name: Execute remote ssh commands to deploy
