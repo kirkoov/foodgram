@@ -122,7 +122,7 @@ jobs:
         # key: ${{ secrets.SSH_KEY }}
         password: ${{ secrets.SSH_PWD }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "./infra/docker-compose.production.yaml"
+        source: "docker-compose.production.yaml"
         target: "foodgram"
 
     # - name: Copy nginx.conf via ssh
