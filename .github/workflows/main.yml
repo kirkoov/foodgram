@@ -162,9 +162,5 @@ jobs:
           docker compose -f docker-compose.production.yaml pull
           docker compose -f docker-compose.production.yaml down -v
           docker compose -f docker-compose.production.yaml up -d
-          docker compose -f docker-compose.production.yaml exec backend python manage.py migrate
-          docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic
-          docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json
-          docker compose exec backend python manage.py import_csv eng
           rm -r docs
           rm nginx.conf
