@@ -114,14 +114,14 @@ jobs:
     steps:
     - name: Checkout the repo
       uses: actions/checkout@v4
-    - name: Copy docker-compose.production.yml via ssh
+    - name: Copy docker-compose.production.yaml via ssh
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "./infra/docker-compose.production.yml"
+        source: "./infra/docker-compose.production.yaml"
         target: "foodgram"
     - name: Execute remote ssh commands to deploy
       uses: appleboy/ssh-action@master
@@ -133,12 +133,12 @@ jobs:
         # In addition, see the README for details on other imports if needed
         script: |
           cd foodgram
-          docker compose -f docker-compose.production.yml pull
-          docker compose -f docker-compose.production.yml down -v
+          docker compose -f docker-compose.production.yaml pull
+          docker compose -f docker-compose.production.yaml down -v
 
-          docker compose -f docker-compose.production.yml up -d
+          docker compose -f docker-compose.production.yaml up -d
 
-          docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-          docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-          docker compose -f docker-compose.production.yml exec backend python manage.py loaddata db.json
+          docker compose -f docker-compose.production.yaml exec backend python manage.py migrate
+          docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic
+          docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json
           docker compose exec backend python manage.py import_csv eng
