@@ -26,16 +26,18 @@ jobs:
   check-ssh-conn:
     runs-on: ubuntu-22.04
     steps:
-    - name: Copy nginx.conf via ssh
-      uses: appleboy/scp-action@master
+    - name: Execute a remote ssh command
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         # password: ${{ secrets.SSH_PWD }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "./infra/nginx.conf"
-        target: "foodgram"
+        script: |
+          cd foodgram
+          cp infra/docker-compose.production.yaml .
+          cp infra/nginx.conf .
 
   # backend_tests:
   #   runs-on: ubuntu-22.04
