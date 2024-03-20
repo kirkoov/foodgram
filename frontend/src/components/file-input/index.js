@@ -44,7 +44,7 @@ const FileInput = ({ label, onChange, file = null, className }) => {
       className={styles.button}
       type='button'
     >
-      Choose
+      Выбрать файл
     </div>
     {currentFile && <div className={styles.image} style={{
       backgroundImage: `url(${currentFile})`

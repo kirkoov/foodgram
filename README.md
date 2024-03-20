@@ -311,6 +311,7 @@ save, close & run
 5. Create remotely or scp to the same remote folder your .env file (see above) & nano .env there to change the paths to where your new dot env file is.
 
 + scp the nginx.conf file to the same remote folder you're working in
+scp nginx.conf root@77.222.43.136:foodgram
 
 6. docker compose -f docker-compose.production.yaml up -d
 
@@ -321,6 +322,7 @@ the same commands as from the Запуск проекта в контейнер�
 (логины и пароли тестовых пользователей см выше)
 Админка: https:/<yourDomainOrIPaddress>/admin/
 The docs are not there, but if needed, copy the doc folder manually & indicate its path in the docker-compose.production.yaml before taking step 6 hereof.
+
 
 
 
