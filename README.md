@@ -321,7 +321,7 @@ the same commands as from the Запуск проекта в контейнер�
 8. Проект будут доступен - в зависимости от выбранного порта - по адресу: https://<yourDomainOrIPaddress>
 (логины и пароли тестовых пользователей см выше)
 Админка: https:/<yourDomainOrIPaddress>/admin/
-The docs are not there, but if needed, copy the doc folder manually & indicate its path in the docker-compose.production.yaml before taking step 6 hereof.
+The docs are there too.
 
 
 
