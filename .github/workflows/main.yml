@@ -136,16 +136,19 @@ jobs:
         source: "./infra/nginx.conf"
         target: "foodgram"
 
-    # - name: Execute remote ssh commands to deploy
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     username: ${{ secrets.USER }}
-    #     key: ${{ secrets.SSH_KEY }}
-    #     passphrase: ${{ secrets.SSH_PASSPHRASE }}
-    #     # In addition, see the README for details on other imports if needed
-    #     script: |
-    #       cd foodgram
+    - name: Execute remote ssh commands to deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        # key: ${{ secrets.SSH_KEY }}
+        password: ${{ secrets.SSH_PWD }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        # In addition, see the README for details on other imports if needed
+        script: |
+          cd foodgram
+          cp infra/docker-compose.production.yaml .
+          cp infra/nginx.conf .
     #       docker compose -f docker-compose.production.yaml pull
     #       docker compose -f docker-compose.production.yaml down -v
 
