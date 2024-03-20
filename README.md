@@ -325,7 +325,6 @@ The docs are not there, but if needed, copy the doc folder manually & indicate i
 
 
 
-
 #### Authors
 ###### Frontend YandexPracticum
 ###### Backend kirkoov
