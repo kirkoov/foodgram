@@ -26,6 +26,7 @@ This project helped me a lot in further grasping the following:
 - Using [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) & Telegram bot notifications in one's routine for better performance.
 
 Tools & stack: Python Django DRF Json Yaml API Docker Nginx PostgreSQL Gunicorn Djoser JWT Postman Telegram
+
 [Back to TOC](#table-of-contents)
 
 ## Usage
