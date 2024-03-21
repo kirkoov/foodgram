@@ -81,6 +81,8 @@ class AbridgedRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Read a recipe."""
+
     author = UsersSerializer(read_only=True)
     tags = TagSerializer(read_only=True, many=True)
     image = Base64ImageField(required=True)
@@ -202,6 +204,8 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(UsersSerializer):
+    """Read a subscription."""
+
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.ReadOnlyField(source="recipes.count")
 
@@ -237,6 +241,8 @@ class SubscriptionSerializer(UsersSerializer):
 
 
 class SubscriptionWriteSerializer(serializers.ModelSerializer):
+    """Add a subscription."""
+
     class Meta:
         model = Subscription
         fields = ("user", "author")

@@ -250,7 +250,8 @@ save, close & run
 MIT [https://choosealicense.com/](https://choosealicense.com/). [Back to TOC](#table-of-contents)
 
 ## How to contribute
-Don't hesitate to contact in case you'd like to contribute. We'd both be better off reading the [Contributor Covenant](https://www.contributor-covenant.org/) which is a standard to start with. [Back to TOC](#table-of-contents)
+Do contact in case you think there's a chance to. We'd both be better off reading the [Contributor Covenant](https://www.contributor-covenant.org/) which is a standard to start with.
+[Back to TOC](#table-of-contents)
 
 #### Authors: kirkoov (Django backend), YandexPracticum (React frontend)
 

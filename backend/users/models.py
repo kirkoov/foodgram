@@ -8,6 +8,8 @@ from backend.constants import (NUM_CHARS_EMAIL, NUM_CHARS_FIRSTNAME,
 
 
 class UserManager(BaseUserManager):
+    """Use to be able to ID users based on their email vs username."""
+
     def _create_user(self, email, password, **extra_fields):
         """
         Create and save a User with the given email and password.
@@ -37,7 +39,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    """Use a custom user class."""
+    """Use a custom user class, to make an email vs username difference."""
 
     email = models.EmailField(
         max_length=NUM_CHARS_EMAIL,

@@ -1,12 +1,10 @@
 """This file is used to import a simple two-column ready-made csv collection
-into a Postgre database for thier use under the Foodgram project.
+into a Postgre database for use under the Foodgram project.
 
 When in the folder containing the manage.py, run in your virtual env
-`python manage.py import_csv` & you should be good to go on with the now
-populated ingredients table.
+`python manage.py import_csv rus <or eng or one after another>` & you should be good to go on with the now populated ingredients table.
 
 """
-
 import csv
 import sys
 
