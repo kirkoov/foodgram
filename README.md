@@ -244,7 +244,7 @@ save, close & run
 
 ## Credits
 - The frontend (React) is a fork from YandexPracticum's [repo](https://github.com/yandex-praktikum/foodgram-project-react)
-- [Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents)
 
 ## Licence
 MIT [https://choosealicense.com/](https://choosealicense.com/). [Back to TOC](#table-of-contents)
