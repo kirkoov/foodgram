@@ -1,92 +1,40 @@
 # Foodgram
-
-## Description
-A website for registered users to post their recipes, add others' as their favourites, subscribe to recipe authors & generate downloadable shopping lists (pdf) in line with the cooking instructions under the recipes they'd like to try.
-
-- This Django+Postgre+Docker+GitHubActions+yaml+TelegramBot for CI/CD project is based on YandexPracticum's template (inc. React) & serves for your favourite cats to be added & boasted of online
-- The motivation behind is better learn this backend dev stack & include it in my CV
-- Once modified locally & pushed to its GitHub repo, this project moves on along the yaml-based orchestration lines to Actions-rebuild the docker images accordingly & auto-redeploy the project to the live server; the associated Telegram bot will notify me about the deploy
-- If you're passionate about sharing your feline pet's pix online & seeing same from other cat people, please head for the [website](https://kittygramme.zapto.org/), sign up & on
-
-
-1. Сайт, где пользователи публикуют/редактируют/удаляют свои любимые рецепты, управляют своими любимыми рецептами и подписками на публикации других авторов. Зарегистрированным авторам доступен сервис «Список покупок»: для приготовления выбранных блюд создается и скачивается (в формате PDF) список нужных продуктов - суммарно по каждому, без дублирования. В ходе работы над проектом настроено взаимодействие Python-приложения с внешними API-сервисами, создан собственный API-сервис на базе проекта Django; подключено SPA (React) к бэкенду на Django через API; созданы образы и запущены контейнеры Docker; закреплены на практике основы DevOps, включая CI&CD.
-
-Инструменты и стек: #python #JSON #YAML #Django #React #Telegram #API #Docker #Nginx #PostgreSQL #Gunicorn #JWT #Postman
-
-
-
-
+Both a recipe website & a shopping list service for you to never forget what you need to buy for the fancy meal you're planning to cook.
 
 ## Table of contents
-
+- [Description](#description)
 - [Usage](#usage)
 - [Credits](#credits)
 - [Licence](#licence)
 - [How to contribute](#how-to-contribute)
 
+## Description
+Ever wanted to become a gourmet or a real meal maker? Try out others' recipes to both your and their satisfaction or otherwise? Or build on this to come up with a better-looking thingy? Well, [this website](https://foodgram.zapto.org/) may be your starting point. Sign up/in to post/edit/delete your recipes, add others' as your favourites, subscribe to authors & generate downloadable pdf lists in line with the recipes you'd like to try. The items to buy just sum up if duplicate, and go alphabetically.
+
+This project helped me a lot in further grasping the following:
+- How a Python/Django app should be set up to interact with third-party APIs;
+- How to create a custom API based on a Django project & as per its requirements;
+- The way a React SPA can be connected to my backend app to perform as one;
+- Docker image & container building & deploying locally & remotely;
+- DevOps fundamentals, including CI/CD;
+- Using [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) & Telegram bot notifications in one's routine for better performance.
+
+#### Tools & stack: Python Django DRF Json Yaml API Docker Nginx PostgreSQL Gunicorn Djoser JWT Postman Telegram
+[Back to TOC](#table-of-contents)
+
 ## Usage
-
-- Register with a username & a password, use them to log in right away
-- Upload your pet's pic under 3 Mb in size & see them there
-- Spread the word))
+- [Visit](https://foodgram.zapto.org/) & sign up/in with an email-password pair, log in
+- Otherwise get straight to [recipes](https://foodgram.zapto.org/recipes) anonymously
+- See the [demo video](https://disk.yandex.ru/i/oBSfTFd1FoFDlA)
 - [Back to TOC](#table-of-contents)
 
-## Credits
+## Installations
+### 1. Local non-Docker
+1. First item
+2. Second item
+3. Third item
+4. Fourth item
 
-- Fork from YandexPracticum's repo [here](https://github.com/yandex-praktikum/kittygram_final)
-- If interested, follow their [courses](https://practicum.yandex.ru/catalog/programming/?from=main_header-programming_button)
-- [Back to TOC](#table-of-contents)
-
-## Licence
-
-MIT [https://choosealicense.com/](https://choosealicense.com/). [Back to TOC](#table-of-contents)
-
-## Features
-
-Add a pic & some details on your pet & make it stand out; edit or delete if needed. Once logged in, you'll see all the registered users' cat pix on the main page. [Back to TOC](#table-of-contents)
-
-## How to contribute
-
-Don't hesitate to contact in case you'd like to contribute. We'd both be better off reading the [Contributor Covenant](https://www.contributor-covenant.org/) which is a standard to start with. [Back to TOC](#table-of-contents)
-
-
-
-
-
-<span style="color:black;">IP address</span>
-<span style="color:red;">goes here</span></br>
-<span style="color:black;">Admin login</span>
-<span style="color:red;">goeshere</span></br>
-<span style="color:black;">Admin pwd</span>
-<span style="color:red;">goeshere</span></br>
-
-###### Technology stack: React Python Django DRF PostgreSQL Poetry
-
-### Installations
-#### Local install
-
-- goes here
-
-#### Remote install
-
-- goes here
-
-
-#### .env.example
-```
-DEBUG
-ALLOWED_HOSTS
-SECRET_KEY
-POSTGRES_DB
-POSTGRES_USER
-POSTGRES_PASSWORD
-DB_NAME
-DB_HOST
-DB_PORT
-DOCKER_USERNAME
-```
-
-For a local non-Docker dev (db.sqlite3-based):
 
 Clone the project and create your virtual env.
 
@@ -124,6 +72,33 @@ If some testing is welcome, pls run e.g. 'poetry run pytest' from the backend fo
 test users: yule.neverknow@me.ir        2h5wJ;S%!w.SZDN
             jam.serious@awesome.org     JzvDvNvvc2+a)w4
             juicy.ham@gorgeous.org      U996vS#mHCV87B@
+[Back to TOC](#table-of-contents)
+
+### 2
+[Back to TOC](#table-of-contents)
+
+### 3
+[Back to TOC](#table-of-contents)
+
+### 4
+[Back to TOC](#table-of-contents)
+
+#### .env.example
+```
+DEBUG
+ALLOWED_HOSTS
+SECRET_KEY
+POSTGRES_DB
+POSTGRES_USER
+POSTGRES_PASSWORD
+DB_NAME
+DB_HOST
+DB_PORT
+DOCKER_USERNAME
+```
+[Back to TOC](#table-of-contents)
+
+
 
 
 
@@ -324,7 +299,17 @@ the same commands as from the Запуск проекта в контейнер�
 The docs are there too.
 
 
+## Credits
+- The frontend (React) is a fork from YandexPracticum's [repo](https://github.com/yandex-praktikum/foodgram-project-react)
+- [Back to TOC](#table-of-contents)
 
-#### Authors
-###### Frontend YandexPracticum
-###### Backend kirkoov
+## Licence
+MIT [https://choosealicense.com/](https://choosealicense.com/). [Back to TOC](#table-of-contents)
+
+## How to contribute
+Don't hesitate to contact in case you'd like to contribute. We'd both be better off reading the [Contributor Covenant](https://www.contributor-covenant.org/) which is a standard to start with. [Back to TOC](#table-of-contents)
+
+#### Authors: kirkoov (Django backend), YandexPracticum (React frontend)
+
+
+

@@ -2,8 +2,8 @@ name: Main Foodgram workflow
 
 on:
   push:
-    # branches:
-    #   - master
+    branches:
+      - main
 
 jobs:
   # frontend_tests:
@@ -185,4 +185,4 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Foodgram deployed OK
+        message: Foodgram been refreshed in builds & deployed OK to WebSpace.
