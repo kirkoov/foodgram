@@ -25,7 +25,7 @@ This project helped me a lot in further grasping the following:
 - DevOps fundamentals, including CI/CD;
 - Using [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) & Telegram bot notifications in one's routine for better performance.
 
-Tools & stack: Python Django DRF Json Yaml API Docker Nginx PostgreSQL Gunicorn Djoser JWT Postman Telegram
+Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #SublimeText #Flake8 #Ruff #Black #Mypy #DjDT #django-cleanup
 
 [Back to TOC](#table-of-contents)
 
