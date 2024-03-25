@@ -1,4 +1,4 @@
-asgiref==3.8.0 
+asgiref==3.8.1 
 certifi==2024.2.2 
 cffi==1.16.0 
 chardet==5.2.0 
@@ -19,7 +19,7 @@ django-templated-mail==1.1.1
 django==5.0.3 
 djangorestframework-simplejwt==5.3.1 
 djangorestframework-stubs==3.14.5 
-djangorestframework==3.15.0 
+djangorestframework==3.15.1 
 djoser==2.2.2 
 drf-extra-fields==3.7.0 
 exceptiongroup==1.2.0 
@@ -51,7 +51,7 @@ pyyaml==6.0.1
 regex==2023.12.25 
 reportlab-stubs==3.6.9.post0 
 reportlab==4.1.0 
-requests-oauthlib==1.4.0 
+requests-oauthlib==2.0.0 
 requests==2.31.0 
 rosetta==0.3 
 scipy==1.12.0 

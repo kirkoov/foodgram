@@ -137,13 +137,16 @@ AUTH_PASSWORD_VALIDATORS = [
         "SimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLength" "Validator",
+        "NAME": "django.contrib.auth.password_validation.MinimumLength"
+        "Validator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPassword" "Validator",
+        "NAME": "django.contrib.auth.password_validation.CommonPassword"
+        "Validator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPassword" "Validator",
+        "NAME": "django.contrib.auth.password_validation.NumericPassword"
+        "Validator",
     },
 ]
 
@@ -157,14 +160,17 @@ USE_TZ = True
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber" "Pagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
+    "Pagination",
     "PAGE_SIZE": 6,
 }
 
