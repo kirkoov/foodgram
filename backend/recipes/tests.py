@@ -2,15 +2,17 @@ import json
 import random
 
 import pytest
+from api.views import IngredientViewSet, TagViewSet
+from backend.constants import (
+    NUM_CHARS_INGREDIENT_NAME,
+    NUM_CHARS_MEALTIME_HEX,
+    NUM_CHARS_MEALTIME_NAME,
+    NUM_CHARS_MEALTIME_SLUG,
+    NUM_CHARS_MEASUREMENT_UNIT,
+)
 from django.db.utils import DataError, IntegrityError
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
-
-from api.views import IngredientViewSet, TagViewSet
-from backend.constants import (NUM_CHARS_INGREDIENT_NAME,
-                               NUM_CHARS_MEALTIME_HEX, NUM_CHARS_MEALTIME_NAME,
-                               NUM_CHARS_MEALTIME_SLUG,
-                               NUM_CHARS_MEASUREMENT_UNIT)
 
 from .models import Ingredient, Tag
 from .validators import validate_hex_color, validate_slug_field
@@ -83,9 +85,10 @@ class RecipeTests(TestCase):
             )
 
     def test_get_tagdetail_200_404(self):
-        response = self.view_tag_detail(
-            self.request_tag_detail, pk=len(self.test_tags) - 1
-        )
+        # In the test db, i.e. sqlite3, the tags start from 1
+        if (then := len(self.test_tags) - 1) == 0:
+            then = 1
+        response = self.view_tag_detail(self.request_tag_detail, pk=then)
         if response.status_code != 200:
             raise DataError("Recipes: no 200 status code for tag details.")
         response = self.view_tag_detail(
