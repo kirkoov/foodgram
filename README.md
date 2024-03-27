@@ -35,7 +35,7 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL 
 - See the [demo video](https://disk.yandex.ru/i/oBSfTFd1FoFDlA)
 - [Back to TOC](#table-of-contents)
 
-## Installations
+## Installations (... BEING EDITED ...)
 ### Local non-Docker
 Get into a folder of your choice, clone the project (https://github.com/kirkoov/foodgram.git), and create your virtual env.
 ##### 1. In the frontend folder's package.json's "proxy" change the ```"http://web:8000/"``` to ```"http://127.0.0.1:8000/"``` & do not forget to redo if necessary. Then in a Terminal, run & ignore warnings:
