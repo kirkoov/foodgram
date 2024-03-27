@@ -37,44 +37,47 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL 
 
 ## Installations (... BEING EDITED ...)
 ### Local non-Docker
-Get into a folder of your choice, clone the project (https://github.com/kirkoov/foodgram.git), and create your virtual env (e.g. with ```poetry```). Best to tweak to your needs and language (```rosetta``` comes pre-included, but should be re-installed to work properly; if you care about English only, then uninstall).
-##### 1. In the frontend folder's package.json's "proxy" change the ```"http://web:8000/"``` to ```"http://127.0.0.1:8000/"``` & do not forget to redo this change if necessary. Then in a Terminal, run & ignore warnings:
+```cd``` into a folder of your choice, clone the project (https://github.com/kirkoov/foodgram.git), and create your virtual env, venv, (e.g. with ```poetry```). This installation method is best to tweak to your needs and language (```rosetta``` comes pre-included, but should be re-installed in your venv to work properly; if you care about English only, then uninstall ```rosetta```).
+##### 1. In the same Terminal, ```cd backend``` or elsewhere with the requirements.txt & run ```poetry add $( cat requirements.txt )```. Take the above note about ```rosetta``` seriously or just remove its lines from the requirements.txt.
+
+##### 2. If you need both the frontend and backend running locally, in the frontend folder package.json's "proxy" change the ```"http://web:8000/"``` to ```"http://127.0.0.1:8000/"``` & do not forget to redo this change later if necessary. Then in a Terminal, run & ignore warnings:
 - ```npm install```
 - ```npm run build```
 - ```npm start```
 
-##### 2. In the project folder, create your .env file, e.g.:
+##### 3. In the project folder, where the ```.env.example``` file is, create your own .env file, e.g.:
 ```
 DEBUG=True
-ALLOWED_HOSTS="127.0.0.1 0.0.0.0 localhost"
-SECRET_KEY=
+ALLOWED_HOSTS="127.0.0.1 0.0.0.0 localhost foodgram.zapto.org"
+SECRET_KEY='django-insecure-tzt1(#hb_0%wb!!12@1$h#-4a36=)d4=(a3cyt%+hgf$x7o$hc'
 POSTGRES_DB=foodgram_postgre
 POSTGRES_USER=foodgram_user
 POSTGRES_PASSWORD=
 DB_HOST=db
 DB_PORT=5432
 ```
-- make sure the settings.py has ```DEBUG=True```
-- ensure that your virtual env has all the required packages, e.g.: ```poetry add $( cat requirements.txt )```
-- ```python manage.py makemigrations```
+- make sure the settings.py has ```DEBUG=True``` too (it's a dev app after all)
+- then run:
+- ```python manage.py makemigrations``` (usually unnecesary with a ready sqlite3)
 - ```python manage.py migrate```
-- with the DEBUG=True, all the test data will be available from the db.sqlite3
+- kindly, ```python manage.py createsuperuser``` yourself
+- for tests (these are added regularly to improve coverage), pls run e.g. ```poetry run pytest``` from the backend folder containing the pytest.ini
+- finally do the ```python manage.py runserver```
 
-<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts images <= 1Mb. The live server will be instructed accordingly when the project Dockers there.
+<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts images<=1Mb. In a live server case, the nginx container will instruct its Docker cousins accordingly when they are deployed there.
 
-##### 3. Back in the browser reload the page http://localhost:3000
+##### 4. Skip if para. 2 doesn't apply. Back in the browser reload the page http://localhost:3000 for the recipes to appear.
 
-##### 4. Admin page: http://localhost:8000/admin/
-- Kindly, ```createsuperuser``` yourself.
-- For some testing, pls run e.g. ```poetry run pytest``` from the backend folder containing the pytest.ini
+##### 5. Admin page: http://localhost:8000/admin/
 
-##### 5. The admin/frontend language can be swapped for Russian before the runserver. See the local Docker deploy instructions below for details.
 
-##### 6. For language translation control, visit http://localhost:8000/rosetta/
+##### 6. The admin/frontend language can be swapped for Russian before the runserver command. See the local Docker deploy instructions below for details.
 
-##### 7. Run ```python manage.py runserver``` and refresh the http://localhost:3000 if necessary
+##### 7. For language translation control, visit http://localhost:8000/rosetta/
 
-##### 8. Navigate, do/undo favourites/subscriptions, try the pdf shopping list download
+##### 8. Run ```python manage.py runserver``` and refresh the http://localhost:3000 if necessary
+
+##### 9. Navigate, do/undo favourites/subscriptions, try the pdf shopping list download
 [Back to TOC](#table-of-contents)
 
 ### Local Docker
@@ -102,7 +105,7 @@ image: nginx:1.19.3
   - unzip/replace the frontend public & src folders (see the zip files)
   - if you want the ingredients in Eng too, see more details below, just bear in mind that all of them can be changed in the backend root folder's csv-files (with their bak cousins saved in the data folder)
 
-##### 4. In the frontend folder's package.json, make sure the "proxy" field  at the file bottom has the value of ```"http://web:8000/"```.
+##### 4. In the frontend folder's package.json, make sure the "proxy" field at the file bottom has the value of ```"http://web:8000/"```.
 
 ##### 5. Back in the Terminal, cd to the infra folder containing the docker-compose.yaml, run & wait for the commands to finish & start the containers:
 ```sudo docker compose up```
