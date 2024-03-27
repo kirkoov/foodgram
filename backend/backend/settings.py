@@ -97,6 +97,17 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 MEDIA_URL = "/media/"
 
+# # Temp solution for tests
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": "db.sqlite3",
+#     }
+# }
+# MEDIA_ROOT = BASE_DIR / "media"
+# STATIC_URL = "static/"
+# STATIC_ROOT = BASE_DIR / "collected_static"
+
 if DEBUG:
     # Local dev case
     DATABASES = {
