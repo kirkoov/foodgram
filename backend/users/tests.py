@@ -54,25 +54,30 @@ class UserTests(TestCase):
         if response.status_code != 200:
             raise DataError("Users: no 200 status code for users.")
 
-    # def test_list_clients_limited(self):
-    #     limit = 1
-    #     request = self.factory.get(
-    #         f"http://127.0.0.1:8000/api/users/?limit={limit}"
-    #     )
-    #     response = self.view(request)
-    #     data = response.__dict__.get("data")
-    #     if data is not None:
-    #         self.assertEqual(data["count"], len(self.test_users))
-    #         self.assertEqual(len(data["results"]), limit)
-    #     else:
-    #         raise DataError("No data in the test_list_clients_limited().")
+    def test_list_users_limited(self):
+        limit = len(self.test_users) - 1
+        url_here = f"http://testserver/api/users/?limit={limit}"
+        request_limited = self.factory.get(url_here)
+        response = UsersViewSet.as_view({"get": "list"})(request_limited)
+        data = response.__dict__.get("data")
+        if data is not None:
+            self.assertEqual(data["count"], len(self.test_users))
+            if limit == 0:
+                self.assertIsNone(data["next"])
+            else:
+                self.assertEqual(data["next"], f"{url_here}&page=2")
+            self.assertEqual(len(data["results"]), limit)
+        else:
+            raise DataError("Users: no data in the test_list_users_limited().")
+
+    # "next": "http://127.0.0.1:8000/api/users/?limit=3&page=2",
 
     # def test_list_client_detail(self):
     #     id_ = 2
-    #     request_detail = self.factory.get(
-    #         f"http://127.0.0.1:8000/api/users/{id_}/"
-    #     )
-    #     response = self.view_detail(request_detail, id=id_)
+    # request_detail = self.factory.get(
+    #     f"http://127.0.0.1:8000/api/users/{id_}/"
+    # )
+    # response = self.view_detail(request_detail, id=id_)
     #     if response.render():
     #         self.assertEqual(
     #             json.loads(response.content),
