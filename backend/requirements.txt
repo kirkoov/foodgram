@@ -64,6 +64,7 @@ tqdm==4.66.2
 types-psycopg2==2.9.21.20240311 
 types-pytz==2024.1.0.20240203 
 types-pyyaml==6.0.12.20240311 
+types-regex==2023.12.25.20240311
 types-requests==2.31.0.20240311 
 typing-extensions==4.10.0 
 tzdata==2024.1 
