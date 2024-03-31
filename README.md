@@ -1,5 +1,5 @@
 # Foodgram
-Both a recipe website & a shopping list service for you to never forget what you need to buy for the fancy meal you're planning to cook.
+Both a recipe website & a shopping list service for you to never forget what you need to buy to cook that fancy meal you've heard or seen.
 
 ## Table of contents
 - [Description](#description)
@@ -15,7 +15,7 @@ Both a recipe website & a shopping list service for you to never forget what you
 - [How to contribute](#how-to-contribute)
 
 ## Description
-Ever wanted to become a gourmet or a real meal maker? Try out others' recipes to both your and their satisfaction or otherwise? Or build on this to come up with a better-looking thingy? Well, [this website](https://foodgram.zapto.org/) may be your starting point. Sign up/in to post/edit/delete your recipes, add others' as your favourites, subscribe to authors & generate downloadable pdf lists in line with the recipes you'd like to try. The items to buy just sum up if duplicate, and go alphabetically. [Admin zone](https://foodgram.zapto.org/admin/), [docs in Russian](https://foodgram.zapto.org/api/docs/). 
+Ever wanted to become a gourmet or a real meal maker? Try out others' recipes to both your and their satisfaction or otherwise? Or build on this to come up with a better-looking thingy? Well, [this website](https://foodgram.zapto.org/) may be your starting point. Sign up/in to post/edit/delete your recipes, add others' as your favourites or subscriptions & generate downloadable pdf shoppingn lists in line with the recipes you'd like to try. The shop items just sum up if duplicate, and go alphabetically. [Admin zone](https://foodgram.zapto.org/admin/), [the docs are in Russian](https://foodgram.zapto.org/api/docs/). 
 
 This project helped me a lot in further grasping the following:
 - How a Python/Django app should be set up to interact with third-party APIs;
