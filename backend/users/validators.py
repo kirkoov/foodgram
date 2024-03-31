@@ -1,7 +1,8 @@
 import regex as re
-from backend.constants import USERNAME_FIELD_REQ
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+
+from backend.constants import USERNAME_FIELD_REQ
 
 
 def is_email_valid(value):

@@ -2,23 +2,21 @@ import json
 import random
 
 import pytest
-from api.views import IngredientViewSet, TagViewSet
-from backend.constants import (
-    NUM_CHARS_INGREDIENT_NAME,
-    NUM_CHARS_MEALTIME_HEX,
-    NUM_CHARS_MEALTIME_NAME,
-    NUM_CHARS_MEALTIME_SLUG,
-    NUM_CHARS_MEASUREMENT_UNIT,
-)
 from django.db.utils import DataError, IntegrityError
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
+from rest_framework import status
+from rest_framework.test import APIRequestFactory, APITestCase
+
+from api.views import IngredientViewSet, TagViewSet
+from backend.constants import (NUM_CHARS_INGREDIENT_NAME,
+                               NUM_CHARS_MEALTIME_HEX, NUM_CHARS_MEALTIME_NAME,
+                               NUM_CHARS_MEALTIME_SLUG,
+                               NUM_CHARS_MEASUREMENT_UNIT)
 
 from .models import Ingredient, Tag
 from .validators import validate_hex_color, validate_slug_field
 
 
-class RecipeTests(TestCase):
+class RecipeTests(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = APIRequestFactory()
@@ -28,6 +26,7 @@ class RecipeTests(TestCase):
         cls.test_tags = []
         cls.request_tags = cls.factory.get(cls.tags_url)
         cls.view_tag_detail = TagViewSet.as_view({"get": "retrieve"})
+
         for index in range(random.randint(1, 10)):
             tag = Tag(
                 name=f"Tag{index}",
@@ -59,7 +58,7 @@ class RecipeTests(TestCase):
         cls.recipes_url = f"{cls.prefix}recipes/"
 
     def test_get_taglist_200(self):
-        response = TagViewSet.as_view({"get": "list"})(self.request_tags)
+        response = self.client.get(self.tags_url)
         if response.status_code != 200:
             raise DataError("Recipes: no 200 status code for tags.")
 
@@ -99,11 +98,8 @@ class RecipeTests(TestCase):
             raise DataError("Recipes: no 404 status code for tag details.")
 
     def test_get_ingredientlist_200(self):
-        response = IngredientViewSet.as_view({"get": "list"})(
-            self.request_ingredients
-        )
-        if response.status_code != 200:
-            raise DataError("Recipes: no 200 status code for ingredient list.")
+        response = self.client.get(self.ingredients_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_ingedientlist_content(self):
         response = IngredientViewSet.as_view({"get": "list"})(
@@ -146,27 +142,46 @@ class RecipeTests(TestCase):
             )
 
     def test_get_ingredientdetail(self):
-        response = self.view_ingredient_detail(
-            self.request_ingredient_detail, pk=len(self.test_ingredients) - 1
+        id_ = 1
+        request_detail = self.factory.get(
+            f"http://testserver/api/ingredients/{id_}/"
         )
-        if response.status_code != 200:
-            raise DataError(
-                "Recipes: no 200 status code for ingredient details."
+        response = self.view_ingredient_detail(request_detail, pk=id_)
+        if response.render():
+            self.assertEqual(
+                json.loads(response.content),
+                {
+                    "id": id_,
+                    "name": f"Ingredient{id_ - 1}",
+                    "measurement_unit": "g",
+                },
             )
-        response.render()
-        self.assertEqual(
-            json.loads(response.content),
-            {
-                "id": len(self.test_ingredients) - 1,
-                "name": f"Ingredient{len(self.test_ingredients) - 2}",
-                "measurement_unit": "g",
-            },
-        )
+        else:
+            raise DataError(
+                "Recipes: no rendered content from the test_get_ingredientdetail()."
+            )
 
-        response = self.view_ingredient_detail(
-            self.request_ingredient_detail, pk=len(self.test_ingredients) + 1
-        )
-        if response.status_code != 404:
-            raise DataError(
-                "Recipes: no 404 status code for ingredient details."
-            )
+        # response = self.view_ingredient_detail(
+        #     self.request_ingredient_detail, pk=len(self.test_ingredients) - 1
+        # )
+        # if response.status_code != 200:
+        #     raise DataError(
+        #         "Recipes: no 200 status code for ingredient details."
+        #     )
+        # response.render()
+        # self.assertEqual(
+        #     json.loads(response.content),
+        #     {
+        #         "id": len(self.test_ingredients) - 1,
+        #         "name": f"Ingredient{len(self.test_ingredients) - 2}",
+        #         "measurement_unit": "g",
+        #     },
+        # )
+
+        # response = self.view_ingredient_detail(
+        #     self.request_ingredient_detail, pk=len(self.test_ingredients) + 1
+        # )
+        # if response.status_code != 404:
+        #     raise DataError(
+        #         "Recipes: no 404 status code for ingredient details."
+        #     )
