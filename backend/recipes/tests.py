@@ -69,16 +69,17 @@ class RecipeTests(TestCase):
         if data is not None:
             tmp_slugs = []
             for new, test in zip(data, self.test_tags):
-                assert new["name"] == test.name
-                assert len(new["name"]) <= NUM_CHARS_MEALTIME_NAME
-                assert new["color"] == test.color
-                assert len(new["color"]) <= NUM_CHARS_MEALTIME_HEX
-                assert validate_hex_color(new["color"]) is None
-                assert new["slug"] == test.slug
-                assert len(new["slug"]) <= NUM_CHARS_MEALTIME_SLUG
-                assert validate_slug_field(new["slug"]) is None
+                self.assertEqual(new["name"], test.name)
+                self.assertTrue(len(new["name"]) <= NUM_CHARS_MEALTIME_NAME)
+                self.assertEqual(new["color"], test.color)
+                self.assertTrue(len(new["color"]) <= NUM_CHARS_MEALTIME_HEX)
+                self.assertIsNone(validate_hex_color(new["color"]))
+                self.assertEqual(new["slug"], test.slug)
+                self.assertTrue(len(new["slug"]) <= NUM_CHARS_MEALTIME_SLUG)
+                self.assertIsNone(validate_slug_field(new["slug"]))
                 tmp_slugs.append(new["slug"])
-            assert len(tmp_slugs) == len(set(tmp_slugs))
+            # The slugs must be unique
+            self.assertEqual(len(tmp_slugs), len(set(tmp_slugs)))
         else:
             raise DataError(
                 "Recipes: errors in the test_get_taglist_content()."
@@ -112,10 +113,12 @@ class RecipeTests(TestCase):
         if data is not None:
             data_sorted = sorted(data, key=lambda d: d["id"])
             for new, test in zip(data_sorted, self.test_ingredients):
-                assert new["name"] == test.name
-                assert len(new["name"]) <= NUM_CHARS_INGREDIENT_NAME
-                assert new["measurement_unit"] == test.measurement_unit
-                assert (
+                self.assertEqual(new["name"], test.name)
+                self.assertTrue(len(new["name"]) <= NUM_CHARS_INGREDIENT_NAME)
+                self.assertEqual(
+                    new["measurement_unit"], test.measurement_unit
+                )
+                self.assertTrue(
                     len(new["measurement_unit"]) <= NUM_CHARS_MEASUREMENT_UNIT
                 )
         else:

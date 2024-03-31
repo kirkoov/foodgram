@@ -2,10 +2,18 @@ import json
 import random
 
 from api.views import UsersViewSet
+from backend.constants import (
+    NUM_CHARS_EMAIL,
+    NUM_CHARS_FIRSTNAME,
+    NUM_CHARS_LASTNAME,
+    NUM_CHARS_USERNAME,
+)
 from django.contrib.auth import get_user_model
 from django.db.utils import DataError
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory
+
+from .validators import is_email_valid  # , validate_username_field
 
 User = get_user_model()
 
@@ -24,10 +32,10 @@ class UserTests(TestCase):
         for index in range(random.randint(1, 11)):
             user = User(
                 username=f"test_uza{index}",
-                first_name="First",
-                last_name="Last",
+                first_name="First{index}",
+                last_name="Last{index}",
                 email=f"normal@user{index}.com",
-                password="foo~Bar",
+                password="foo{index}Bar",
             )
             cls.test_users.append(user)
         User.objects.bulk_create(cls.test_users)
@@ -39,6 +47,8 @@ class UserTests(TestCase):
             password="bar~Foo",
         )
         cls.test_users.append(cls.admin_user)
+        # The user model has it that their orderting is by the emails
+        cls.test_users = sorted(cls.test_users, key=lambda k: k.email)
 
     def test_create_superuser(self):
         self.assertEqual(self.admin_user.username, "test_admin_uza")
@@ -61,16 +71,39 @@ class UserTests(TestCase):
         response = UsersViewSet.as_view({"get": "list"})(request_limited)
         data = response.__dict__.get("data")
         if data is not None:
+            tmp_usernames = []
             self.assertEqual(data["count"], len(self.test_users))
             if limit == 0:
                 self.assertIsNone(data["next"])
             else:
                 self.assertEqual(data["next"], f"{url_here}&page=2")
+            self.assertIsNone(data["previous"])
+            for new, test in zip(data["results"], self.test_users):
+                self.assertEqual(new["email"], test.email)
+                self.assertTrue(len(new["email"]) <= NUM_CHARS_EMAIL)
+                self.assertIsNone(is_email_valid(new["email"]))
+
+                self.assertEqual(new["username"], test.username)
+                self.assertTrue(len(new["username"]) <= NUM_CHARS_USERNAME)
+                # assert validate_username_field(new["username"]) is None
+                # A BUG must be here:
+                # https://github.com/datamllab/tods/issues/58
+
+                self.assertEqual(new["first_name"], test.first_name)
+                self.assertTrue(len(new["first_name"]) <= NUM_CHARS_FIRSTNAME)
+
+                self.assertEqual(new["last_name"], test.last_name)
+                self.assertTrue(len(new["last_name"]) <= NUM_CHARS_LASTNAME)
+
+                self.assertTrue(
+                    new["is_subscribed"] is False
+                )  # By default it's False
+                tmp_usernames.append(new["username"])
+            # The usernames must be unique
+            self.assertEqual(len(tmp_usernames), len(set(tmp_usernames)))
             self.assertEqual(len(data["results"]), limit)
         else:
             raise DataError("Users: no data in the test_list_users_limited().")
-
-    # "next": "http://127.0.0.1:8000/api/users/?limit=3&page=2",
 
     # def test_list_client_detail(self):
     #     id_ = 2
