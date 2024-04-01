@@ -18,6 +18,18 @@ DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localHHost").split()
 
 
+if DEBUG:
+    # For DjDT
+    import mimetypes
+
+    mimetypes.add_type("application/javascript", ".js", True)
+    INTERNAL_IPS = ["127.0.0.1"]
+
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+    }
+
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -34,6 +46,7 @@ INSTALLED_APPS = [
     "recipes.apps.RecipesConfig",
     "api.apps.ApiConfig",
     "rosetta",
+    "debug_toolbar",
     "django_cleanup.apps.CleanupConfig",
 ]
 
@@ -47,6 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -95,19 +109,6 @@ MEDIA_URL = "/media/"
 # STATIC_ROOT = BASE_DIR / "collected_static"
 
 if DEBUG:
-    # For DjDT
-    import mimetypes
-
-    mimetypes.add_type("application/javascript", ".js", True)
-
-    MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
-    INSTALLED_APPS += ("debug_toolbar",)
-    INTERNAL_IPS = ("127.0.0.1",)
-    DEBUG_TOOLBAR_CONFIG = {
-        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
-        "INTERCEPT_REDIRECTS": False,
-    }
-
     # Local dev case
     DATABASES = {
         "default": {
