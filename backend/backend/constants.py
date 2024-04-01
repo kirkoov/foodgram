@@ -13,7 +13,7 @@ NUM_CHARS_MEALTIME_NAME = (
 
 HEX_FIELD_REQ = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
 SLUG_FIELD_REQ = "^[-a-zA-Z0-9_]+$"
-USERNAME_FIELD_REQ = "^[\w.@+-]+\z"  # noqa: W605
+USERNAME_FIELD_REQ = r"^[\w.@+-]+\z$"
 
 MIN_COOKING_TIME_MINS = 1
 MAX_COOKING_TIME_MINS = 525960  # = 365.25 days in min (e.g., for a cheese)

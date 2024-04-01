@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     "recipes.apps.RecipesConfig",
     "api.apps.ApiConfig",
     "rosetta",
-    "debug_toolbar",
     "django_cleanup.apps.CleanupConfig",
 ]
 
@@ -48,7 +47,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -101,11 +99,15 @@ if DEBUG:
     import mimetypes
 
     mimetypes.add_type("application/javascript", ".js", True)
-    INTERNAL_IPS = ["127.0.0.1"]
 
+    MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
+    INSTALLED_APPS += ("debug_toolbar",)
+    INTERNAL_IPS = ("127.0.0.1",)
     DEBUG_TOOLBAR_CONFIG = {
         "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+        "INTERCEPT_REDIRECTS": False,
     }
+
     # Local dev case
     DATABASES = {
         "default": {
