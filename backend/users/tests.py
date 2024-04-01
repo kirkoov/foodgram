@@ -1,17 +1,14 @@
 import json
 import random
 
-from api.views import UsersViewSet
-from backend.constants import (
-    NUM_CHARS_EMAIL,
-    NUM_CHARS_FIRSTNAME,
-    NUM_CHARS_LASTNAME,
-    NUM_CHARS_USERNAME,
-)
 from django.contrib.auth import get_user_model
 from django.db.utils import DataError
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, APITestCase
+
+from api.views import UsersViewSet
+from backend.constants import (NUM_CHARS_EMAIL, NUM_CHARS_FIRSTNAME,
+                               NUM_CHARS_LASTNAME, NUM_CHARS_USERNAME)
 
 from .validators import is_email_valid  # , validate_username_field
 
@@ -94,9 +91,7 @@ class UserTests(APITestCase):
                 self.assertEqual(new["last_name"], test.last_name)
                 self.assertTrue(len(new["last_name"]) <= NUM_CHARS_LASTNAME)
 
-                self.assertTrue(
-                    new["is_subscribed"] is False
-                )  # By default it's False
+                self.assertTrue(new["is_subscribed"] is False)  # By default it's False
                 tmp_usernames.append(new["username"])
             # The usernames must be unique
             self.assertEqual(len(tmp_usernames), len(set(tmp_usernames)))
@@ -106,9 +101,7 @@ class UserTests(APITestCase):
 
     def test_get_user_detail(self):
         id_ = 1
-        request_detail = self.factory.get(
-            f"http://testserver/api/users/{id_}/"
-        )
+        request_detail = self.factory.get(f"http://testserver/api/users/{id_}/")
         response = self.view_user_detail(request_detail, id=id_)
         if response.render():
             self.assertEqual(
@@ -123,9 +116,7 @@ class UserTests(APITestCase):
                 },
             )
         else:
-            raise DataError(
-                "No rendered content from the test_list_client_detail()."
-            )
+            raise DataError("No rendered content from the test_list_client_detail().")
 
     def test_get_userdetail_status404(self):
         # To make sure none as such exists, the multiplication is there

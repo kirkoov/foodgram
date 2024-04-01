@@ -37,7 +37,7 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL 
 
 ## Installations (... BEING EDITED ...)
 ### Local non-Docker
-```cd``` into a folder of your choice, clone the project (https://github.com/kirkoov/foodgram.git), and create your virtual env, venv (hereinafter e.g. with ```poetry```). This installation method is best to tweak to your needs and language (```rosetta``` comes included, but for some reasons should be re-installed in your venv to work properly; if you care about English only in your admin zone, then you may want to never install ```rosetta``` at all).
+```cd``` into a folder of your choice, clone the project from https://github.com/kirkoov/foodgram.git, and create your virtual env, (venv hereinafter, e.g. with ```poetry```). This installation method is best to tweak to your needs and language (```rosetta``` comes included, but for some reasons should be re-installed in your venv to work properly; if you care about English only in your admin zone, then you may want to never install ```rosetta``` at all).
 ##### 1. In the same Terminal, ```cd backend``` or elsewhere with the requirements.txt & run ```poetry add $( cat requirements.txt )```. Take the above note about ```rosetta``` seriously or just remove its lines from the requirements.txt.
 
 ##### 2. If you need both the frontend and backend running locally, in the frontend folder package.json's "proxy" change the ```"http://web:8000/"``` to ```"http://127.0.0.1:8000/"``` & do not forget to redo this change later if necessary. Then in a Terminal, run & ignore warnings:
@@ -56,9 +56,9 @@ POSTGRES_PASSWORD=
 DB_HOST=db
 DB_PORT=5432
 ```
-- make sure the settings.py has ```DEBUG=True``` too (it's a dev app after all)
+- make sure the settings.py has ```DEBUG=True``` too (it's for dev after all)
 - then run:
-- ```python manage.py makemigrations``` (usually unnecesary with a ready sqlite3)
+- ```python manage.py makemigrations``` (usually unnecessary with an sqlite3)
 - ```python manage.py migrate```
 - kindly, ```python manage.py createsuperuser``` yourself
 - for tests (these are added regularly to improve coverage), pls run e.g. ```poetry run pytest``` from the backend folder containing the pytest.ini
@@ -69,7 +69,6 @@ DB_PORT=5432
 ##### 4. Skip if para. 2 doesn't apply. Back in the browser reload the page http://localhost:3000 for the recipes to appear.
 
 ##### 5. Admin page: http://localhost:8000/admin/
-
 
 ##### 6. The admin/frontend language can be swapped for Russian before the runserver command. See the local Docker deploy instructions below for details.
 
@@ -84,7 +83,7 @@ DB_PORT=5432
 This project been tested on Ubuntu 22, with Docker 25.0.4 & docker compose v2.24.7.
 ##### 1. Make sure your system's port 80 is not busy (by default the project uses this port, which can be changed though) and run in a Terminal:
 
-```mkdir foodgram && cd foodgram && git clone git@github.com:kirkoov/foodgram-project-react.git```
+```mkdir foodgram && cd foodgram && git clone``` (see [above(#local-non-Docker))
 
 ```cd foodgram-project-react && nano .env``` like you may have done following the previous installation's steps (see the .env details there).
 
@@ -164,7 +163,7 @@ And for the language changes to take effect, ```Ctrl+c``` in the other Terminal 
 This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
 ##### 1. Make sure your system's port 80 is not busy (see the prev install's intro) & ssh to your live server. If needed, check that port 8090 there is free (```ss -ltn```), since it's the project's backend default.
 
-##### 2. Git-clone the project, ```cd foodgram-project-react``` and create your .env file there (see the example above).
+##### 2. Git-clone the project (see [above(#local-non-Docker)), ```cd foodgram-project-react``` and create your .env file there (see the example there too).
 
 ##### 3. ```cd infra``` & in the docker-compose.yaml change the ports for a live server like so:
 ```
@@ -189,7 +188,7 @@ This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker
 
 ### Local containers, Docker image-based
 This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
-##### 1. Git-clone the repo, tweak the backend/front end folders if needed, build your images locally or use mine, then cd to the infra folder & run:
+##### 1. Git-clone the repo (see [above(#local-non-Docker)), tweak the backend/front end folders if needed, build your images locally or use mine, then cd to the infra folder & run:
 ```sudo docker compose -f docker-compose.production.yaml up``` (please check the names of the containers & ports)
 
 ##### 2. In another Terminal, do the same as in the previous install instructions, but skip the git-cloning; and remember that the ```sudo docker compose``` commands must be used with the ```-f docker-compose.production.yaml``` rather. And remember the case when you nee your frontend in the other language (this requires a separate image pre-build on your own after unzipping the frontend archive).

@@ -5,6 +5,7 @@ When in the folder containing the manage.py, run in your virtual env
 `python manage.py import_csv rus <or eng or one after another>` & you should be good to go on with the now populated ingredients table.
 
 """
+
 import csv
 import sys
 

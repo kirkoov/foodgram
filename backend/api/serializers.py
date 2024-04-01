@@ -28,8 +28,7 @@ class UsersSerializer(UserSerializer):
         if request is None or request.user.is_anonymous:
             return False
         return (
-            request.user.is_authenticated
-            and request.user.is_subscriber.all().exists()
+            request.user.is_authenticated and request.user.is_subscriber.all().exists()
         )
 
 
@@ -50,9 +49,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
     id = serializers.ReadOnlyField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
-    measurement_unit = serializers.ReadOnlyField(
-        source="ingredient.measurement_unit"
-    )
+    measurement_unit = serializers.ReadOnlyField(source="ingredient.measurement_unit")
 
     class Meta:
         model = RecipeIngredient
@@ -112,9 +109,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if request is None or request.user.is_anonymous:
             return False
-        return ShoppingCart.objects.filter(
-            recipe=obj, user=self.request.user
-        ).exists()
+        return ShoppingCart.objects.filter(recipe=obj, user=self.request.user).exists()
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -180,9 +175,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         return (
             request.user.is_authenticated
-            and Favorite.objects.filter(
-                user=request.user, recipe=obj.pk
-            ).exists()
+            and Favorite.objects.filter(user=request.user, recipe=obj.pk).exists()
         )
 
 
@@ -197,9 +190,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         request = self.context["request"]
         return (
             request.user.is_authenticated
-            and ShoppingCart.objects.filter(
-                user=request.user, recipe=obj.pk
-            ).exists()
+            and ShoppingCart.objects.filter(user=request.user, recipe=obj.pk).exists()
         )
 
 
@@ -256,9 +247,7 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
                 detail=_("Wrong user or author details."),
                 code=status.HTTP_400_BAD_REQUEST,
             )
-        if Subscription.objects.filter(
-            author=author_id, user=user_id
-        ).exists():
+        if Subscription.objects.filter(author=author_id, user=user_id).exists():
             raise serializers.ValidationError(
                 detail=_("This subscription exists already."),
                 code=status.HTTP_400_BAD_REQUEST,

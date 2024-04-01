@@ -17,19 +17,6 @@ SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localHHost").split()
 
-
-if DEBUG:
-    # For DjDT
-    import mimetypes
-
-    mimetypes.add_type("application/javascript", ".js", True)
-    INTERNAL_IPS = ["127.0.0.1"]
-
-    DEBUG_TOOLBAR_CONFIG = {
-        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
-    }
-
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -46,7 +33,6 @@ INSTALLED_APPS = [
     "recipes.apps.RecipesConfig",
     "api.apps.ApiConfig",
     "rosetta",
-    "debug_toolbar",
     "django_cleanup.apps.CleanupConfig",
 ]
 
@@ -60,8 +46,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -109,6 +95,18 @@ MEDIA_URL = "/media/"
 # STATIC_ROOT = BASE_DIR / "collected_static"
 
 if DEBUG:
+    # For DjDT
+    import mimetypes
+
+    mimetypes.add_type("application/javascript", ".js", True)
+    INTERNAL_IPS = ["127.0.0.1"]
+
+    MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
+    INSTALLED_APPS += ("debug_toolbar",)
+    DEBUG_TOOLBAR_CONFIG = {
+        "INTERCEPT_REDIRECTS": False,
+        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+    }
     # Local dev case
     DATABASES = {
         "default": {
@@ -148,16 +146,13 @@ AUTH_PASSWORD_VALIDATORS = [
         "SimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLength"
-        "Validator",
+        "NAME": "django.contrib.auth.password_validation.MinimumLength" "Validator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPassword"
-        "Validator",
+        "NAME": "django.contrib.auth.password_validation.CommonPassword" "Validator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPassword"
-        "Validator",
+        "NAME": "django.contrib.auth.password_validation.NumericPassword" "Validator",
     },
 ]
 
@@ -171,17 +166,14 @@ USE_TZ = True
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
-    "DEFAULT_FILTER_BACKENDS": (
-        "django_filters.rest_framework.DjangoFilterBackend",
-    ),
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
-    "Pagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber" "Pagination",
     "PAGE_SIZE": 6,
 }
 

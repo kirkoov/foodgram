@@ -42,6 +42,7 @@ class RecipeViewSet(ModelViewSet):
 
     def get_queryset(self):
         """Use the prefetch_related() to rid of duplicate requests."""
+        print("HELLO")
         queryset = Recipe.objects.prefetch_related(
             "author",
             "tags",

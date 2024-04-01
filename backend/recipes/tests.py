@@ -40,9 +40,7 @@ class RecipeTests(APITestCase):
         cls.ingredients_url = f"{cls.prefix}ingredients/"
         cls.test_ingredients = []
         cls.request_ingredients = cls.factory.get(cls.ingredients_url)
-        cls.view_ingredient_detail = IngredientViewSet.as_view(
-            {"get": "retrieve"}
-        )
+        cls.view_ingredient_detail = IngredientViewSet.as_view({"get": "retrieve"})
         cls.test_ingredient_name = "Ingredient"
         for index in range(random.randint(1, 100)):
             ingredient = Ingredient(
@@ -51,9 +49,7 @@ class RecipeTests(APITestCase):
             )
             cls.test_ingredients.append(ingredient)
         Ingredient.objects.bulk_create(cls.test_ingredients)
-        cls.request_ingredient_detail = cls.factory.get(
-            f"{cls.ingredients_url}/"
-        )
+        cls.request_ingredient_detail = cls.factory.get(f"{cls.ingredients_url}/")
 
         cls.recipes_url = f"{cls.prefix}recipes/"
 
@@ -80,9 +76,7 @@ class RecipeTests(APITestCase):
             # The slugs must be unique
             self.assertEqual(len(tmp_slugs), len(set(tmp_slugs)))
         else:
-            raise DataError(
-                "Recipes: errors in the test_get_taglist_content()."
-            )
+            raise DataError("Recipes: errors in the test_get_taglist_content().")
 
     def test_get_tagdetail_200_404(self):
         # In the test db, i.e. sqlite3, the tags start from 1
@@ -102,25 +96,19 @@ class RecipeTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_ingedientlist_content(self):
-        response = IngredientViewSet.as_view({"get": "list"})(
-            self.request_ingredients
-        )
+        response = IngredientViewSet.as_view({"get": "list"})(self.request_ingredients)
         data = response.__dict__.get("data")
         if data is not None:
             data_sorted = sorted(data, key=lambda d: d["id"])
             for new, test in zip(data_sorted, self.test_ingredients):
                 self.assertEqual(new["name"], test.name)
                 self.assertTrue(len(new["name"]) <= NUM_CHARS_INGREDIENT_NAME)
-                self.assertEqual(
-                    new["measurement_unit"], test.measurement_unit
-                )
+                self.assertEqual(new["measurement_unit"], test.measurement_unit)
                 self.assertTrue(
                     len(new["measurement_unit"]) <= NUM_CHARS_MEASUREMENT_UNIT
                 )
         else:
-            raise DataError(
-                "Recipes: errors in the test_get_ingedientlist_content()."
-            )
+            raise DataError("Recipes: errors in the test_get_ingedientlist_content().")
 
     def test_ingredient_search(self):
         request = self.factory.get(
@@ -143,9 +131,7 @@ class RecipeTests(APITestCase):
 
     def test_get_ingredientdetail(self):
         id_ = 1
-        request_detail = self.factory.get(
-            f"http://testserver/api/ingredients/{id_}/"
-        )
+        request_detail = self.factory.get(f"http://testserver/api/ingredients/{id_}/")
         response = self.view_ingredient_detail(request_detail, pk=id_)
         if response.render():
             self.assertEqual(
