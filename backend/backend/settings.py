@@ -100,8 +100,8 @@ if DEBUG:
     MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
     INSTALLED_APPS += ("debug_toolbar",)
     DEBUG_TOOLBAR_CONFIG = {
-        "INTERCEPT_REDIRECTS": False,
-        "SHOW_TOOLBAR_CALLBACK": lambda _request: DEBUG,
+        # "INTERCEPT_REDIRECTS": False,
+        "SHOW_TOOLBAR_CALLBACK": lambda request: True,
     }
     # Local dev case
     DATABASES = {
