@@ -93,9 +93,12 @@ MEDIA_URL = "/media/"
 if DEBUG:
     # For DjDT
     import mimetypes
+    import socket
 
     mimetypes.add_type("application/javascript", ".js", True)
-    INTERNAL_IPS = ["127.0.0.1", "77.222.43.136"]
+    INTERNAL_IPS = ["127.0.0.1"]
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())  # type: ignore[assignment]
+    INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
 
     MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
     INSTALLED_APPS += ("debug_toolbar",)
