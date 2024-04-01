@@ -23,7 +23,7 @@ This project helped me a lot in further grasping the following:
 - The way a React SPA can be connected to my backend app to perform as one;
 - Docker image & container building & deploying locally & remotely;
 - DevOps fundamentals, including CI/CD;
-- Using [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) & Telegram bot notifications in one's routine for better performance.
+- Using both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance.
 
 Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #SublimeText #Flake8 #Ruff #Black #Mypy #DjDT #django-cleanup
 
