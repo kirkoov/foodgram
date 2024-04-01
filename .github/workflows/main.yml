@@ -152,13 +152,13 @@ jobs:
 
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         # In addition, see the README for details on other imports if needed
+        # Removed the 'docker system prune -af' from below
         script: |
           cd foodgram
           cp infra/docker-compose.production.yaml .
           cp infra/nginx.conf .
           docker compose -f docker-compose.production.yaml --progress=quiet pull
           docker compose -f docker-compose.production.yaml --progress=quiet down -v
-          docker system prune -af
           docker compose -f docker-compose.production.yaml --progress=quiet up -d
     - name: Execute remote ssh commands to deploy(2)
       uses: appleboy/ssh-action@master

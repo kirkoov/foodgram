@@ -1,17 +1,19 @@
-from typing import Optional
-
+from backend.constants import (
+    MAX_COOKING_TIME_MINS,
+    MAX_INGREDIENT_AMOUNT,
+    MIN_COOKING_TIME_MINS,
+    MIN_INGREDIENT_AMOUNT,
+    NUM_CHARS_INGREDIENT_NAME,
+    NUM_CHARS_MEALTIME_HEX,
+    NUM_CHARS_MEALTIME_NAME,
+    NUM_CHARS_MEALTIME_SLUG,
+    NUM_CHARS_MEASUREMENT_UNIT,
+    NUM_CHARS_RECIPE_NAME,
+)
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from backend.constants import (MAX_COOKING_TIME_MINS, MAX_INGREDIENT_AMOUNT,
-                               MIN_COOKING_TIME_MINS, MIN_INGREDIENT_AMOUNT,
-                               NUM_CHARS_INGREDIENT_NAME,
-                               NUM_CHARS_MEALTIME_HEX, NUM_CHARS_MEALTIME_NAME,
-                               NUM_CHARS_MEALTIME_SLUG,
-                               NUM_CHARS_MEASUREMENT_UNIT,
-                               NUM_CHARS_RECIPE_NAME)
 from recipes import validators
 
 from .validators import validate_img_size
@@ -20,15 +22,15 @@ User = get_user_model()
 
 
 class RecipeQuerySet(models.QuerySet):
-    def add_user_annotations(self, user_id: Optional[int]):
+    def add_user_annotations(self, user_id: str | int):
         return self.annotate(
             is_favorited=models.Exists(
-                Favorite.objects.filter(  # type: ignore[misc]
+                Favorite.objects.filter(
                     user_id=user_id, recipe__pk=models.OuterRef("pk")
                 )
             ),
             is_in_shopping_cart=models.Exists(
-                ShoppingCart.objects.filter(  # type: ignore[misc]
+                ShoppingCart.objects.filter(
                     user_id=user_id, recipe__pk=models.OuterRef("pk")
                 )
             ),
