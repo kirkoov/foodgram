@@ -7,10 +7,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def show_toolbar(request):
-    return True
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
@@ -105,7 +101,7 @@ if DEBUG:
     INSTALLED_APPS += ("debug_toolbar",)
     DEBUG_TOOLBAR_CONFIG = {
         "INTERCEPT_REDIRECTS": False,
-        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+        "SHOW_TOOLBAR_CALLBACK": lambda _request: DEBUG,
     }
     # Local dev case
     DATABASES = {
@@ -146,13 +142,16 @@ AUTH_PASSWORD_VALIDATORS = [
         "SimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLength" "Validator",
+        "NAME": "django.contrib.auth.password_validation.MinimumLength"
+        "Validator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPassword" "Validator",
+        "NAME": "django.contrib.auth.password_validation.CommonPassword"
+        "Validator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPassword" "Validator",
+        "NAME": "django.contrib.auth.password_validation.NumericPassword"
+        "Validator",
     },
 ]
 
@@ -166,14 +165,17 @@ USE_TZ = True
 AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
+    ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber" "Pagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
+    "Pagination",
     "PAGE_SIZE": 6,
 }
 
