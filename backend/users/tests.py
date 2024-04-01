@@ -1,14 +1,17 @@
 import json
 import random
 
+from api.views import UsersViewSet
+from backend.constants import (
+    NUM_CHARS_EMAIL,
+    NUM_CHARS_FIRSTNAME,
+    NUM_CHARS_LASTNAME,
+    NUM_CHARS_USERNAME,
+)
 from django.contrib.auth import get_user_model
 from django.db.utils import DataError
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, APITestCase
-
-from api.views import UsersViewSet
-from backend.constants import (NUM_CHARS_EMAIL, NUM_CHARS_FIRSTNAME,
-                               NUM_CHARS_LASTNAME, NUM_CHARS_USERNAME)
 
 from .validators import is_email_valid  # , validate_username_field
 
@@ -133,3 +136,17 @@ class UserTests(APITestCase):
             request_detail, id=self.users_rnd_create_limit * 2
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    # email: "test@uza.zapto.org"
+    # first_name: "Test"
+    # last_name: "Test"
+    # password: "123VVV123"
+    # username: "testuza"
+
+    # {
+    #   "email": "vpupkin@yandex.ru",
+    #   "username": "vasya.pupkin",
+    #   "first_name": "Вася",
+    #   "last_name": "Пупкин",
+    #   "password": "Qwerty123"
+    # }
