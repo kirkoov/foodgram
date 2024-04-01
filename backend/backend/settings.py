@@ -95,7 +95,7 @@ if DEBUG:
     import mimetypes
 
     mimetypes.add_type("application/javascript", ".js", True)
-    INTERNAL_IPS = ["127.0.0.1"]
+    INTERNAL_IPS = ["127.0.0.1", "77.222.43.136"]
 
     MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
     INSTALLED_APPS += ("debug_toolbar",)
