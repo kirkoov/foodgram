@@ -7,11 +7,28 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def show_toolbar(request):
+    return True
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localHHost").split()
+
+
+if DEBUG:
+    # For DjDT
+    import mimetypes
+
+    mimetypes.add_type("application/javascript", ".js", True)
+    INTERNAL_IPS = ["127.0.0.1"]
+
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+    }
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -29,6 +46,7 @@ INSTALLED_APPS = [
     "recipes.apps.RecipesConfig",
     "api.apps.ApiConfig",
     "rosetta",
+    "debug_toolbar",
     "django_cleanup.apps.CleanupConfig",
 ]
 
@@ -42,8 +60,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
-
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
@@ -91,21 +109,6 @@ MEDIA_URL = "/media/"
 # STATIC_ROOT = BASE_DIR / "collected_static"
 
 if DEBUG:
-    # For DjDT
-    import mimetypes
-    import socket
-
-    mimetypes.add_type("application/javascript", ".js", True)
-    INTERNAL_IPS = ["127.0.0.1"]
-    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())  # type: ignore[assignment]
-    INTERNAL_IPS += [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips]
-
-    MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
-    INSTALLED_APPS += ("debug_toolbar",)
-    DEBUG_TOOLBAR_CONFIG = {
-        # "INTERCEPT_REDIRECTS": False,
-        "SHOW_TOOLBAR_CALLBACK": lambda request: True,
-    }
     # Local dev case
     DATABASES = {
         "default": {
