@@ -8,14 +8,6 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingCart,
-    Tag,
-)
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -25,22 +17,18 @@ from rest_framework import permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            ShoppingCart, Tag)
 from users.models import Subscription
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import LimitPagination
-from .serializers import (
-    AbridgedRecipeSerializer,
-    FavoriteSerializer,
-    IngredientSerializer,
-    RecipeSerializer,
-    RecipeWriteSerializer,
-    ShoppingCartSerializer,
-    SubscriptionSerializer,
-    SubscriptionWriteSerializer,
-    TagSerializer,
-    UsersSerializer,
-)
+from .serializers import (AbridgedRecipeSerializer, FavoriteSerializer,
+                          IngredientSerializer, RecipeSerializer,
+                          RecipeWriteSerializer, ShoppingCartSerializer,
+                          SubscriptionSerializer, SubscriptionWriteSerializer,
+                          TagSerializer, UsersSerializer)
 
 User = get_user_model()
 
@@ -79,13 +67,9 @@ class RecipeViewSet(ModelViewSet):
         TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts/")
         buffer = io.BytesIO()
         p = canvas.Canvas(buffer, pagesize=A4)
-        p.drawImage(
-            "fg_logo_for_shopping_list.png", 30, 790, width=20, height=20
-        )
+        p.drawImage("fg_logo_for_shopping_list.png", 30, 790, width=20, height=20)
         pdfmetrics.registerFont(TTFont("DejaVuSans", "DejaVuSans.ttf"))
-        pdfmetrics.registerFont(
-            TTFont("DejaVuSansBold", "DejaVuSans-Bold.ttf")
-        )
+        pdfmetrics.registerFont(TTFont("DejaVuSansBold", "DejaVuSans-Bold.ttf"))
         p.setFont("DejaVuSans", 12)
         p.drawRightString(550, 800, "Shopping list, Foodgram")
         p.setFont("DejaVuSansBold", 10)
@@ -189,9 +173,7 @@ class RecipeViewSet(ModelViewSet):
 
 class BaseFavoriteShoppingCartViewSet(ModelViewSet):
     model: type[Favorite] | type[ShoppingCart] | None
-    serializer_class: type[FavoriteSerializer] | type[
-        ShoppingCartSerializer
-    ] | None
+    serializer_class: type[FavoriteSerializer] | type[ShoppingCartSerializer] | None
 
     def create(self, request, **kwargs):
         item_id = self.kwargs.get("id")
@@ -203,17 +185,13 @@ class BaseFavoriteShoppingCartViewSet(ModelViewSet):
             )
         new_item = self.model(user=request.user, recipe=item)
         new_item.save()
-        serializer = self.serializer_class(
-            new_item, context={"request": request}
-        )
+        serializer = self.serializer_class(new_item, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, **kwargs):
         item_id = self.kwargs.get("id")
         item = get_object_or_404(Recipe, id=item_id)
-        if not self.model.objects.filter(
-            user=request.user, recipe=item
-        ).exists():
+        if not self.model.objects.filter(user=request.user, recipe=item).exists():
             return Response(
                 _("No recipe to delete."),
                 status=status.HTTP_400_BAD_REQUEST,
@@ -281,9 +259,7 @@ def subscribe_user(request, id):
     author = get_object_or_404(User, id=id)
     if request.method == "DELETE":
         try:
-            subscription = get_object_or_404(
-                Subscription, user=user, author=author
-            )
+            subscription = get_object_or_404(Subscription, user=user, author=author)
             subscription.delete()
             return Response(
                 {"success": _("Subscription deleted.")},
