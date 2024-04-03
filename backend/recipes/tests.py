@@ -2,10 +2,6 @@ import json
 import random
 
 import pytest
-from django.db.utils import DataError, IntegrityError
-from rest_framework import status
-from rest_framework.test import APIRequestFactory, APITestCase
-
 from api.views import IngredientViewSet, TagViewSet
 from backend.constants import (
     NUM_CHARS_INGREDIENT_NAME,
@@ -14,6 +10,11 @@ from backend.constants import (
     NUM_CHARS_MEALTIME_SLUG,
     NUM_CHARS_MEASUREMENT_UNIT,
 )
+from django.db.utils import DataError, IntegrityError
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient, APIRequestFactory, APITestCase
+
 from .models import Ingredient, Tag
 from .validators import validate_hex_color, validate_slug_field
 
@@ -61,8 +62,7 @@ class RecipeTests(APITestCase):
 
     def test_get_taglist_200(self):
         response = self.client.get(self.tags_url)
-        if response.status_code != 200:
-            raise DataError("Recipes: no 200 status code for tags.")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_taglist_content(self):
         response = TagViewSet.as_view({"get": "list"})(self.request_tags)
@@ -162,3 +162,40 @@ class RecipeTests(APITestCase):
             raise DataError(
                 "Recipes: no rendered content from the test_get_ingredientdetail()."
             )
+
+    def test_recipe_page_available_anonymous_user(self):
+        response = self.client.get(self.recipes_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @pytest.fixture(autouse=True, scope="class")
+    def _test_recipe_page_available_signed_user(self, get_standard_user_data):
+        self._test_recipe_page_available_signed_user = get_standard_user_data
+        client = APIClient()
+        response = client.post(
+            self._test_recipe_page_available_signed_user["url"],
+            self._test_recipe_page_available_signed_user["data"],
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        test_data = {
+            "password": self._test_recipe_page_available_signed_user["data"][
+                "password"
+            ],
+            "email": self._test_recipe_page_available_signed_user["data"][
+                "email"
+            ],
+        }
+        response = client.post(
+            self._test_recipe_page_available_signed_user["token_url"],
+            test_data,
+            format="json",
+        )
+        token = Token.objects.get(
+            user__username=self._test_recipe_page_available_signed_user[
+                "data"
+            ]["username"]
+        )
+        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        response = client.get(self.recipes_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        client.logout()
