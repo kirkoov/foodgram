@@ -1,6 +1,5 @@
 import django_filters
 from django_filters import CharFilter, FilterSet, rest_framework
-
 from recipes.models import Ingredient, Recipe
 
 

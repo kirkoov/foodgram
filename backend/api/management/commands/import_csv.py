@@ -11,7 +11,6 @@ import sys
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError, OperationalError
-
 from recipes.models import Ingredient
 
 

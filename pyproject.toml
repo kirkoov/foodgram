@@ -89,6 +89,15 @@ flake8 = "^7.0.0"
 black = "^24.3.0"
 ruff = "^0.3.4"
 isort = "^5.13.2"
+flake8-isort = "^6.1.1"
+
+[tool.isort]
+profile = "black"
+# known_django="django"
+known_first_party = "api"
+no_lines_before = "LOCALFOLDER"
+sections="FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+
 
 [build-system]
 requires = ["poetry-core"]

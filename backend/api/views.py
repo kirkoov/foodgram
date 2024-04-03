@@ -8,6 +8,14 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingCart,
+    Tag,
+)
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -17,18 +25,22 @@ from rest_framework import permissions, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
 from users.models import Subscription
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import LimitPagination
-from .serializers import (AbridgedRecipeSerializer, FavoriteSerializer,
-                          IngredientSerializer, RecipeSerializer,
-                          RecipeWriteSerializer, ShoppingCartSerializer,
-                          SubscriptionSerializer, SubscriptionWriteSerializer,
-                          TagSerializer, UsersSerializer)
+from .serializers import (
+    AbridgedRecipeSerializer,
+    FavoriteSerializer,
+    IngredientSerializer,
+    RecipeSerializer,
+    RecipeWriteSerializer,
+    ShoppingCartSerializer,
+    SubscriptionSerializer,
+    SubscriptionWriteSerializer,
+    TagSerializer,
+    UsersSerializer,
+)
 
 User = get_user_model()
 

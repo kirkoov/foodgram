@@ -2,16 +2,20 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from backend.constants import (MAX_COOKING_TIME_MINS, MAX_INGREDIENT_AMOUNT,
-                               MIN_COOKING_TIME_MINS, MIN_INGREDIENT_AMOUNT,
-                               NUM_CHARS_INGREDIENT_NAME,
-                               NUM_CHARS_MEALTIME_HEX, NUM_CHARS_MEALTIME_NAME,
-                               NUM_CHARS_MEALTIME_SLUG,
-                               NUM_CHARS_MEASUREMENT_UNIT,
-                               NUM_CHARS_RECIPE_NAME)
 from recipes import validators
 
+from backend.constants import (
+    MAX_COOKING_TIME_MINS,
+    MAX_INGREDIENT_AMOUNT,
+    MIN_COOKING_TIME_MINS,
+    MIN_INGREDIENT_AMOUNT,
+    NUM_CHARS_INGREDIENT_NAME,
+    NUM_CHARS_MEALTIME_HEX,
+    NUM_CHARS_MEALTIME_NAME,
+    NUM_CHARS_MEALTIME_SLUG,
+    NUM_CHARS_MEASUREMENT_UNIT,
+    NUM_CHARS_RECIPE_NAME,
+)
 from .validators import validate_img_size
 
 User = get_user_model()

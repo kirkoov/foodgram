@@ -1,12 +1,18 @@
 from django.utils.translation import gettext_lazy as _
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingCart,
+    Tag,
+)
 from rest_framework import serializers, status
+from users.models import Subscription, User
 
 from backend.constants import MAX_INGREDIENT_AMOUNT, MIN_INGREDIENT_AMOUNT
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            ShoppingCart, Tag)
-from users.models import Subscription, User
 
 
 class UsersSerializer(UserSerializer):
