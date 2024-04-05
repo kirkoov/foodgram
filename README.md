@@ -40,11 +40,11 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL 
 ##### 1. In the same Terminal, ```cd backend``` or elsewhere you've put the requirements.txt & run ```poetry add $( cat requirements.txt )```. Take the above note about ```rosetta``` or just remove its lines from the requirements.txt before running this command.
 
 ##### 2. If you want to try both the frontend and backend locally, in the frontend folder package.json's "proxy" change the `"http://web:8000/"` to `"http://127.0.0.1:8000/"` & do not forget to undo this change later if required. Then in a Terminal, to launch the frontend, run & ignore warnings:
-- ```npm install```
-- ```npm run build```
-- ```npm start```
+- ```npm install```;
+- ```npm run build```;
+- ```npm start```.
 
-##### 3. In the project folder, where the ```.env.example``` file is, create your own .env file like below. If you plan to work with an sqlite3 db only, non need to include all the fields:
+##### 3. In the project folder, where the ```.env.example``` file is, create your own .env file like below. If you plan to work with an sqlite3 db only, no need to include all the fields:
 ```
 DEBUG=True
 ALLOWED_HOSTS="127.0.0.1 0.0.0.0 localhost foodgram.zapto.org"
@@ -56,35 +56,35 @@ DB_HOST=db
 DB_PORT=5432
 ```
 Then run:
-- ```python manage.py makemigrations``` (usually unnecessary with an sqlite3)
-- ```python manage.py migrate```
-- ```python manage.py createsuperuser```
-- (optional) `python manage.py test` or `poetry run pytest` from the backend folder containing the `pytest.ini`
-- ```python manage.py runserver```
+- ```python manage.py makemigrations``` (usually unnecessary with an sqlite3);
+- ```python manage.py migrate```;
+- ```python manage.py createsuperuser```;
+- (optional) `python manage.py test` or `poetry run pytest` from the backend folder containing the `pytest.ini`;
+- ```python manage.py runserver```.
 
 <b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts images<=1Mb, although when running live locally, the frontend may accept larger imgs. Still, in a live server case, the nginx container will instruct its Docker cousins not to.
 
-##### 4. Skip if para. 2 doesn't apply. Back in the browser, reload the page http://localhost:3000 for the test recipes to appear.
+##### 4. Skip if para. 2 above doesn't apply. Back in the browser, reload the page http://localhost:3000 for the test recipes to appear.
 
-##### 5. Admin page: http://localhost:8000/admin/
+##### 5. Admin page: http://localhost:8000/admin/.
 
 ##### 6. The admin/frontend language can be swapped for Russian before the runserver command. See the local Docker deploy instructions below for details.
 
-##### 7. For language translation control, visit http://localhost:8000/rosetta/
+##### 7. For language translation control, if applies, visit http://localhost:8000/rosetta/.
 
-##### 8. Run ```python manage.py runserver``` and refresh the http://localhost:3000 if necessary
+##### 8. Run ```python manage.py runserver``` and refresh the http://localhost:3000 if necessary.
 
 ##### 9. Navigate, do/undo favourites/subscriptions, try the pdf shopping list download and/or build on this repo.
 [Back to TOC](#table-of-contents)
 
 ### Local Docker
-Ubuntu 22, Docker 25.0.4, docker compose v2.24.7.
+Ubuntu 22, Docker 25.0.4, docker compose v2.24.7
 ##### 1. Make sure your system's port 80 is not busy (by default the project uses this port, which can be changed though) and run in a Terminal:
 
-- make the initial clone steps as [above](#local-non-Docker)
-- ```cd foodgram && nano .env``` like in the previous install's instructions
+- make the initial clone steps as [above](#local-non-Docker);
+- ```cd foodgram && nano .env``` like in the previous install's instructions.
 
-<b>NB</b>: the settings.py has it in such a way that Docker containers need its DEBUG var in the .env as False. The opposite is used for dev (DjDT, db.sqlite3), while with the False the project relies on PostgreSQL by default.
+<b>NB</b>: the settings.py has it in such a way that Docker containers need its DEBUG var in the .env as False. The opposite is used for dev (DjDT, db.sqlite3), while with the False the project defaults to PostgreSQL.
 
 ##### 2. Decide what ports will be piped locally for the containers to run (by default 80:80). Different ports should be indicated in the infra/docker-compose.yaml, e.g. in the nginx service:
 ```
@@ -97,9 +97,9 @@ image: nginx:1.19.3
 ```
 
 ##### 3. Define the admin zone language (the default Eng vs Rus):
-  - change the settings.py's LANGUAGE_CODE accordingly
-  - unzip/replace the frontend public & src folders (see the zip files)
-  - if you want the ingredients in Eng too, see more details below, just bear in mind that all of them can be changed in the backend root folder's csv-files (with their bak cousins saved in the data folder)
+  - change the settings.py's LANGUAGE_CODE accordingly;
+  - unzip/replace the frontend public & src folders (see the zip files);
+  - if you want the ingredients in Eng too, see more details below, just bear in mind that all of them can be changed in the backend root folder's csv-files (with their bak cousins saved in the data folder).
 
 ##### 4. In the frontend folder's package.json, make sure the "proxy" field at the file bottom has the value of ```"http://web:8000/"```.
 
@@ -119,50 +119,49 @@ which may eventually include (->):
 ```
 
 ##### 6. Continue in another Terminal window, from the same infra folder:
-- ```sudo docker compose exec backend python manage.py migrate```
-- ```sudo docker compose exec backend python manage.py collectstatic```
+- ```sudo docker compose exec backend python manage.py migrate```;
+- ```sudo docker compose exec backend python manage.py collectstatic```.
 
 -> ```169 static files copied to '/app/static_django'```
 
 ##### 7. If you want none of the test admin, users, recipes, ingredients, subscriptions, & would rather do them on your own, run:
-  - ```sudo docker compose python manage.py createsuperuser```
-  - populate them tables from the admin zone, do your ingredients (name, measurement unit), etc.
-  - still, to get the look and feel locally, you may want to use the defaults in Rus, just load this fixture: ```sudo docker compose exec backend python manage.py loaddata db.json```
+  - ```sudo docker compose python manage.py createsuperuser```;
+  - populate them tables from the admin zone, do your ingredients (name, measurement unit), etc;
+  - still, to get the look and feel locally, you may want to use the defaults in Rus, just load this fixture: ```sudo docker compose exec backend python manage.py loaddata db.json```;
 
 -> ```Installed 2240 object(s) from 1 fixture(s)```
 
-  - or/and you may also want to use the default ingredients: ```sudo docker compose exec backend python manage.py import_csv eng``` + ```sudo docker compose exec backend python manage.py import_csv rus```
-  - then check in the admin zone if these imported ingredients (translated) are in the DB
+  - or/and you may also want to use the default ingredients: ```sudo docker compose exec backend python manage.py import_csv eng``` + ```sudo docker compose exec backend python manage.py import_csv rus```;
+  - then check in the admin zone if these imported ingredients (translated) are in the DB.
 
 <b>NB</b>: if for some reason this is not the first time you run these commands & the Docker volumes have not been rm'ed, all such data will remain as is & you may see messages about duplicate values in the DB or/and that no migrations are necessary.
 
-<b>NB</b>: if you plan to work with both Rus/Eng translations, make sure the settings.py's lang_code is the one you need, and the make/compilemessages work in the backend container. Open another Terminal and from the same infra folder run:
-```sudo docker compose exec backend bash``` +
+<b>NB</b>: if you plan to work with both Rus/Eng translations, make sure the settings.py's lang_code has the value you need, and the make/compilemessages do work in the backend container. Open another Terminal and from the same infra folder run:
+```sudo docker compose exec backend bash```;
 ```apt update && apt upgrade -y && apt install gettext-base && apt install gettext```. Then quit (```Ctrl+d```) and run:
 
-```sudo docker compose exec -it backend django-admin makemessages --all --ignore=env``` + 
-```sudo docker compose exec -it backend django-admin compilemessages --ignore=env```
+```sudo docker compose exec -it backend django-admin makemessages --all --ignore=env```; 
+```sudo docker compose exec -it backend django-admin compilemessages --ignore=env```.
 
 And for the language changes to take effect, ```Ctrl+c``` in the other Terminal to stop the containers and ```sudo docker compose up --build``` again. Refresh the admin zone page. Should there occur any untranslated fields, stop & down the containers, check the lang_code in the settings.py, do the ```sudo docker system prune -af``` & repeat from para. 3 hereof.
 
-##### 8. If for some reason you need a cache purge, run ```sudo docker compose exec backend python manage.py clear_cache```
+##### 8. If for some reason you need a cache purge, run ```sudo docker compose exec backend python manage.py clear_cache```.
 
-##### 9. The ready recipes, admin zone & docs should be live & kicking at:
-- http://127.0.0.1/ (if you never changed the ports & docker-compose file)
-- http://127.0.0.1/admin/
-- http://127.0.0.1/api/docs/
+##### 9. If you never changed the ports & docker-compose file, the ready-made recipes, admin zone & docs should be live & kicking at:
+- http://127.0.0.1/recipes/;
+- http://127.0.0.1/admin/;
+- http://127.0.0.1/api/docs/ correspondingly.
 
-##### 10. To delete it all, ```Ctrl+c``` + ```sudo docker compose down -v``` + ```sudo docker system prune -af``` + do the project folder too.
-
+##### 10. To delete it all, do the ```Ctrl+c``` + ```sudo docker compose down -v``` + ```sudo docker system prune -af``` + `rm -r` the project folder too.
 [Back to TOC](#table-of-contents)
 
 ### Remote Docker, GitHub repo-based
-This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
+Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 ##### 1. Make sure your system's port 80 is not busy (see the prev install's intro) & ssh to your live server. If needed, check that port 8090 there is free (```ss -ltn```), since it's the project's backend default.
 
-##### 2. Git-clone & `.env` the project (see [above](#local-non-Docker)).
+##### 2. Git-clone & `.env` the project as before (see [above](#local-non-Docker)).
 
-##### 3. ```cd infra``` & in the docker-compose.yaml change the ports for a live server like so:
+##### 3. ```cd infra``` & in the docker-compose.yaml change the ports for a live server run like so:
 ```
     nginx:
     image: nginx:1.22.1
@@ -174,17 +173,16 @@ This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker
     volumes:
       ...
 ```
-##### 4. Follow the 3 to 8 steps of the [Local Docker](#local-docker) install.
+##### 4. Follow the 3-8 steps of the [Local Docker](#local-docker) install.
 
-##### 5. The project, admin page & docs should be operational at:
-- http(s)://yourDomainOrIPaddress/ (if you never changed the ports & docker-compose file)
-- http(s)://yourDomainOrIPaddress/admin/
-- http(s)://yourDomainOrIPaddress/api/docs/
-
+##### 5. If you never changed the ports & docker-compose file, the project recipes, admin page & docs should be live at:
+- http(s)://yourDomainOrIPaddress/;
+- http(s)://yourDomainOrIPaddress/admin/;
+- http(s)://yourDomainOrIPaddress/api/docs/;
 [Back to TOC](#table-of-contents)
 
 ### Local containers, Docker image-based
-This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
+Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 ##### 1. Git-clone the repo (see [above](#local-non-Docker)), tweak the backend/front end folders if needed, build your images locally or use mine, then cd to the infra folder & run:
 ```sudo docker compose -f docker-compose.production.yaml up``` (please check the names of the containers & ports)
 
