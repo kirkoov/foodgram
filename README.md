@@ -32,7 +32,7 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL 
 - [Visit](https://foodgram.zapto.org/) & sign up/in with an email-password pair, log in
 - Or get straight to the [recipes](https://foodgram.zapto.org/recipes) anonymously
 - See the [demo video](https://disk.yandex.ru/i/oBSfTFd1FoFDlA)
-[Back to TOC](#table-of-contents)
+  [Back to TOC](#table-of-contents)
 
 ## Installations
 ### Local non-Docker
@@ -179,7 +179,7 @@ Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 - http(s)://yourDomainOrIPaddress/;
 - http(s)://yourDomainOrIPaddress/admin/;
 - http(s)://yourDomainOrIPaddress/api/docs/;
-[Back to TOC](#table-of-contents)
+  [Back to TOC](#table-of-contents)
 
 ### Local containers, Docker image-based
 Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
@@ -194,8 +194,7 @@ Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 - http://127.0.0.1/ (if you never changed the ports & docker-compose file)
 - http://127.0.0.1/admin/
 - http://127.0.0.1/api/docs/
-
-[Back to TOC](#table-of-contents)
+  [Back to TOC](#table-of-contents)
 
 ### Remote containers, Docker image-based
 This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
@@ -236,12 +235,11 @@ save, close & run
 - http(s)://yourDomainOrIPaddress/ (if you never changed the ports & docker-compose file)
 - http(s)://yourDomainOrIPaddress/admin/
 - http(s)://yourDomainOrIPaddress/api/docs/
-
-[Back to TOC](#table-of-contents)
+  [Back to TOC](#table-of-contents)
 
 ## Credits
 - The frontend (React) is a fork from YandexPracticum's [repo](https://github.com/yandex-praktikum/foodgram-project-react)
-[Back to TOC](#table-of-contents)
+  [Back to TOC](#table-of-contents)
 
 ## Licence
 MIT [https://choosealicense.com/](https://choosealicense.com/).
