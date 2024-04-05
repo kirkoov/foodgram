@@ -15,58 +15,56 @@ Both a recipe website & a shopping list service for you to never forget what you
 - [How to contribute](#how-to-contribute)
 
 ## Description
-Ever wanted to become a gourmet or a real meal maker? Try out others' recipes to both your and their satisfaction or otherwise? Or build on this to come up with a better-looking thingy? Well, [this website](https://foodgram.zapto.org/) may be your starting point. Sign up/in to post/edit/delete your recipes, add others' as your favourites or subscriptions & generate downloadable pdf shoppingn lists in line with the recipes you'd like to try. The shop items just sum up if duplicate, and go alphabetically. [Admin zone](https://foodgram.zapto.org/admin/), [the docs are in Russian](https://foodgram.zapto.org/api/docs/). 
+Ever wanted to become a gourmet or a real meal maker? Try out others' recipes to both your and their satisfaction or otherwise? Or build on this to come up with a better-looking thingy? Well, [this website](https://foodgram.zapto.org/) may be your starting point. Sign up/in to post/edit/delete your recipes, add others' as your favourites or subscriptions & generate downloadable pdf shopping lists in line with the recipes you'd like to try. The shop items just sum up if duplicate, and go alphabetically. [The admin zone](https://foodgram.zapto.org/admin/) & [the docs](https://foodgram.zapto.org/api/docs/) (in Russian) follow. 
 
 This project helped me a lot in further grasping the following:
-- How a Python/Django app should be set up to interact with third-party APIs;
+- How a Django app should be set up to interact with third-party APIs;
 - How to create a custom API based on a Django project & as per its requirements;
-- The way a React SPA can be connected to my backend app to perform as one;
+- The way a React SPA can be connected to one's backend app to perform as one;
 - Docker image & container building & deploying locally & remotely;
-- DevOps fundamentals, including CI/CD;
-- Using both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance.
+- DevOps, including CI/CD;
+- Using both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance & automated deploys.
 
-Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #SublimeText #Flake8 #Ruff #Black #Mypy #DjDT #django-cleanup
-
+Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #SublimeText #Flake8 #Ruff #Black #Mypy #DjDT #Django-cleanup
 [Back to TOC](#table-of-contents)
 
 ## Usage
 - [Visit](https://foodgram.zapto.org/) & sign up/in with an email-password pair, log in
-- Otherwise get straight to [recipes](https://foodgram.zapto.org/recipes) anonymously
+- Or get straight to the [recipes](https://foodgram.zapto.org/recipes) anonymously
 - See the [demo video](https://disk.yandex.ru/i/oBSfTFd1FoFDlA)
-- [Back to TOC](#table-of-contents)
+[Back to TOC](#table-of-contents)
 
-## Installations (... BEING EDITED ...)
+## Installations
 ### Local non-Docker
-```cd``` into a folder of your choice, clone the project from https://github.com/kirkoov/foodgram.git, and create your virtual env, (venv hereinafter, e.g. with ```poetry```). This installation method is best to tweak to your needs and language (```rosetta``` comes included, but for some reasons should be re-installed in your venv to work properly; if you care about English only in your admin zone, then you may want to never install ```rosetta``` at all).
-##### 1. In the same Terminal, ```cd backend``` or elsewhere with the requirements.txt & run ```poetry add $( cat requirements.txt )```. Take the above note about ```rosetta``` seriously or just remove its lines from the requirements.txt.
+```cd``` into a folder of your choice, clone the project from https://github.com/kirkoov/foodgram.git, `cd foodgram` & create your virtual env (venv, e.g. with `poetry`). This installation case is best to tweak to your needs and language. ```rosetta``` comes included, but for further ops should be re-installed in place to work properly. If you care about English wording only for your admin zone, uninstall ```rosetta```.
+##### 1. In the same Terminal, ```cd backend``` or elsewhere you've put the requirements.txt & run ```poetry add $( cat requirements.txt )```. Take the above note about ```rosetta``` or just remove its lines from the requirements.txt before running this command.
 
-##### 2. If you need both the frontend and backend running locally, in the frontend folder package.json's "proxy" change the ```"http://web:8000/"``` to ```"http://127.0.0.1:8000/"``` & do not forget to redo this change later if necessary. Then in a Terminal, run & ignore warnings:
+##### 2. If you want to try both the frontend and backend locally, in the frontend folder package.json's "proxy" change the `"http://web:8000/"` to `"http://127.0.0.1:8000/"` & do not forget to undo this change later if required. Then in a Terminal, to launch the frontend, run & ignore warnings:
 - ```npm install```
 - ```npm run build```
 - ```npm start```
 
-##### 3. In the project folder, where the ```.env.example``` file is, create your own .env file, e.g.:
+##### 3. In the project folder, where the ```.env.example``` file is, create your own .env file like below. If you plan to work with an sqlite3 db only, non need to include all the fields:
 ```
 DEBUG=True
 ALLOWED_HOSTS="127.0.0.1 0.0.0.0 localhost foodgram.zapto.org"
 SECRET_KEY='django-insecure-tzt1(#hb_0%wb!!12@1$h#-4a36=)d4=(a3cyt%+hgf$x7o$hc'
 POSTGRES_DB=foodgram_postgre
 POSTGRES_USER=foodgram_user
-POSTGRES_PASSWORD=
+POSTGRES_PASSWORD=<insert your pwd>
 DB_HOST=db
 DB_PORT=5432
 ```
-- make sure the settings.py has ```DEBUG=True``` too (it's for dev after all)
-- then run:
+Then run:
 - ```python manage.py makemigrations``` (usually unnecessary with an sqlite3)
 - ```python manage.py migrate```
-- kindly, ```python manage.py createsuperuser``` yourself
-- for tests (these are added regularly to improve coverage), pls run e.g. ```poetry run pytest``` from the backend folder containing the pytest.ini
-- finally do the ```python manage.py runserver```
+- ```python manage.py createsuperuser```
+- (optional) `python manage.py test` or `poetry run pytest` from the backend folder containing the `pytest.ini`
+- ```python manage.py runserver```
 
-<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts images<=1Mb. In a live server case, the nginx container will instruct its Docker cousins accordingly when they are deployed there.
+<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts images<=1Mb, although when running live locally, the frontend may accept larger imgs. Still, in a live server case, the nginx container will instruct its Docker cousins not to.
 
-##### 4. Skip if para. 2 doesn't apply. Back in the browser reload the page http://localhost:3000 for the recipes to appear.
+##### 4. Skip if para. 2 doesn't apply. Back in the browser, reload the page http://localhost:3000 for the test recipes to appear.
 
 ##### 5. Admin page: http://localhost:8000/admin/
 
@@ -76,16 +74,15 @@ DB_PORT=5432
 
 ##### 8. Run ```python manage.py runserver``` and refresh the http://localhost:3000 if necessary
 
-##### 9. Navigate, do/undo favourites/subscriptions, try the pdf shopping list download
+##### 9. Navigate, do/undo favourites/subscriptions, try the pdf shopping list download and/or build on this repo.
 [Back to TOC](#table-of-contents)
 
 ### Local Docker
-This project been tested on Ubuntu 22, with Docker 25.0.4 & docker compose v2.24.7.
+Ubuntu 22, Docker 25.0.4, docker compose v2.24.7.
 ##### 1. Make sure your system's port 80 is not busy (by default the project uses this port, which can be changed though) and run in a Terminal:
 
-```mkdir foodgram && cd foodgram && git clone``` (see [above(#local-non-Docker))
-
-```cd foodgram-project-react && nano .env``` like you may have done following the previous installation's steps (see the .env details there).
+- make the initial clone steps as [above](#local-non-Docker)
+- ```cd foodgram && nano .env``` like in the previous install's instructions
 
 <b>NB</b>: the settings.py has it in such a way that Docker containers need its DEBUG var in the .env as False. The opposite is used for dev (DjDT, db.sqlite3), while with the False the project relies on PostgreSQL by default.
 
@@ -163,7 +160,7 @@ And for the language changes to take effect, ```Ctrl+c``` in the other Terminal 
 This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
 ##### 1. Make sure your system's port 80 is not busy (see the prev install's intro) & ssh to your live server. If needed, check that port 8090 there is free (```ss -ltn```), since it's the project's backend default.
 
-##### 2. Git-clone the project (see [above(#local-non-Docker)), ```cd foodgram-project-react``` and create your .env file there (see the example there too).
+##### 2. Git-clone & `.env` the project (see [above](#local-non-Docker)).
 
 ##### 3. ```cd infra``` & in the docker-compose.yaml change the ports for a live server like so:
 ```
@@ -188,7 +185,7 @@ This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker
 
 ### Local containers, Docker image-based
 This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
-##### 1. Git-clone the repo (see [above(#local-non-Docker)), tweak the backend/front end folders if needed, build your images locally or use mine, then cd to the infra folder & run:
+##### 1. Git-clone the repo (see [above](#local-non-Docker)), tweak the backend/front end folders if needed, build your images locally or use mine, then cd to the infra folder & run:
 ```sudo docker compose -f docker-compose.production.yaml up``` (please check the names of the containers & ports)
 
 ##### 2. In another Terminal, do the same as in the previous install instructions, but skip the git-cloning; and remember that the ```sudo docker compose``` commands must be used with the ```-f docker-compose.production.yaml``` rather. And remember the case when you nee your frontend in the other language (this requires a separate image pre-build on your own after unzipping the frontend archive).
@@ -249,7 +246,8 @@ save, close & run
 [Back to TOC](#table-of-contents)
 
 ## Licence
-MIT [https://choosealicense.com/](https://choosealicense.com/). [Back to TOC](#table-of-contents)
+MIT [https://choosealicense.com/](https://choosealicense.com/).
+[Back to TOC](#table-of-contents)
 
 ## How to contribute
 Do contact in case you think there's a chance to. We'd both be better off reading the [Contributor Covenant](https://www.contributor-covenant.org/) which is a standard to start with.
