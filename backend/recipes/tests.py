@@ -2,12 +2,13 @@ import json
 import random
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.db.utils import DataError, IntegrityError
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APIRequestFactory, APITestCase
 
-from api.views import IngredientViewSet, TagViewSet
+from api.views import IngredientViewSet, RecipeViewSet, TagViewSet
 from backend.constants import (
     NUM_CHARS_INGREDIENT_NAME,
     NUM_CHARS_MEALTIME_HEX,
@@ -17,6 +18,8 @@ from backend.constants import (
 )
 from .models import Ingredient, Tag
 from .validators import validate_hex_color, validate_slug_field
+
+User = get_user_model()
 
 
 class RecipeTests(APITestCase):
@@ -55,6 +58,11 @@ class RecipeTests(APITestCase):
         cls.request_ingredient_detail = cls.factory.get(f"{cls.ingredients_url}/")
 
         cls.recipes_url = f"{cls.prefix}recipes/"
+        cls.test_recipes = []
+        cls.request_recipes = cls.factory.get(cls.recipes_url)
+        cls.view_recipe_detail = RecipeViewSet.as_view({"get": "retrieve"})
+        cls.test_recipe_name = "Test recipe"
+        cls.request_recipe_detail = cls.factory.get(f"{cls.recipes_url}/")
 
     def test_get_taglist_200(self):
         response = self.client.get(self.tags_url)
@@ -182,19 +190,4 @@ class RecipeTests(APITestCase):
         client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         response = client.get(self.recipes_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # print(response.__dict__)
         client.logout()
-
-    # def test_recipe_create(self):
-    #     data = (
-    #         {
-    #             "ingredients": [
-    #                 {"id": len(self.test_ingredients) - 1, "amount": self.test_ingredients[]}
-    #             ],
-    #             "tags": [1, 2],
-    #             "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
-    #             "name": "Test recipe name",
-    #             "text": "Cooking instructions for the test recipe name",
-    #             "cooking_time": 1,
-    #         },
-    #     )
