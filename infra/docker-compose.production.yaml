@@ -9,6 +9,7 @@ volumes:
 services:
   db:
     image: postgres:14.11
+    restart: always
     # For other cases # env_file: ../.env
     # For CI/CD
     env_file: .env
@@ -18,6 +19,7 @@ services:
   backend:
     # image: foodgram_backend  # if pre-built locally with a name you chose
     image: kirkoov/foodgram_backend
+    restart: always
     # For other cases # env_file: ../.env
     # For CI/CD
     env_file: .env
@@ -30,11 +32,13 @@ services:
   frontend:
     # image: foodgram_frontend  # if pre-built locally with a name you chose
     image: kirkoov/foodgram_frontend
+    restart: always
     volumes:
       - static_frontend:/app/result_build/
 
   nginx:
     image: nginx:1.22.1
+    restart: always
     ports:
       # Live server
       - "8090:80"

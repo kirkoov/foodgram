@@ -26,13 +26,15 @@ This project helped me a lot in further grasping the following:
 - Using both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance & automated deploys.
 
 Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #SublimeText #Flake8 #Ruff #Black #Mypy #DjDT #Django-cleanup
+
 [Back to TOC](#table-of-contents)
 
 ## Usage
 - [Visit](https://foodgram.zapto.org/) & sign up/in with an email-password pair, log in
 - Or get straight to the [recipes](https://foodgram.zapto.org/recipes) anonymously
 - See the [demo video](https://disk.yandex.ru/i/oBSfTFd1FoFDlA)
-  [Back to TOC](#table-of-contents)
+
+[Back to TOC](#table-of-contents)
 
 ## Installations
 ### Local non-Docker
@@ -75,6 +77,7 @@ Then run:
 ##### 8. Run ```python manage.py runserver``` and refresh the http://localhost:3000 if necessary.
 
 ##### 9. Navigate, do/undo favourites/subscriptions, try the pdf shopping list download and/or build on this repo.
+
 [Back to TOC](#table-of-contents)
 
 ### Local Docker
@@ -153,6 +156,7 @@ And for the language changes to take effect, ```Ctrl+c``` in the other Terminal 
 - http://127.0.0.1/api/docs/ correspondingly.
 
 ##### 10. To delete it all, do the ```Ctrl+c``` + ```sudo docker compose down -v``` + ```sudo docker system prune -af``` + `rm -r` the project folder too.
+
 [Back to TOC](#table-of-contents)
 
 ### Remote Docker, GitHub repo-based
@@ -178,8 +182,9 @@ Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 ##### 5. If you never changed the ports & docker-compose file, the project recipes, admin page & docs should be live at:
 - http(s)://yourDomainOrIPaddress/;
 - http(s)://yourDomainOrIPaddress/admin/;
-- http(s)://yourDomainOrIPaddress/api/docs/;
-  [Back to TOC](#table-of-contents)
+- http(s)://yourDomainOrIPaddress/api/docs/.
+
+[Back to TOC](#table-of-contents)
 
 ### Local containers, Docker image-based
 Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
@@ -194,7 +199,8 @@ Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 - http://127.0.0.1/ (if you never changed the ports & docker-compose file)
 - http://127.0.0.1/admin/
 - http://127.0.0.1/api/docs/
-  [Back to TOC](#table-of-contents)
+
+[Back to TOC](#table-of-contents)
 
 ### Remote containers, Docker image-based
 This project been tested on a live server with Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7.
@@ -232,21 +238,25 @@ save, close & run
 ##### 6. If ok, take the same steps as from the prev instructions' para 2. Otherwise, stop & run without the -d flag to see the output.
 
 ##### 7. The project, admin page & docs availability:
-- http(s)://yourDomainOrIPaddress/ (if you never changed the ports & docker-compose file)
-- http(s)://yourDomainOrIPaddress/admin/
-- http(s)://yourDomainOrIPaddress/api/docs/
-  [Back to TOC](#table-of-contents)
+- http(s)://yourDomainOrIPaddress/ (if you never changed the ports & docker-compose file);
+- http(s)://yourDomainOrIPaddress/admin/;
+- http(s)://yourDomainOrIPaddress/api/docs/.
+
+[Back to TOC](#table-of-contents)
 
 ## Credits
 - The frontend (React) is a fork from YandexPracticum's [repo](https://github.com/yandex-praktikum/foodgram-project-react)
-  [Back to TOC](#table-of-contents)
+
+[Back to TOC](#table-of-contents)
 
 ## Licence
 MIT [https://choosealicense.com/](https://choosealicense.com/).
+
 [Back to TOC](#table-of-contents)
 
 ## How to contribute
 Do contact in case you think there's a chance to. We'd both be better off reading the [Contributor Covenant](https://www.contributor-covenant.org/) which is a standard to start with.
+
 [Back to TOC](#table-of-contents)
 
 #### Authors: kirkoov (Django backend), YandexPracticum (React frontend)
