@@ -13,6 +13,8 @@ Both a recipe website & a shopping list service for you to never forget what you
 - [Credits](#credits)
 - [Licence](#licence)
 - [How to contribute](#how-to-contribute)
+- [Authors](#authors)
+
 
 ## Description
 Ever wanted to become a gourmet or a real meal maker? Try out others' recipes to both your and their satisfaction or otherwise? Or build on this to come up with a better-looking thingy, featuring more languages than just Eng/Rus? Well, [this website](https://foodgram.zapto.org/) may be your starting point. Sign up/in to post/edit/delete your recipes, add others' as your favourites or subscriptions & generate downloadable pdf shopping lists in line with the recipes you'd like to try. The shop items just sum up if duplicate, and go alphabetically. [The admin zone](https://foodgram.zapto.org/admin/) & [the docs](https://foodgram.zapto.org/api/docs/) (in Russian) follow. 
@@ -259,7 +261,7 @@ Do contact in case you think there's a chance to. We'd both be better off readin
 
 [Back to TOC](#table-of-contents)
 
-#### Authors: kirkoov (Django backend), YandexPracticum (React frontend)
+## Authors: kirkoov (Django backend), YandexPracticum (React frontend)
 
 
 
