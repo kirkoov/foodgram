@@ -110,7 +110,9 @@ class UserTests(APITestCase):
                 self.assertEqual(new["last_name"], test.last_name)
                 self.assertTrue(len(new["last_name"]) <= NUM_CHARS_LASTNAME)
 
-                self.assertTrue(new["is_subscribed"] is False)  # By default it's False
+                self.assertTrue(
+                    new["is_subscribed"] is False
+                )  # By default it's False
                 tmp_usernames.append(new["username"])
             # The usernames must be unique
             self.assertEqual(len(tmp_usernames), len(set(tmp_usernames)))
@@ -135,7 +137,9 @@ class UserTests(APITestCase):
                 },
             )
         else:
-            raise DataError("No rendered content from the test_list_client_detail().")
+            raise DataError(
+                "No rendered content from the test_list_client_detail()."
+            )
 
     def test_get_userdetail_status404(self):
         # To make sure none as such exists, the multiplication is there
@@ -181,7 +185,9 @@ class UserTests(APITestCase):
                 response = client.post(
                     f"{self.users_url}set_password/", pwd_data, format="json"
                 )
-                self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+                self.assertEqual(
+                    response.status_code, status.HTTP_204_NO_CONTENT
+                )
                 client.logout()
                 client.login(
                     username=test_data["username"],
@@ -197,10 +203,14 @@ class UserTests(APITestCase):
                 response = client.post(
                     f"{self.users_url}set_password/", pwd_data, format="json"
                 )
-                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+                self.assertEqual(
+                    response.status_code, status.HTTP_400_BAD_REQUEST
+                )
                 client.logout()
         else:
-            raise DataError("Users: no data in the test_new_user_signup_201().")
+            raise DataError(
+                "Users: no data in the test_new_user_signup_201()."
+            )
 
     def test_new_user_signup_400(self):
         data = get_standard_user_data()
@@ -230,7 +240,9 @@ class UserTests(APITestCase):
             f"{self.prefix}auth/token/login/", test_data, format="json"
         )
         self.assertTrue("auth_token" in response.__dict__["data"])
-        self.assertTrue(isinstance(response.__dict__["data"]["auth_token"], str))
+        self.assertTrue(
+            isinstance(response.__dict__["data"]["auth_token"], str)
+        )
 
         response = self.client.post(f"{self.prefix}auth/token/logout/")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

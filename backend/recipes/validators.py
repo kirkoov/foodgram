@@ -14,7 +14,9 @@ def validate_hex_color(value):
 def validate_slug_field(value):
     slug_reg = re.compile(SLUG_FIELD_REQ)
     if not re.search(slug_reg, value):
-        raise ValidationError("Check the ReDoc for the slug field requirements.")
+        raise ValidationError(
+            "Check the ReDoc for the slug field requirements."
+        )
 
 
 def validate_img_size(image):
