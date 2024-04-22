@@ -1,12 +1,12 @@
 import json
 import random
+from typing import List
 
 import pytest
 from django.contrib.auth import get_user_model
 from django.db.utils import DataError, IntegrityError
 from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APIClient, APIRequestFactory, APITestCase
+from rest_framework.test import APIRequestFactory, APITestCase
 
 from api.views import IngredientViewSet, RecipeViewSet, TagViewSet
 from backend.constants import (
@@ -23,13 +23,17 @@ User = get_user_model()
 
 
 class RecipeTests(APITestCase):
+    prefix = "/api/"
+    tags_url = f"{prefix}tags/"
+    ingredients_url = f"{prefix}ingredients/"
+    test_ingredient_name = "Ingredient"
+    recipes_url = f"{prefix}recipes/"
+    factory = APIRequestFactory()
+    test_tags: List[Tag] = []
+    test_ingredients: List[Ingredient] = []
+
     @classmethod
     def setUpTestData(cls):
-        cls.factory = APIRequestFactory()
-        cls.prefix = "/api/"
-
-        cls.tags_url = f"{cls.prefix}tags/"
-        cls.test_tags = []
         cls.request_tags = cls.factory.get(cls.tags_url)
         cls.view_tag_detail = TagViewSet.as_view({"get": "retrieve"})
 
@@ -43,13 +47,12 @@ class RecipeTests(APITestCase):
         Tag.objects.bulk_create(cls.test_tags)
         cls.request_tag_detail = cls.factory.get(f"{cls.tags_url}/")
 
-        cls.ingredients_url = f"{cls.prefix}ingredients/"
         cls.test_ingredients = []
         cls.request_ingredients = cls.factory.get(cls.ingredients_url)
         cls.view_ingredient_detail = IngredientViewSet.as_view(
             {"get": "retrieve"}
         )
-        cls.test_ingredient_name = "Ingredient"
+
         for index in range(random.randint(1, 100)):
             ingredient = Ingredient(
                 name=f"{cls.test_ingredient_name}{index}",
@@ -61,18 +64,17 @@ class RecipeTests(APITestCase):
             f"{cls.ingredients_url}/"
         )
 
-        cls.recipes_url = f"{cls.prefix}recipes/"
         cls.test_recipes = []
         cls.request_recipes = cls.factory.get(cls.recipes_url)
         cls.view_recipe_detail = RecipeViewSet.as_view({"get": "retrieve"})
         cls.test_recipe_name = "Test recipe"
         cls.request_recipe_detail = cls.factory.get(f"{cls.recipes_url}/")
 
-    def test_get_taglist_200(self):
+    def test_get_tag_list_200(self):
         response = self.client.get(self.tags_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_taglist_content(self):
+    def test_get_tag_list_content(self):
         response = TagViewSet.as_view({"get": "list"})(self.request_tags)
         data = response.__dict__.get("data")
         if data is not None:
@@ -91,10 +93,10 @@ class RecipeTests(APITestCase):
             self.assertEqual(len(tmp_slugs), len(set(tmp_slugs)))
         else:
             raise DataError(
-                "Recipes: errors in the test_get_taglist_content()."
+                "Recipes: errors in the test_get_tag_list_content()."
             )
 
-    def test_get_tagdetail_200_404(self):
+    def test_get_tag_detail_200_404(self):
         # In the test db, i.e. sqlite3, the tags start from 1
         if (then := len(self.test_tags) - 1) == 0:
             then = 1
@@ -107,11 +109,11 @@ class RecipeTests(APITestCase):
         if response.status_code != 404:
             raise DataError("Recipes: no 404 status code for tag details.")
 
-    def test_get_ingredientlist_200(self):
+    def test_get_ingredient_list_200(self):
         response = self.client.get(self.ingredients_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_ingedientlist_content(self):
+    def test_get_ingredient_list_content(self):
         response = IngredientViewSet.as_view({"get": "list"})(
             self.request_ingredients
         )
@@ -129,7 +131,7 @@ class RecipeTests(APITestCase):
                 )
         else:
             raise DataError(
-                "Recipes: errors in the test_get_ingedientlist_content()."
+                "Recipes: errors in the test_get_ingredient_list_content()."
             )
 
     def test_ingredient_search(self):
@@ -140,7 +142,8 @@ class RecipeTests(APITestCase):
         data = response.__dict__.get("data")
         self.assertEqual(len(data), len(self.test_ingredients))
 
-    def test_create_same_ingredients_fails(self):
+    @staticmethod
+    def test_create_same_ingredients_fails():
         with pytest.raises(IntegrityError):
             Ingredient.objects.create(
                 name="The-same-ingredient",
@@ -151,7 +154,7 @@ class RecipeTests(APITestCase):
                 measurement_unit="kg",
             )
 
-    def test_get_ingredientdetail(self):
+    def test_get_ingredient_detail(self):
         id_ = 1
         request_detail = self.factory.get(
             f"http://testserver/api/ingredients/{id_}/"
@@ -168,42 +171,10 @@ class RecipeTests(APITestCase):
             )
         else:
             raise DataError(
-                "Recipes: no rendered content from the test_get_ingredientdetail()."
+                "Recipes: no rendered content from the "
+                "test_get_ingredient_detail()."
             )
 
     def test_recipe_page_available_anonymous_user(self):
         response = self.client.get(self.recipes_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @pytest.fixture(autouse=True, scope="class")
-    def _test_recipe_page_available_signed_user(self, get_standard_user_data):
-        self._test_recipe_page_available_signed_user = get_standard_user_data
-        client = APIClient()
-        response = client.post(
-            self._test_recipe_page_available_signed_user["url"],
-            self._test_recipe_page_available_signed_user["data"],
-            format="json",
-        )
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        test_data = {
-            "password": self._test_recipe_page_available_signed_user["data"][
-                "password"
-            ],
-            "email": self._test_recipe_page_available_signed_user["data"][
-                "email"
-            ],
-        }
-        response = client.post(
-            self._test_recipe_page_available_signed_user["token_url"],
-            test_data,
-            format="json",
-        )
-        token = Token.objects.get(
-            user__username=self._test_recipe_page_available_signed_user[
-                "data"
-            ]["username"]
-        )
-        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
-        response = client.get(self.recipes_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        client.logout()

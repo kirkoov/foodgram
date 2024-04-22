@@ -1,5 +1,6 @@
 import json
 import random
+from typing import List
 
 from django.contrib.auth import get_user_model
 from django.db.utils import DataError
@@ -40,11 +41,15 @@ def get_standard_user_data():
 
 
 class UserTests(APITestCase):
+    prefix = "/api/"
+    users_url = f"{prefix}users/"
+    factory = APIRequestFactory()
+    users_rnd_create_limit = 11
+    test_users: List[User] = []
+    admin_user = None
+
     @classmethod
     def setUpTestData(cls):
-        cls.factory = APIRequestFactory()
-        cls.prefix = "/api/"
-        cls.users_rnd_create_limit = 11
         cls.users_url = f"{cls.prefix}users/"
         cls.test_users = []
         cls.request_users = cls.factory.get(cls.users_url)
@@ -141,7 +146,7 @@ class UserTests(APITestCase):
                 "No rendered content from the test_list_client_detail()."
             )
 
-    def test_get_userdetail_status404(self):
+    def test_get_user_detail_status404(self):
         # To make sure none as such exists, the multiplication is there
         request_detail = self.factory.get(
             f"{self.users_url}{self.users_rnd_create_limit * 2}/"
@@ -151,7 +156,7 @@ class UserTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_new_user_signup_201_pwdchange(self):
+    def test_new_user_signup_201_pwd_change(self):
         response = self.client.post(
             self.users_url, get_standard_user_data(), format="json"
         )

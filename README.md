@@ -261,7 +261,7 @@ Do contact in case you think there's a chance to. We'd both be better off readin
 
 [Back to TOC](#table-of-contents)
 
-## Authors: kirkoov (Django backend), YandexPracticum (React frontend)
+# Authors: kirkoov (Django backend), YandexPracticum (React frontend)
 
 
 
