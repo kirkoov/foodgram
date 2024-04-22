@@ -260,18 +260,18 @@ class SubscriptionWriteSerializer(serializers.ModelSerializer):
         except AttributeError:
             raise serializers.ValidationError(
                 detail=_("Wrong user or author details."),
-                code=status.HTTP_400_BAD_REQUEST,
+                code=str(status.HTTP_400_BAD_REQUEST),
             )
         if Subscription.objects.filter(
             author=author_id, user=user_id
         ).exists():
             raise serializers.ValidationError(
                 detail=_("This subscription exists already."),
-                code=status.HTTP_400_BAD_REQUEST,
+                code=str(status.HTTP_400_BAD_REQUEST),
             )
         if user_id == author_id:
             raise serializers.ValidationError(
                 detail=_("You can't subscribe to yourself."),
-                code=status.HTTP_400_BAD_REQUEST,
+                code=str(status.HTTP_400_BAD_REQUEST),
             )
         return data

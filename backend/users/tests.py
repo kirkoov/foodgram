@@ -1,6 +1,5 @@
 import json
 import random
-from typing import List
 
 from django.contrib.auth import get_user_model
 from django.db.utils import DataError
@@ -45,7 +44,6 @@ class UserTests(APITestCase):
     users_url = f"{prefix}users/"
     factory = APIRequestFactory()
     users_rnd_create_limit = 11
-    test_users: List[User] = []
     admin_user = None
 
     @classmethod

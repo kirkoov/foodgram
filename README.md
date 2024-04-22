@@ -87,9 +87,9 @@ Ubuntu 22, Docker 25.0.4, docker compose v2.24.7
 ##### 1. Make sure your system's port 80 is not busy (by default the project uses this port, which can be changed though) and run in a Terminal:
 
 - make the initial clone steps as [above](#local-non-Docker);
-- ```cd foodgram && nano .env``` like in the previous install's instructions.
+- ```cd foodgram && nano .env``` like in the previous installation instructions.
 
-<b>NB</b>: the settings.py has it in such a way that Docker containers need its DEBUG var in the .env as False. The opposite is used for dev (DjDT, db.sqlite3), while with the False the project defaults to PostgreSQL.
+<b>NB</b>: the settings.py has it in such a way that Docker containers need its DEBUG var in the .env as False. The opposite is used for dev (DjDT, db.sqlite3), while with `False` the project defaults to PostgreSQL.
 
 ##### 2. Decide what ports will be piped locally for the containers to run (by default 80:80). Different ports should be indicated in the infra/docker-compose.yaml, e.g. in the nginx service:
 ```
@@ -163,7 +163,7 @@ And for the language changes to take effect, ```Ctrl+c``` in the other Terminal 
 
 ### Remote Docker, GitHub repo-based
 Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
-##### 1. Make sure your system's port 80 is not busy (see the prev install's intro) & ssh to your live server. If needed, check that port 8090 there is free (```ss -ltn```), since it's the project's backend default.
+##### 1. Make sure your system's port 80 is not busy (see the prev installation intro) & ssh to your live server. If needed, check that port 8090 there is free (```ss -ltn```), since it's the project's backend default.
 
 ##### 2. Git-clone & `.env` the project as before (see [above](#local-non-Docker)).
 
@@ -193,7 +193,7 @@ Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 ##### 1. Git-clone the repo (see [above](#local-non-Docker)), tweak the backend/front end folders if needed, build your images locally or use mine, then cd to the infra folder & run:
 ```sudo docker compose -f docker-compose.production.yaml up``` (please check the names of the containers & ports)
 
-##### 2. In another Terminal, do the same as in the previous install instructions, but skip the git-cloning; and remember that the ```sudo docker compose``` commands must be used with the ```-f docker-compose.production.yaml``` rather. And remember the case when you nee your frontend in the other language (this requires a separate image pre-build on your own after unzipping the frontend archive).
+##### 2. In another Terminal, do the same as in the previous install instructions, but skip the git-cloning; and remember that the ```sudo docker compose``` commands must be used with the ```-f docker-compose.production.yaml``` rather. And remember the case when you need your frontend in the other language (this requires a separate image pre-build on your own after unzipping the frontend archive).
 
 ##### 3. To stop & remove container, run ```sudo docker compose down -v``` + the ones specified in the prev instructions (e.g. the [Local Docker](#local-docker)'s step 10).
 
@@ -261,7 +261,9 @@ Do contact in case you think there's a chance to. We'd both be better off readin
 
 [Back to TOC](#table-of-contents)
 
-# Authors: kirkoov (Django backend), YandexPracticum (React frontend)
+
+## Authors
+kirkoov (Django backend), YandexPracticum (React frontend)
 
 
 

@@ -72,9 +72,9 @@ class RecipeViewSet(ModelViewSet):
 
     def create_shopping_list_pdf(self, shoppings):
         """Draw the FG icon & then the shopping list strings."""
-        X_ITEM = 30
-        X_QNTY = 380
-        X_UNITS = 450
+        x_item = 30
+        x_qnty = 380
+        x_units = 450
 
         TTFSearchPath.append(str(settings.BASE_DIR) + "/data/fonts/")
         buffer = io.BytesIO()
@@ -89,16 +89,16 @@ class RecipeViewSet(ModelViewSet):
         p.setFont("DejaVuSans", 12)
         p.drawRightString(550, 800, "Shopping list, Foodgram")
         p.setFont("DejaVuSansBold", 10)
-        p.drawString(X_ITEM, 750, "Item")
-        p.drawString(X_QNTY, 750, "Qnty")
-        p.drawString(X_UNITS, 750, "Units")
+        p.drawString(x_item, 750, "Item")
+        p.drawString(x_qnty, 750, "Qnty")
+        p.drawString(x_units, 750, "Units")
         p.setFont("DejaVuSans", 12)
         i = 15
         y = 730
         for item, details in sorted(shoppings.items()):
-            p.drawString(X_ITEM, y, item)
-            p.drawString(X_QNTY, y, str(details[0]))
-            p.drawString(X_UNITS, y, details[1])
+            p.drawString(x_item, y, item)
+            p.drawString(x_qnty, y, str(details[0]))
+            p.drawString(x_units, y, details[1])
             y -= i
         p.showPage()
         p.save()
@@ -276,9 +276,9 @@ class UsersViewSet(UserViewSet):
 
 @api_view(["POST", "DELETE"])
 @permission_classes([permissions.IsAuthenticated])
-def subscribe_user(request, id):
+def subscribe_user(request, i_d):
     user = request.user
-    author = get_object_or_404(User, id=id)
+    author = get_object_or_404(User, id=i_d)
     if request.method == "DELETE":
         try:
             subscription = get_object_or_404(
