@@ -23,7 +23,7 @@ urlpatterns = [
     re_path(r"auth/", include("djoser.urls")),
     re_path(r"auth/", include("djoser.urls.authtoken")),
     re_path(
-        r"users/(?P<id>\d+)/subscribe", subscribe_user, name="subscribe_user"
+        r"users/(?P<i_d>\d+)/subscribe", subscribe_user, name="subscribe_user"
     ),
     re_path(r"", include(router_v1.urls)),
 ]
