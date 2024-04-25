@@ -178,7 +178,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs: deploy
     steps:
-    - name: Send a telegram
+    - name: Send a telegram to mark the end of the deployment
       uses: appleboy/telegram-action@master
       with:
         to: ${{ secrets.TELEGRAM_TO }}
