@@ -1,7 +1,7 @@
 import json
-import pytest
 import random
 
+import pytest
 from django.contrib.auth import get_user_model
 from django.db.utils import DataError
 from rest_framework import status
@@ -288,11 +288,13 @@ class UserTests(APITestCase):
 
 
 @pytest.mark.django_db
-def test_new_standard_user_hits_me_url_200_401(api_client,
-                                               get_standard_user_data_):
+def test_new_standard_user_hits_me_url_200_401(
+    api_client, get_standard_user_data_
+):
     data = get_standard_user_data_["data"]
     data["email"] = "standard@user.org"
     data["username"] = "standardUser"
-    response = api_client.post(get_standard_user_data_["url"], data,
-                               format="json")
+    response = api_client.post(
+        get_standard_user_data_["url"], data, format="json"
+    )
     assert response.status_code == status.HTTP_201_CREATED
