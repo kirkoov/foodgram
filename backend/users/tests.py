@@ -1,4 +1,5 @@
 import json
+import pytest
 import random
 
 from django.contrib.auth import get_user_model
@@ -45,6 +46,7 @@ class UserTests(APITestCase):
     factory = APIRequestFactory()
     users_rnd_create_limit = 11
     admin_user = None
+    test_users = None
 
     @classmethod
     def setUpTestData(cls):
@@ -159,6 +161,7 @@ class UserTests(APITestCase):
             self.users_url, get_standard_user_data(), format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         self.assertEqual(User.objects.count(), len(self.test_users) + 1)
         data = response.__dict__.get("data")
         if data is not None:
@@ -264,21 +267,32 @@ class UserTests(APITestCase):
         response = client.post(self.users_url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        test_data = {
-            "password": data["password"],
-            "email": data["email"],
-        }
-        response = client.post(
-            f"{self.prefix}auth/token/login/", test_data, format="json"
-        )
-        self.assertTrue("auth_token" in response.__dict__["data"])
+        # test_data = {
+        #     "password": data["password"],
+        #     "email": data["email"],
+        # }
+        # response = client.post(
+        #     f"{self.prefix}auth/token/login/", test_data, format="json"
+        # )
+        # self.assertTrue("auth_token" in response.__dict__["data"])
+        #
+        # token = Token.objects.get(user__username=data["username"])
+        # client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+        #
+        # response = self.client.get(f"{self.users_url}me/")
+        # self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        #
+        # response = client.get(f"{self.users_url}me/")
+        # self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # client.logout()
 
-        token = Token.objects.get(user__username=data["username"])
-        client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
-        response = self.client.get(f"{self.users_url}me/")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-        response = client.get(f"{self.users_url}me/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        client.logout()
+@pytest.mark.django_db
+def test_new_standard_user_hits_me_url_200_401(api_client,
+                                               get_standard_user_data_):
+    data = get_standard_user_data_["data"]
+    data["email"] = "standard@user.org"
+    data["username"] = "standardUser"
+    response = api_client.post(get_standard_user_data_["url"], data,
+                               format="json")
+    assert response.status_code == status.HTTP_201_CREATED

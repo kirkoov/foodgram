@@ -1,9 +1,11 @@
 import pytest
 
+from rest_framework.test import APIClient
 
-@pytest.fixture(scope="module")
-def get_standard_user_data():
-    return {
+
+@pytest.fixture(scope="session")
+def get_standard_user_data_() -> dict:
+    yield {
         "url": "/api/users/",
         "token_url": "/api/auth/token/login/",
         "data": {
@@ -14,3 +16,8 @@ def get_standard_user_data():
             "password": "wHat~Eva^_",
         },
     }
+
+
+@pytest.fixture(scope="session")
+def api_client() -> APIClient:
+    yield APIClient()

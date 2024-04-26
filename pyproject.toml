@@ -90,6 +90,7 @@ black = "^24.3.0"
 ruff = "^0.3.4"
 isort = "^5.13.2"
 flake8-isort = "^6.1.1"
+coverage = "^7.5.0"
 
 [tool.isort]
 profile = "black"
