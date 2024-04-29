@@ -4,6 +4,8 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 
+from backend.constants import PAGINATOR_NUM
+
 load_dotenv()
 
 
@@ -97,17 +99,6 @@ WSGI_APPLICATION = "backend.wsgi.application"
 
 MEDIA_URL = "/media/"
 
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": "db.sqlite3",
-#     }
-# }
-# MEDIA_ROOT = BASE_DIR / "media"
-# STATIC_URL = "static/"
-# STATIC_ROOT = BASE_DIR / "collected_static"
-
 if DEBUG:
     # Local dev case
     DATABASES = {
@@ -182,7 +173,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumber"
     "Pagination",
-    "PAGE_SIZE": 6,
+    "PAGE_SIZE": PAGINATOR_NUM,
 }
 
 LANGUAGES = (
@@ -198,8 +189,8 @@ DJOSER = {
     "HIDE_USERS": False,
     "LOGIN_FIELD": "email",
     "SERIALIZERS": {
-        "user": "api.serializers.UserSerializer",
-        "current_user": "api.serializers.UserSerializer",
+        "user": "api.serializers.UsersSerializer",
+        "current_user": "api.serializers.UsersSerializer",
     },
     "PERMISSIONS": {
         "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],

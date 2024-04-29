@@ -247,7 +247,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 
 class UsersViewSet(UserViewSet):
-    """Use the Djoser's."""
+    """Use Djoser's."""
 
     serializer_class = UsersSerializer
     queryset = User.objects.all()
@@ -258,6 +258,16 @@ class UsersViewSet(UserViewSet):
         if self.action == "me":
             self.permission_classes = [permissions.IsAuthenticated]
         return super().get_permissions()
+
+        # @action(methods=["get"], url_path="me", detail=False)
+        # def me_path_user(self, request):
+        """Current user."""
+        # user = request.user
+        # if request.user.is_authenticated:
+        #     serializer = self.get_serializer(user)
+        #     return Response(serializer.data)
+        # return Response({'detail': 'Пользователь незарегистрирован.'},
+        #                 status=HTTPStatus.UNAUTHORIZED)
 
     @action(
         methods=["get"],

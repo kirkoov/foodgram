@@ -496,23 +496,19 @@ typing-extensions = ">=3.7.4"
 
 [[package]]
 name = "django-rosetta"
-version = "0.10.1"
+version = "0.10.0"
 description = "A Django application that eases the translation of Django projects"
 optional = false
 python-versions = "*"
-files = []
-develop = false
+files = [
+    {file = "django-rosetta-0.10.0.tar.gz", hash = "sha256:e0380c456e807b5954afaa54ed43c1dbaf29a2af8dd773ec332c8c2fe5465418"},
+    {file = "django_rosetta-0.10.0-py3-none-any.whl", hash = "sha256:a42ed265a976a8e5e907f20bad56239e701084a4b9936810e85ffb27bf9a1f15"},
+]
 
 [package.dependencies]
 Django = ">=4.2"
 polib = ">=1.1.0"
 requests = ">=2.30.0"
-
-[package.source]
-type = "git"
-url = "https://github.com/mbi/django-rosetta.git"
-reference = "HEAD"
-resolved_reference = "0825204e095e84b65afb3de4382446f0fd112398"
 
 [[package]]
 name = "django-stubs"
@@ -1573,16 +1569,6 @@ requests = ">=2.0.0"
 rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
-name = "rosetta"
-version = "0.3"
-description = "Tools, wrappers, etc... for data science with a concentration on text processing"
-optional = false
-python-versions = "*"
-files = [
-    {file = "rosetta-0.3.tar.gz", hash = "sha256:bc89b4153ceaa15913410f7eb0cb833ab7379f1f6f4032e1ff8c2635c55e4719"},
-]
-
-[[package]]
 name = "ruff"
 version = "0.3.7"
 description = "An extremely fast Python linter and code formatter, written in Rust."
@@ -1878,4 +1864,4 @@ webcolors = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "46fe6aa2a7654ef9c60ca0dd8450a57c2b2dddc7232c8beda3d6e6ba4441789f"
+content-hash = "16ac522ac135dbddbbb737ec245d060e49a0b801136883739795df545592a3f8"

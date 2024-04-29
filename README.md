@@ -40,7 +40,16 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL 
 
 ## Installations
 ### Local non-Docker
-```cd``` into a folder of your choice, clone the project from https://github.com/kirkoov/foodgram.git, `cd foodgram` & create your virtual env (venv, e.g. with `poetry`). This installation case is best to tweak to your needs and language. ```rosetta``` comes included, but for further ops should be re-installed in place to work properly. If you care about English wording only for your admin zone, uninstall ```rosetta```.
+```cd``` into a folder of your choice, clone the project from https://github.
+com/kirkoov/foodgram.git, `cd foodgram` & create your virtual env (venv, e.g.
+with `poetry`). This installation case is best to tweak to your needs and 
+language. ```rosetta``` comes included, but for further ops should be 
+re-installed in place to work properly & entered like 
+`http://localhost:8000/rosetta/` only while under an admin 
+session.
+If you care 
+about 
+English wording only for your admin zone, uninstall ```rosetta```.
 ##### 1. In the same Terminal, ```cd backend``` or elsewhere you've put the requirements.txt & run ```poetry add $( cat requirements.txt )```. Take the above note about ```rosetta``` or just remove its lines from the requirements.txt before running this command.
 
 ##### 2. If you want to try both the frontend and backend locally, in the frontend folder package.json's "proxy" change the `"http://web:8000/"` to `"http://127.0.0.1:8000/"` & do not forget to undo this change later if required. Then in a Terminal, to launch the frontend, run & ignore warnings:

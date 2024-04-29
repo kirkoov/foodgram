@@ -62,7 +62,6 @@ reportlab-stubs = "3.6.9.post0"
 reportlab = "4.1.0"
 requests-oauthlib = "2.0.0"
 requests = "2.31.0"
-rosetta = "0.3"
 scipy = "1.12.0"
 six = "1.16.0"
 social-auth-app-django = "5.4.0"
@@ -79,8 +78,8 @@ tzdata = "2024.1"
 urllib3 = "2.2.1"
 webcolors-stubs = "0.0.3"
 webcolors = "1.13"
-django-rosetta = {git = "https://github.com/mbi/django-rosetta.git"}
 types-regex = "^2023.12.25.20240311"
+django-rosetta = "^0.10.0"
 
 
 [tool.poetry.group.dev.dependencies]
