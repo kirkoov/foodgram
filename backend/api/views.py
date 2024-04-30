@@ -259,16 +259,6 @@ class UsersViewSet(UserViewSet):
             self.permission_classes = [permissions.IsAuthenticated]
         return super().get_permissions()
 
-        # @action(methods=["get"], url_path="me", detail=False)
-        # def me_path_user(self, request):
-        """Current user."""
-        # user = request.user
-        # if request.user.is_authenticated:
-        #     serializer = self.get_serializer(user)
-        #     return Response(serializer.data)
-        # return Response({'detail': 'Пользователь незарегистрирован.'},
-        #                 status=HTTPStatus.UNAUTHORIZED)
-
     @action(
         methods=["get"],
         detail=False,

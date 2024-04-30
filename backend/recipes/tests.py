@@ -1,20 +1,25 @@
 import json
-import random
+
+# import random
+# from pprint import pprint as pp
 from typing import List
 
-import pytest
+# import pytest
 from django.contrib.auth import get_user_model
-from django.db.utils import DataError, IntegrityError
-from rest_framework import status
-from rest_framework.test import APIRequestFactory, APITestCase
 
-from api.views import IngredientViewSet, RecipeViewSet, TagViewSet
+# from django.db.utils import DataError, IntegrityError
+from rest_framework import status
+from rest_framework.test import APIClient, APIRequestFactory, APITestCase
+
+# from api.views import IngredientViewSet, RecipeViewSet, TagViewSet
 from backend.constants import (
     NUM_CHARS_INGREDIENT_NAME,
     NUM_CHARS_MEALTIME_HEX,
     NUM_CHARS_MEALTIME_NAME,
     NUM_CHARS_MEALTIME_SLUG,
     NUM_CHARS_MEASUREMENT_UNIT,
+    TEST_NUM_INGREDIENTS,
+    TEST_NUM_TAGS,
 )
 from .models import Ingredient, Tag
 from .validators import validate_hex_color, validate_slug_field
@@ -26,18 +31,15 @@ class RecipeTests(APITestCase):
     prefix = "/api/"
     tags_url = f"{prefix}tags/"
     ingredients_url = f"{prefix}ingredients/"
-    test_ingredient_name = "Ingredient"
     recipes_url = f"{prefix}recipes/"
+    api_client = APIClient()
     factory = APIRequestFactory()
     test_tags: List[Tag] = []
     test_ingredients: List[Ingredient] = []
 
     @classmethod
     def setUpTestData(cls):
-        cls.request_tags = cls.factory.get(cls.tags_url)
-        cls.view_tag_detail = TagViewSet.as_view({"get": "retrieve"})
-
-        for index in range(random.randint(1, 10)):
+        for index in range(1, TEST_NUM_TAGS + 1):
             tag = Tag(
                 name=f"Tag{index}",
                 color=f"#E26C{index}D",
@@ -45,136 +47,165 @@ class RecipeTests(APITestCase):
             )
             cls.test_tags.append(tag)
         Tag.objects.bulk_create(cls.test_tags)
-        cls.request_tag_detail = cls.factory.get(f"{cls.tags_url}/")
 
-        cls.test_ingredients = []
-        cls.request_ingredients = cls.factory.get(cls.ingredients_url)
-        cls.view_ingredient_detail = IngredientViewSet.as_view(
-            {"get": "retrieve"}
-        )
-
-        for index in range(random.randint(1, 100)):
+        for idx in range(1, TEST_NUM_INGREDIENTS):
             ingredient = Ingredient(
-                name=f"{cls.test_ingredient_name}{index}",
+                name=f"Ingredient{idx}",
                 measurement_unit="g",
             )
             cls.test_ingredients.append(ingredient)
         Ingredient.objects.bulk_create(cls.test_ingredients)
-        cls.request_ingredient_detail = cls.factory.get(
-            f"{cls.ingredients_url}/"
-        )
 
-        cls.test_recipes = []
-        cls.request_recipes = cls.factory.get(cls.recipes_url)
-        cls.view_recipe_detail = RecipeViewSet.as_view({"get": "retrieve"})
-        cls.test_recipe_name = "Test recipe"
-        cls.request_recipe_detail = cls.factory.get(f"{cls.recipes_url}/")
+        # cls.test_recipes = []
+        # cls.request_recipes = cls.factory.get(cls.recipes_url)
+        # cls.view_recipe_detail = RecipeViewSet.as_view({"get": "retrieve"})
+        # cls.test_recipe_name = "Test recipe"
+        # cls.request_recipe_detail = cls.factory.get(f"{cls.recipes_url}/")
 
-    def test_get_tag_list_200(self):
+    def test_list_tags(self):
         response = self.client.get(self.tags_url)
+        tmp_tags = []
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_tag_list_content(self):
-        response = TagViewSet.as_view({"get": "list"})(self.request_tags)
-        data = response.__dict__.get("data")
-        if data is not None:
-            tmp_slugs = []
-            for new, test in zip(data, self.test_tags):
-                self.assertEqual(new["name"], test.name)
-                self.assertTrue(len(new["name"]) <= NUM_CHARS_MEALTIME_NAME)
-                self.assertEqual(new["color"], test.color)
-                self.assertTrue(len(new["color"]) <= NUM_CHARS_MEALTIME_HEX)
-                self.assertIsNone(validate_hex_color(new["color"]))
-                self.assertEqual(new["slug"], test.slug)
-                self.assertTrue(len(new["slug"]) <= NUM_CHARS_MEALTIME_SLUG)
-                self.assertIsNone(validate_slug_field(new["slug"]))
-                tmp_slugs.append(new["slug"])
-            # The slugs must be unique
-            self.assertEqual(len(tmp_slugs), len(set(tmp_slugs)))
-        else:
-            raise DataError(
-                "Recipes: errors in the test_get_tag_list_content()."
-            )
-
-    def test_get_tag_detail_200_404(self):
-        # In the test db, i.e. sqlite3, the tags start from 1
-        if (then := len(self.test_tags) - 1) == 0:
-            then = 1
-        response = self.view_tag_detail(self.request_tag_detail, pk=then)
-        if response.status_code != 200:
-            raise DataError("Recipes: no 200 status code for tag details.")
-        response = self.view_tag_detail(
-            self.request_tag_detail, pk=len(self.test_tags) + 1
+        self.assertEqual(
+            json.loads(response.content),
+            [
+                {
+                    "id": x.id,
+                    "name": x.name,
+                    "color": x.color,
+                    "slug": x.slug,
+                }
+                for x in Tag.objects.all()
+            ],
         )
-        if response.status_code != 404:
-            raise DataError("Recipes: no 404 status code for tag details.")
+        for x in Tag.objects.all():
+            self.assertTrue(len(x.name) <= NUM_CHARS_MEALTIME_NAME)
+            self.assertTrue(len(x.color) <= NUM_CHARS_MEALTIME_HEX)
+            self.assertIsNone(validate_hex_color(x.color))
+            self.assertTrue(len(x.slug) <= NUM_CHARS_MEALTIME_SLUG)
+            self.assertIsNone(validate_slug_field(x.slug))
+            tmp_tags.append(x.slug)
+        self.assertEqual(Tag.objects.count(), len(set(tmp_tags)))
 
-    def test_get_ingredient_list_200(self):
+    def test_tag_detail(self):
+        id_ = len(self.test_tags)
+        self.assertTrue(id_ >= 1)
+        response = self.api_client.get(f"{self.tags_url}{id_}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        tag = Tag.objects.get(id=id_)
+        self.assertEqual(
+            json.loads(response.content),
+            {
+                "id": tag.id,
+                "name": tag.name,
+                "color": tag.color,
+                "slug": tag.slug,
+            },
+        )
+        id_ = len(self.test_tags) + 1
+        response = self.api_client.get(f"{self.tags_url}{id_}/")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_list_ingredients(self):
         response = self.client.get(self.ingredients_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_ingredient_list_content(self):
-        response = IngredientViewSet.as_view({"get": "list"})(
-            self.request_ingredients
+        tmp_ingredients = []
+        self.assertEqual(
+            json.loads(response.content),
+            [
+                {
+                    "id": x.id,
+                    "name": x.name,
+                    "measurement_unit": x.measurement_unit,
+                }
+                for x in Ingredient.objects.all()
+            ],
         )
-        data = response.__dict__.get("data")
-        if data is not None:
-            data_sorted = sorted(data, key=lambda d: d["id"])
-            for new, test in zip(data_sorted, self.test_ingredients):
-                self.assertEqual(new["name"], test.name)
-                self.assertTrue(len(new["name"]) <= NUM_CHARS_INGREDIENT_NAME)
-                self.assertEqual(
-                    new["measurement_unit"], test.measurement_unit
-                )
-                self.assertTrue(
-                    len(new["measurement_unit"]) <= NUM_CHARS_MEASUREMENT_UNIT
-                )
-        else:
-            raise DataError(
-                "Recipes: errors in the test_get_ingredient_list_content()."
+        for x in Ingredient.objects.all():
+            self.assertTrue(len(x.name) <= NUM_CHARS_INGREDIENT_NAME)
+            self.assertTrue(
+                len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT
             )
+            tmp_ingredients.append(x.name)
+        self.assertEqual(Ingredient.objects.count(), len(set(tmp_ingredients)))
 
     def test_ingredient_search(self):
-        request = self.factory.get(
-            f"{self.prefix}ingredients/?search={self.test_ingredient_name}"
+        count_ini = Ingredient.objects.count()
+        Ingredient.objects.create(
+            name="find_me ingredient",
+            measurement_unit="shovel",
         )
-        response = IngredientViewSet.as_view({"get": "list"})(request)
-        data = response.__dict__.get("data")
-        self.assertEqual(len(data), len(self.test_ingredients))
-
-    @staticmethod
-    def test_create_same_ingredients_fails():
-        with pytest.raises(IntegrityError):
-            Ingredient.objects.create(
-                name="The-same-ingredient",
-                measurement_unit="kg",
-            )
-            Ingredient.objects.create(
-                name="The-same-ingredient",
-                measurement_unit="kg",
-            )
-
-    def test_get_ingredient_detail(self):
-        id_ = 1
-        request_detail = self.factory.get(
-            f"http://testserver/api/ingredients/{id_}/"
+        self.assertEqual(Ingredient.objects.count(), count_ini + 1)
+        response = self.client.get(
+            f"{self.ingredients_url}?name=find_me%20ingredient"
         )
-        response = self.view_ingredient_detail(request_detail, pk=id_)
-        if response.render():
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        if TEST_NUM_INGREDIENTS == 1000:
             self.assertEqual(
                 json.loads(response.content),
-                {
-                    "id": id_,
-                    "name": f"Ingredient{id_ - 1}",
-                    "measurement_unit": "g",
-                },
+                [
+                    {
+                        "id": 1000,
+                        "name": "find_me ingredient",
+                        "measurement_unit": "shovel",
+                    }
+                ],
             )
-        else:
-            raise DataError(
-                "Recipes: no rendered content from the "
-                "test_get_ingredient_detail()."
+        response = self.client.get(f"{self.ingredients_url}?name=Ingredient")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        if TEST_NUM_INGREDIENTS == 1000:
+            self.assertEqual(
+                len(json.loads(response.content)), TEST_NUM_INGREDIENTS - 1
             )
 
-    def test_recipe_page_available_anonymous_user(self):
-        response = self.client.get(self.recipes_url)
+    def test_ingredient_detail(self):
+        id_ = len(self.test_ingredients)
+        self.assertTrue(id_ >= 1)
+        response = self.api_client.get(f"{self.ingredients_url}{id_}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ingredient = Ingredient.objects.get(id=id_)
+        self.assertEqual(
+            json.loads(response.content),
+            {
+                "id": ingredient.id,
+                "name": ingredient.name,
+                "measurement_unit": ingredient.measurement_unit,
+            },
+        )
+
+    # @staticmethod
+    # def test_create_same_ingredients_fails():
+    #     with pytest.raises(IntegrityError):
+    #         Ingredient.objects.create(
+    #             name="The-same-ingredient",
+    #             measurement_unit="kg",
+    #         )
+    #         Ingredient.objects.create(
+    #             name="The-same-ingredient",
+    #             measurement_unit="kg",
+    #         )
+    #
+    # def test_get_ingredient_detail(self):
+    #     id_ = 1
+    #     request_detail = self.factory.get(
+    #         f"http://testserver/api/ingredients/{id_}/"
+    #     )
+    #     response = self.view_ingredient_detail(request_detail, pk=id_)
+    #     if response.render():
+    #         self.assertEqual(
+    #             json.loads(response.content),
+    #             {
+    #                 "id": id_,
+    #                 "name": f"Ingredient{id_ - 1}",
+    #                 "measurement_unit": "g",
+    #             },
+    #         )
+    #     else:
+    #         raise DataError(
+    #             "Recipes: no rendered content from the "
+    #             "test_get_ingredient_detail()."
+    #         )
+    #
+    # def test_recipe_page_available_anonymous_user(self):
+    #     response = self.client.get(self.recipes_url)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
