@@ -1,5 +1,22 @@
 # Foodgram
-Both a recipe website & a shopping list service for you to never forget what you need to buy to cook that fancy meal you've heard or seen. In English or Russian for starters. 
+Both a recipe website & a shopping list service for you to never forget what 
+you need to buy to cook that fancy meal you've heard or seen, featuring its 
+interface in English or 
+Russian thanks to `rosetta`. This is my main project to 
+showcase my skills 
+as a 
+Python backend developer able to docker & pytest a Django/DRF project. At 
+present, I'm 
+still on 
+it with more tests to go, 
+since my goal is 'to cover it all'. Please 
+find in the 
+description below the tools 
+and stack used. Made with ❤️ on the SublimeText4 and continued on the 
+PyCharm 2024.
+1.1 
+(Community 
+Edition), no affiliation to either implied.
 
 ## Table of contents
 - [Description](#description)
@@ -27,7 +44,7 @@ This project helped me a lot in further grasping the following:
 - DevOps, including CI/CD;
 - Using both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance & automated deploys.
 
-Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #SublimeText #Flake8 #Ruff #Black #Mypy #DjDT #Django-cleanup
+Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #Flake8 #Ruff #Black #Mypy #DjDT #Django-cleanup
 
 [Back to TOC](#table-of-contents)
 
@@ -75,7 +92,9 @@ Then run:
 - (optional) `python manage.py test` or `poetry run pytest` from the backend folder containing the `pytest.ini`;
 - ```python manage.py runserver```.
 
-<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts images<=1Mb, although when running live locally, the frontend may accept larger imgs. Still, in a live server case, the nginx container will instruct its Docker cousins not to.
+<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.
+org/project/django-cleanup/)</b> is used. By default, the admin zone accepts 
+images<=1Mb, although when running live locally, the frontend may accept larger images. Still, in a live server case, the nginx container will instruct its Docker cousins not to.
 
 ##### 4. Skip if para. 2 above doesn't apply. Back in the browser, reload the page http://localhost:3000 for the test recipes to appear.
 
@@ -111,7 +130,7 @@ image: nginx:1.19.3
 ```
 
 ##### 3. Define the admin zone language (the default Eng vs Rus):
-  - change the settings.py's LANGUAGE_CODE accordingly;
+  - change the LANGUAGE_CODE accordingly (settings.py);
   - unzip/replace the frontend public & src folders (see the zip files);
   - if you want the ingredients in Eng too, see more details below, just bear in mind that all of them can be changed in the backend root folder's csv-files (with their bak cousins saved in the data folder).
 
@@ -148,9 +167,9 @@ which may eventually include (->):
   - or/and you may also want to use the default ingredients: ```sudo docker compose exec backend python manage.py import_csv eng``` + ```sudo docker compose exec backend python manage.py import_csv rus```;
   - then check in the admin zone if these imported ingredients (translated) are in the DB.
 
-<b>NB</b>: if for some reason this is not the first time you run these commands & the Docker volumes have not been rm'ed, all such data will remain as is & you may see messages about duplicate values in the DB or/and that no migrations are necessary.
+<b>NB</b>: if for some reason this is not the first time you run these commands & the Docker volumes have not been `rm`ed, all such data will remain as is & you may see messages about duplicate values in the DB or/and that no migrations are necessary.
 
-<b>NB</b>: if you plan to work with both Rus/Eng translations, make sure the settings.py's lang_code has the value you need, and the make/compilemessages do work in the backend container. Open another Terminal and from the same infra folder run:
+<b>NB</b>: if you plan to work with both Rus/Eng translations, make sure the settings.py lang_code has the value you need, and the `makemessages`/`compilemessages` do work in the backend container. Open another Terminal and from the same infra folder run:
 ```sudo docker compose exec backend bash```;
 ```apt update && apt upgrade -y && apt install gettext-base && apt install gettext```. Then quit (```Ctrl+d```) and run:
 
@@ -191,9 +210,9 @@ Ubuntu 22, Docker 25.0.4 & docker compose v2.24.7
 ##### 4. Follow the 3-8 steps of the [Local Docker](#local-docker) install.
 
 ##### 5. If you never changed the ports & docker-compose file, the project recipes, admin page & docs should be live at:
-- http(s)://yourDomainOrIPaddress/;
-- http(s)://yourDomainOrIPaddress/admin/;
-- http(s)://yourDomainOrIPaddress/api/docs/.
+- http(s)://your_domain_or_IP_address/;
+- http(s)://your_domain_or_IP_address/admin/;
+- http(s)://your_domain_or_IP_address/api/docs/.
 
 [Back to TOC](#table-of-contents)
 
@@ -249,9 +268,10 @@ save, close & run
 ##### 6. If ok, take the same steps as from the prev instructions' para 2. Otherwise, stop & run without the -d flag to see the output.
 
 ##### 7. The project, admin page & docs availability:
-- http(s)://yourDomainOrIPaddress/ (if you never changed the ports & docker-compose file);
-- http(s)://yourDomainOrIPaddress/admin/;
-- http(s)://yourDomainOrIPaddress/api/docs/.
+- http(s)://your_domain_or_IP_address/ (if you never changed the ports & 
+  docker-compose file);
+- http(s)://your_domain_or_IP_address/admin/;
+- http(s)://your_domain_or_IP_address/api/docs/.
 
 [Back to TOC](#table-of-contents)
 
