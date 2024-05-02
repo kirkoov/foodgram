@@ -12,7 +12,8 @@ it with more tests to go,
 since my goal is 'to cover it all'. Please 
 find in the 
 description below the tools 
-and stack used. Made with ❤️ on the SublimeText4 and continued on the 
+and stack used and the motivation behind the project. Made with ❤️ on the 
+SublimeText4 and continued on the 
 PyCharm 2024.
 1.1 
 (Community 
@@ -37,12 +38,15 @@ Edition), no affiliation to either implied.
 Ever wanted to become a gourmet or a real meal maker? Try out others' recipes to both your and their satisfaction or otherwise? Or build on this to come up with a better-looking thingy, featuring more languages than just Eng/Rus? Well, [this website](https://foodgram.zapto.org/) may be your starting point. Sign up/in to post/edit/delete your recipes, add others' as your favourites or subscriptions & generate downloadable pdf shopping lists in line with the recipes you'd like to try. The shop items just sum up if duplicate, and go alphabetically. [The admin zone](https://foodgram.zapto.org/admin/) & [the docs](https://foodgram.zapto.org/api/docs/) (in Russian) follow. 
 
 This project helped me a lot in further grasping the following:
-- How a Django app should be set up to interact with third-party APIs;
-- How to create a custom API based on a Django project & as per its requirements;
-- The way a React SPA can be connected to one's backend app to perform as one;
-- Docker image & container building & deploying locally & remotely;
-- DevOps, including CI/CD;
-- Using both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance & automated deploys.
+- Set up a Django app for it to interact with third-party APIs;
+- Create a custom API based on a Django project & as per its 
+  tech docs/requirements;
+- Connect friendlily a React SPA to a backend app for both to 
+  perform as one;
+- Build & deploy both locally & remotely docker images & containers;
+- Enjoy more of DevOps, including CI/CD;
+- Use further both [DjDT](https://django-debug-toolbar.readthedocs.
+  io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance & automated deploys.
 
 Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #Flake8 #Ruff #Black #Mypy #DjDT #Django-cleanup
 

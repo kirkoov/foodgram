@@ -1,13 +1,12 @@
 import json
-import random
 from typing import List
 
 import pytest
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from rest_framework import status
-from rest_framework.test import APIClient, APITestCase
 from rest_framework.authtoken.models import Token
+from rest_framework.test import APIClient, APITestCase
 
 from backend.constants import (
     NUM_CHARS_INGREDIENT_NAME,
@@ -17,11 +16,7 @@ from backend.constants import (
     NUM_CHARS_MEASUREMENT_UNIT,
     TEST_NUM_INGREDIENTS,
     TEST_NUM_TAGS,
-    TEST_NUM_RECIPES,
-    MIN_COOKING_TIME_MINS,
-    MAX_COOKING_TIME_MINS,
 )
-from conftest import get_standard_user_data
 from .models import Ingredient, Recipe, Tag
 from .validators import validate_hex_color, validate_slug_field
 
@@ -172,7 +167,9 @@ class RecipeTests(APITestCase):
         )
         for x in Ingredient.objects.all():
             self.assertTrue(len(x.name) <= NUM_CHARS_INGREDIENT_NAME)
-            self.assertTrue(len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT)
+            self.assertTrue(
+                len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT
+            )
             tmp_ingredients.append(x.name)
         self.assertEqual(Ingredient.objects.count(), len(set(tmp_ingredients)))
 
@@ -183,7 +180,9 @@ class RecipeTests(APITestCase):
             measurement_unit="shovel",
         )
         self.assertEqual(Ingredient.objects.count(), count_ini + 1)
-        response = self.client.get(f"{self.ingredients_url}?name=find_me%20ingredient")
+        response = self.client.get(
+            f"{self.ingredients_url}?name=find_me%20ingredient"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         if TEST_NUM_INGREDIENTS == 2000:
             self.assertEqual(
@@ -199,7 +198,9 @@ class RecipeTests(APITestCase):
         response = self.client.get(f"{self.ingredients_url}?name=Ingredient")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         if TEST_NUM_INGREDIENTS == 2000:
-            self.assertEqual(len(json.loads(response.content)), TEST_NUM_INGREDIENTS)
+            self.assertEqual(
+                len(json.loads(response.content)), TEST_NUM_INGREDIENTS
+            )
 
     def test_ingredient_detail(self):
         id_ = len(self.test_ingredients)
