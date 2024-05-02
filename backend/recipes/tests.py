@@ -265,3 +265,16 @@ class RecipeTests(APITestCase):
         cls.api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         response = cls.api_client.get("/api/users/me/")
         assert response.status_code == status.HTTP_200_OK
+
+        # new_rec = Recipe(name="TestMe recipe",image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bA
+        # AAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==", cooking_time=123, text="Instructions to cook the TestMe recipe", author=user)
+
+
+#         new_rec.save()
+
+#         new_rec.tags.set([1, 3])
+
+# >>> new_rec.id
+# 23
+# >>> new_ri = RecipeIngredient(11, 2000, 23)
+# >>> new_ri = RecipeIngredient(1, 199, 23)

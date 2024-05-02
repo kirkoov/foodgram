@@ -46,7 +46,8 @@ This project helped me a lot in further grasping the following:
 - Build & deploy both locally & remotely docker images & containers;
 - Enjoy more of DevOps, including CI/CD;
 - Use further both [DjDT](https://django-debug-toolbar.readthedocs.
-  io/en/latest/) for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance & automated deploys.
+  io/en/latest/) for the dev & Telegram bot notifications about GitHub 
+  Actions deploys - for better performance & automated deployments.
 
 Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #Flake8 #Ruff #Black #Mypy #DjDT #Django-cleanup
 
