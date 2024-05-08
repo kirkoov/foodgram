@@ -29,6 +29,7 @@ from users.models import Subscription
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import LimitPagination
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     AbridgedRecipeSerializer,
     FavoriteSerializer,
@@ -51,6 +52,12 @@ class RecipeViewSet(ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filterset_class = RecipeFilter
     pagination_class = LimitPagination
+
+    def get_permissions(self):
+        if self.action == "patch":
+            # or self.action == "delete":
+            self.permission_classes = (IsAuthorOrReadOnly,)
+        return super().get_permissions()
 
     def get_queryset(self):
         """Use the prefetch_related() to rid of duplicate requests."""
