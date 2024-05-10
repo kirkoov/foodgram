@@ -54,8 +54,7 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = LimitPagination
 
     def get_permissions(self):
-        if self.action == "patch":
-            # or self.action == "delete":
+        if self.action == "patch" or self.action == "delete":
             self.permission_classes = (IsAuthorOrReadOnly,)
         return super().get_permissions()
 
