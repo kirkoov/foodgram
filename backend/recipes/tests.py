@@ -54,6 +54,7 @@ class RecipeTests(APITestCase):
         "last_name": "User",
         "password": "wHat~Eva^_",
     }
+
     recipe_data = {
         "name": "TestMe recipe",
         "image": (
