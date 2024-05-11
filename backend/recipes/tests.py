@@ -1,6 +1,8 @@
 import json
 import os
 import random
+
+# from pprint import pprint
 from typing import List
 
 import pytest
@@ -34,26 +36,23 @@ User = get_user_model()
 
 
 class RecipeTests(APITestCase):
+    api_client = APIClient()
     prefix = "/api/"
     tags_url = f"{prefix}tags/"
     ingredients_url = f"{prefix}ingredients/"
     recipes_url = f"{prefix}recipes/"
+    token_url = f"{prefix}auth/token/"
+    login_url = f"{token_url}login/"
+    logout_url = f"{token_url}logout/"
     test_tags: List[Tag] = []
     test_ingredients: List[Ingredient] = []
     test_recipes: List[Recipe] = []
-    first_user_data = {
-        "email": "first_test@user.com",
-        "username": "first_test_user",
-        "first_name": "First Test",
+    user_data = {
+        "email": "test@user.com",
+        "username": "test_user",
+        "first_name": "Test",
         "last_name": "User",
         "password": "wHat~Eva^_",
-    }
-    second_user_data = {
-        "email": "second_test@user.com",
-        "username": "second_test_user",
-        "first_name": "Second Test",
-        "last_name": "Uza",
-        "password": "wHat338,-",
     }
     recipe_data = {
         "name": "TestMe recipe",
@@ -77,7 +76,8 @@ class RecipeTests(APITestCase):
     }
     default_images = [
         "front-view-arrangement-healthy-breakfast-meal-with-yogurt.jpg",
-        "vertical-shot-delicious-vegetable-meatballs-with-creamy-sauce.resized." "jpg",
+        "vertical-shot-delicious-vegetable-meatballs-with-creamy-sauce.resized."
+        "jpg",
         "korean-fish-cake-vegetable-soup-table.jpg",
         "lunch.resized.jpg",
         "dinner.resized.jpg",
@@ -90,11 +90,9 @@ class RecipeTests(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.api_client = APIClient()
-        cls.api_client_another = APIClient()
         cls.create_test_tags()
         cls.create_test_ingredients()
-        cls.create_test_users()
+        cls.create_test_user()
         cls.create_test_recipes()
 
     def test_list_tags(self):
@@ -158,7 +156,9 @@ class RecipeTests(APITestCase):
         )
         for x in Ingredient.objects.all():
             self.assertTrue(len(x.name) <= NUM_CHARS_INGREDIENT_NAME)
-            self.assertTrue(len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT)
+            self.assertTrue(
+                len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT
+            )
             tmp_ingredients.append(x.name)
         self.assertEqual(Ingredient.objects.count(), len(set(tmp_ingredients)))
 
@@ -169,7 +169,9 @@ class RecipeTests(APITestCase):
             measurement_unit="shovel",
         )
         self.assertEqual(Ingredient.objects.count(), count_ini + 1)
-        response = self.client.get(f"{self.ingredients_url}?name=find_me%20ingredient")
+        response = self.client.get(
+            f"{self.ingredients_url}?name=find_me%20ingredient"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         if TEST_NUM_INGREDIENTS == 2000:
             self.assertEqual(
@@ -185,7 +187,9 @@ class RecipeTests(APITestCase):
         response = self.client.get(f"{self.ingredients_url}?name=Ingredient")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         if TEST_NUM_INGREDIENTS == 2000:
-            self.assertEqual(len(json.loads(response.content)), TEST_NUM_INGREDIENTS)
+            self.assertEqual(
+                len(json.loads(response.content)), TEST_NUM_INGREDIENTS
+            )
 
     def test_ingredient_detail(self):
         id_ = len(self.test_ingredients)
@@ -205,7 +209,7 @@ class RecipeTests(APITestCase):
     def test_create_recipe(self):
         recipe_count_ini = Recipe.objects.count()
         recipe_data = {
-            "name": "Test another recipe",
+            "name": "Another recipe to add",
             "image": (
                 "data:image/png;base64,"
                 "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///"
@@ -233,9 +237,12 @@ class RecipeTests(APITestCase):
         # For the sake of this test, the temp images accumulated by now are
         # deleted.
         self.delete_tmp_images()
-        self.tokenize_first_user()
-        response = self.api_client.post(self.recipes_url, recipe_data, format="json")
+        self.log_in_and_tokenize_user()
+        response = self.api_client.post(
+            self.recipes_url, recipe_data, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         self.assertEqual(Recipe.objects.count(), recipe_count_ini + 1)
         response = self.client.get(
             f"{self.recipes_url}{recipe_count_ini + 1}/", format="json"
@@ -243,9 +250,15 @@ class RecipeTests(APITestCase):
         tag_1 = Tag.objects.get(id=recipe_data["tags"][0])
         tag_2 = Tag.objects.get(id=recipe_data["tags"][1])
         first_test_user = User.objects.get(id=1)
-        ingredient_1 = Ingredient.objects.get(id=recipe_data["ingredients"][0]["id"])
-        ingredient_2 = Ingredient.objects.get(id=recipe_data["ingredients"][1]["id"])
-        ingredient_3 = Ingredient.objects.get(id=recipe_data["ingredients"][2]["id"])
+        ingredient_1 = Ingredient.objects.get(
+            id=recipe_data["ingredients"][0]["id"]
+        )
+        ingredient_2 = Ingredient.objects.get(
+            id=recipe_data["ingredients"][1]["id"]
+        )
+        ingredient_3 = Ingredient.objects.get(
+            id=recipe_data["ingredients"][2]["id"]
+        )
         img_path = f"{TEST_SERVER_URL}/media/recipes/"
         for image in os.listdir(MEDIA_ROOT / "recipes"):
             if image not in self.default_images:
@@ -314,50 +327,73 @@ class RecipeTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Recipe.objects.count(), recipe_count_ini)
-        response = self.client.post(self.recipes_url, self.recipe_data, format="json")
+        response = self.client.post(
+            self.recipes_url, self.recipe_data, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(Recipe.objects.count(), recipe_count_ini)
+
         response = self.api_client.post(
             "a-wrong-url-somehow", incomplete_data, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.log_out_and_detokenize_user()
 
     def test_recipe_detail(self):
         # The json response structure is checked by the test_create_recipe(),
         # so there's no need to repeat the same here.
         id_ = Recipe.objects.count()
         self.assertTrue(id_ >= 1)
-        response = self.client.get(f"{self.recipes_url}{id_}/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.api_client.get(f"{self.recipes_url}{id_}/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        readers = (self.client, self.api_client)
+        for reader in readers:
+            response = reader.get(f"{self.recipes_url}{id_}/")
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
         id_ += 1
         response = self.client.get(f"{self.recipes_url}{id_}/")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    # def test_recipe_patch(self):
-    #     id_ = Recipe.objects.count()
-    #     self.assertTrue(id_ >= 1)
-    #     readers = (self.client, self.api_client, self.api_client_another)
-    #     for reader in readers:
-    #         response = reader.get(f"{self.recipes_url}{id_}/")
-    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     patch_data = {
-    #         "ingredients": [
-    #             {
-    #                 "id": 4,
-    #                 "amount": 4,
-    #             },
-    #             {
-    #                 "id": 55,
-    #                 "amount": 55,
-    #             },
-    #         ],
-    #         "tags": [3],
-    #         "name": "Patched by ...",
-    #         "text": "Patched cooking instructions now",
-    #         "cooking_time": 1,
-    #     }
+    def test_recipe_patch(self):
+        id_ = Recipe.objects.count()
+        self.assertTrue(id_ >= 1)
+        response = self.client.get(f"{self.recipes_url}{id_}/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # self.log_in_and_tokenize_user()
+        patch_data = {
+            "ingredients": [
+                {
+                    "id": 4,
+                    "amount": 4,
+                },
+                {
+                    "id": 55,
+                    "amount": 55,
+                },
+            ],
+            "tags": [3],
+            "name": "Fist user's recipe patched by the second user?",
+            "text": "Patched cooking instructions now",
+            "cooking_time": 1,
+        }
+        response = self.client.patch(
+            f"{self.recipes_url}{id_}/", patch_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        user = User.objects.get(id=1)
+        self.api_client.force_authenticate(user=user)
+        response = self.api_client.patch(
+            f"{self.recipes_url}{id_}/", patch_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.api_client.logout()
+        response = self.api_client.patch(
+            f"{self.recipes_url}{id_}/", patch_data, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # self.api_client.logout()
+
     #
     #     response = self.api_client_another.patch(
     #         f"{self.recipes_url}{id_}/", patch_data, format="json"
@@ -454,28 +490,18 @@ class RecipeTests(APITestCase):
             )
 
     @classmethod
-    def create_test_users(cls):
+    def create_test_user(cls):
         response = cls.api_client.post(
             "/api/users/",
-            cls.first_user_data,
+            cls.user_data,
             format="json",
         )
         assert response.status_code == status.HTTP_201_CREATED
         assert User.objects.count() == 1
-        cls.tokenize_first_user()
+        cls.log_in_and_tokenize_user()
         response = cls.api_client.get("/api/users/me/")
         assert response.status_code == status.HTTP_200_OK
-
-        response = cls.api_client_another.post(
-            "/api/users/",
-            cls.second_user_data,
-            format="json",
-        )
-        assert response.status_code == status.HTTP_201_CREATED
-        assert User.objects.count() == 2
-        cls.tokenize_second_user()
-        response = cls.api_client_another.get("/api/users/me/")
-        assert response.status_code == status.HTTP_200_OK
+        cls.api_client.logout()
 
     @classmethod
     def delete_tmp_images(cls):
@@ -506,7 +532,7 @@ class RecipeTests(APITestCase):
 
     @classmethod
     def create_test_recipes(cls):
-        cls.tokenize_first_user()
+        cls.log_in_and_tokenize_user()
         for idx in range(1, TEST_NUM_RECIPES + 1):
             cls.recipe_data["name"] = f"TestMe recipe {idx}"
             cls.recipe_data["cooking_time"] = random.randint(
@@ -531,41 +557,59 @@ class RecipeTests(APITestCase):
             assert len(cls.recipe_data["ingredients"]) <= NUM_CHARS_RECIPE_NAME
             assert len(cls.recipe_data["text"]) > 0
             assert cls.recipe_data["cooking_time"] >= MIN_COOKING_TIME_MINS
-
             response = cls.api_client.post(
                 cls.recipes_url, cls.recipe_data, format="json"
             )
             assert response.status_code == status.HTTP_201_CREATED
+        cls.log_out_and_detokenize_user()
 
     @classmethod
     def tearDownClass(cls):
         cls.api_client.logout()
-        cls.api_client_another.logout()
         # Just in case some temp images been left behind
         cls.delete_tmp_images()
 
     @classmethod
-    def tokenize_first_user(cls):
+    def log_in_and_tokenize_user(cls):
         login_data = {
-            "password": cls.first_user_data["password"],
-            "email": cls.first_user_data["email"],
+            "password": cls.user_data["password"],
+            "email": cls.user_data["email"],
         }
         response = cls.api_client.post(
-            "/api/auth/token/login/", login_data, format="json"
+            cls.login_url, login_data, format="json"
         )
         assert "auth_token" in json.loads(response.content)
-        token = Token.objects.get(user__username=cls.first_user_data["username"])
+        token = Token.objects.get(user__username=cls.user_data["username"])
         cls.api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
     @classmethod
-    def tokenize_second_user(cls):
-        login_data = {
-            "password": cls.second_user_data["password"],
-            "email": cls.second_user_data["email"],
-        }
-        response = cls.api_client_another.post(
-            "/api/auth/token/login/", login_data, format="json"
-        )
-        assert "auth_token" in json.loads(response.content)
-        token = Token.objects.get(user__username=cls.second_user_data["username"])
-        cls.api_client_another.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+    def log_out_and_detokenize_user(cls):
+        response = cls.api_client.post(cls.logout_url, format="json")
+        cls.api_client.logout()
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+    # @classmethod
+    # def tokenize_first_user(cls):
+    #     login_data = {
+    #         "password": cls.user_data["password"],
+    #         "email": cls.user_data["email"],
+    #     }
+    #     response = cls.api_client.post(
+    #         "/api/auth/token/login/", login_data, format="json"
+    #     )
+    #     assert "auth_token" in json.loads(response.content)
+    #     token = Token.objects.get(user__username=cls.user_data["username"])
+    #     cls.api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    # @classmethod
+    # def tokenize_second_user(cls):
+    #     login_data = {
+    #         "password": cls.second_user_data["password"],
+    #         "email": cls.second_user_data["email"],
+    #     }
+    #     response = cls.api_client_another.post(
+    #         "/api/auth/token/login/", login_data, format="json"
+    #     )
+    #     assert "auth_token" in json.loads(response.content)
+    #     token = Token.objects.get(user__username=cls.second_user_data["username"])
+    #     cls.api_client_another.credentials(HTTP_AUTHORIZATION="Token " + token.key)
