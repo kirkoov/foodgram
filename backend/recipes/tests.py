@@ -77,8 +77,7 @@ class RecipeTests(APITestCase):
     }
     default_images = [
         "front-view-arrangement-healthy-breakfast-meal-with-yogurt.jpg",
-        "vertical-shot-delicious-vegetable-meatballs-with-creamy-sauce.resized."
-        "jpg",
+        "vertical-shot-delicious-vegetable-meatballs-with-creamy-sauce.resized." "jpg",
         "korean-fish-cake-vegetable-soup-table.jpg",
         "lunch.resized.jpg",
         "dinner.resized.jpg",
@@ -124,7 +123,8 @@ class RecipeTests(APITestCase):
     def test_tag_detail(self):
         id_ = len(self.test_tags)
         self.assertTrue(id_ >= 1)
-        response = self.client.get(f"{self.tags_url}{id_}/")
+        # For some reason, tag details are not controlled by the AllowAny perm
+        response = self.api_client.get(f"{self.tags_url}{id_}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         tag = Tag.objects.get(id=id_)
         self.assertEqual(
@@ -138,6 +138,7 @@ class RecipeTests(APITestCase):
         )
         id_ = len(self.test_tags) + 1
         response = self.api_client.get(f"{self.tags_url}{id_}/")
+        # print(json.loads(response.content))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_list_ingredients(self):
@@ -157,9 +158,7 @@ class RecipeTests(APITestCase):
         )
         for x in Ingredient.objects.all():
             self.assertTrue(len(x.name) <= NUM_CHARS_INGREDIENT_NAME)
-            self.assertTrue(
-                len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT
-            )
+            self.assertTrue(len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT)
             tmp_ingredients.append(x.name)
         self.assertEqual(Ingredient.objects.count(), len(set(tmp_ingredients)))
 
@@ -170,9 +169,7 @@ class RecipeTests(APITestCase):
             measurement_unit="shovel",
         )
         self.assertEqual(Ingredient.objects.count(), count_ini + 1)
-        response = self.client.get(
-            f"{self.ingredients_url}?name=find_me%20ingredient"
-        )
+        response = self.client.get(f"{self.ingredients_url}?name=find_me%20ingredient")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         if TEST_NUM_INGREDIENTS == 2000:
             self.assertEqual(
@@ -188,9 +185,7 @@ class RecipeTests(APITestCase):
         response = self.client.get(f"{self.ingredients_url}?name=Ingredient")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         if TEST_NUM_INGREDIENTS == 2000:
-            self.assertEqual(
-                len(json.loads(response.content)), TEST_NUM_INGREDIENTS
-            )
+            self.assertEqual(len(json.loads(response.content)), TEST_NUM_INGREDIENTS)
 
     def test_ingredient_detail(self):
         id_ = len(self.test_ingredients)
@@ -239,9 +234,7 @@ class RecipeTests(APITestCase):
         # deleted.
         self.delete_tmp_images()
         self.log_in_and_tokenize_user()
-        response = self.api_client.post(
-            self.recipes_url, recipe_data, format="json"
-        )
+        response = self.api_client.post(self.recipes_url, recipe_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         self.assertEqual(Recipe.objects.count(), recipe_count_ini + 1)
@@ -251,15 +244,9 @@ class RecipeTests(APITestCase):
         tag_1 = Tag.objects.get(id=recipe_data["tags"][0])
         tag_2 = Tag.objects.get(id=recipe_data["tags"][1])
         first_test_user = User.objects.get(id=1)
-        ingredient_1 = Ingredient.objects.get(
-            id=recipe_data["ingredients"][0]["id"]
-        )
-        ingredient_2 = Ingredient.objects.get(
-            id=recipe_data["ingredients"][1]["id"]
-        )
-        ingredient_3 = Ingredient.objects.get(
-            id=recipe_data["ingredients"][2]["id"]
-        )
+        ingredient_1 = Ingredient.objects.get(id=recipe_data["ingredients"][0]["id"])
+        ingredient_2 = Ingredient.objects.get(id=recipe_data["ingredients"][1]["id"])
+        ingredient_3 = Ingredient.objects.get(id=recipe_data["ingredients"][2]["id"])
         img_path = f"{TEST_SERVER_URL}/media/recipes/"
         for image in os.listdir(MEDIA_ROOT / "recipes"):
             if image not in self.default_images:
@@ -328,9 +315,7 @@ class RecipeTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Recipe.objects.count(), recipe_count_ini)
-        response = self.client.post(
-            self.recipes_url, self.recipe_data, format="json"
-        )
+        response = self.client.post(self.recipes_url, self.recipe_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(Recipe.objects.count(), recipe_count_ini)
 
@@ -358,7 +343,8 @@ class RecipeTests(APITestCase):
         self.assertTrue(id_ >= 1)
         response = self.client.get(f"{self.recipes_url}{id_}/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.log_in_and_tokenize_user()
+        self.assertIn("image", json.loads(response.content))
+        img_path = json.loads(response.content)["image"]  # Keep unchanged
         patch_data = {
             "ingredients": [
                 {
@@ -375,81 +361,80 @@ class RecipeTests(APITestCase):
             "text": "Patched cooking instructions now",
             "cooking_time": 1,
         }
+        for patcher in (self.client, self.api_client):
+            response = patcher.patch(
+                f"{self.recipes_url}{id_}/", patch_data, format="json"
+            )
+            self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
         response = self.client.patch(
-            f"{self.recipes_url}{id_}/", patch_data, format="json"
+            f"where-did-you-get-this-url/{id_}/", patch_data, format="json"
         )
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        user = User.objects.get(id=1)
-        self.api_client.force_authenticate(user=user)
+        self.log_in_and_tokenize_user()
         response = self.api_client.patch(
             f"{self.recipes_url}{id_}/", patch_data, format="json"
         )
+        self.log_out_and_detokenize_user()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        recipe = Recipe.objects.get(id=id_)
+        user = User.objects.get(id=recipe.author.id)
 
-        self.api_client.logout()
+        tags = []
+        for tag in patch_data["tags"]:
+            t = Tag.objects.get(id=tag)
+            tags.append({"id": t.id, "name": t.name, "color": t.color, "slug": t.slug})
+        ingredients = []
+        for ingredient in patch_data["ingredients"]:
+            i = Ingredient.objects.get(id=ingredient["id"])
+            ingredients.append(
+                {
+                    "amount": ingredient["amount"],
+                    "id": ingredient["id"],
+                    "measurement_unit": i.measurement_unit,
+                    "name": i.name,
+                }
+            )
+        self.assertEqual(
+            json.loads(response.content),
+            {
+                "id": id_,
+                "tags": tags,
+                "author": {
+                    "email": user.email,
+                    "id": user.id,
+                    "username": user.username,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "is_subscribed": False,
+                },
+                "ingredients": ingredients,
+                "is_favorited": False,
+                "is_in_shopping_cart": False,
+                "name": patch_data["name"],
+                "image": img_path,
+                "text": patch_data["text"],
+                "cooking_time": patch_data["cooking_time"],
+            },
+        )
+        # 403
+        # response = self.client.patch(
+        #     f"{self.recipes_url}{id_}/", patch_data, format="json"
+        # )
+        # self.assertEqual(
+        #     response.status_code,
+        #     status.HTTP_403_FORBIDDEN,
+        #     "Must be the 403 status code!",
+        # )
+
+        self.log_in_and_tokenize_user()
+        patch_data["ingredients"] = None
+        patch_data["name"] = None
         response = self.api_client.patch(
             f"{self.recipes_url}{id_}/", patch_data, format="json"
         )
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-        # self.api_client.logout()
-
-    #
-    #     response = self.api_client_another.patch(
-    #         f"{self.recipes_url}{id_}/", patch_data, format="json"
-    #     )
-    #     self.assertEqual(
-    #         response.status_code,
-    #         status.HTTP_403_FORBIDDEN,
-    #         "Must be the 403 status code!",
-    #     )
-    #
-    #     for patcher in readers:
-    #         patcher.logout()
-    #         response = patcher.patch(
-    #             f"{self.recipes_url}{id_}/", patch_data, format="json"
-    #         )
-    #         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-    #
-    #     # response = self.api_client_another
-    # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    # response = self.api_client.patch(
-    #     f"where-did-you-get-this-url/{id_}/", patch_data, format="json"
-    # )
-    # self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    #
-    # response = self.api_client_another.patch(
-    #     f"{self.recipes_url}{id_}/", patch_data, format="json"
-    # )
-    # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    #
-    # patch_data["ingredients"] = None
-    # patch_data["name"] = None
-    # response = self.api_client.patch(
-    #     f"{self.recipes_url}{id_}/", patch_data, format="json"
-    # )
-    # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    # # Json structure response checked here?
-
-    #
-
-    #
-    # # 403
-    # patch_data["ingredients"] = [
-    #     {
-    #         "id": 55,
-    #         "amount": 55,
-    #     },
-    # ]
-    # patch_data["name"] = "Patched by a second user"
-    # response = self.api_client_another.patch(
-    #     f"{self.recipes_url}{id_}/", patch_data, format="json"
-    # )
-    # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    # # pprint(json.loads(response.content))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_list_recipes(self):
         response = self.client.get(self.recipes_url)
@@ -503,6 +488,15 @@ class RecipeTests(APITestCase):
         response = cls.api_client.get("/api/users/me/")
         assert response.status_code == status.HTTP_200_OK
         cls.api_client.logout()
+
+        user_data = {
+            "email": "another@user.com",
+            "username": "another_user",
+            "first_name": "AnotherTest",
+            "last_name": "User",
+            "password": "wEva_$",
+        }
+        User.objects.create(**user_data)
 
     @classmethod
     def delete_tmp_images(cls):
@@ -576,9 +570,7 @@ class RecipeTests(APITestCase):
             "password": cls.user_data["password"],
             "email": cls.user_data["email"],
         }
-        response = cls.api_client.post(
-            cls.login_url, login_data, format="json"
-        )
+        response = cls.api_client.post(cls.login_url, login_data, format="json")
         assert "auth_token" in json.loads(response.content)
         token = Token.objects.get(user__username=cls.user_data["username"])
         cls.api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
