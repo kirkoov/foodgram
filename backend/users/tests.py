@@ -149,7 +149,7 @@ def test_user_sign_up_400(api_client, get_standard_user_data):
 #         assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-# @pytest.mark.django_db
+# @pytest.mark.django_db  # test comment
 # def test_get_user_me_url(api_client, get_standard_user_data):
 #     id_ = 1
 #     if User.objects.count() == 2:
