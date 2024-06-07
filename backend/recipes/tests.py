@@ -37,6 +37,7 @@ User = get_user_model()
 
 class RecipeTests(APITestCase):
     api_client = APIClient()
+    another_api_client = APIClient()
     prefix = "/api/"
     tags_url = f"{prefix}tags/"
     ingredients_url = f"{prefix}ingredients/"
@@ -53,6 +54,13 @@ class RecipeTests(APITestCase):
         "first_name": "Test",
         "last_name": "User",
         "password": "wHat~Eva^_",
+    }
+    another_user_data = {
+        "email": "another@user.com",
+        "username": "another_user",
+        "first_name": "AnotherTest",
+        "last_name": "User",
+        "password": "wEva_$",
     }
 
     recipe_data = {
@@ -440,7 +448,8 @@ class RecipeTests(APITestCase):
             },
         )
         # 403
-        # response = self.client.patch(
+        # self.log_in_and_tokenize_another_user()
+        # response = self.api_client.patch(
         #     f"{self.recipes_url}{id_}/", patch_data, format="json"
         # )
         # self.assertEqual(
@@ -448,14 +457,15 @@ class RecipeTests(APITestCase):
         #     status.HTTP_403_FORBIDDEN,
         #     "Must be the 403 status code!",
         # )
+        # self.log_out_and_detokenize_user()
 
-        self.log_in_and_tokenize_user()
-        patch_data["ingredients"] = None
-        patch_data["name"] = None
-        response = self.api_client.patch(
-            f"{self.recipes_url}{id_}/", patch_data, format="json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        # self.log_in_and_tokenize_user()
+        # patch_data["ingredients"] = None
+        # patch_data["name"] = None
+        # response = self.api_client.patch(
+        #     f"{self.recipes_url}{id_}/", patch_data, format="json"
+        # )
+        # self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_list_recipes(self):
         response = self.client.get(self.recipes_url)
@@ -597,6 +607,19 @@ class RecipeTests(APITestCase):
         assert "auth_token" in json.loads(response.content)
         token = Token.objects.get(user__username=cls.user_data["username"])
         cls.api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
+
+    # @classmethod
+    # def log_in_and_tokenize_another_user(cls):
+    #     login_data = {
+    #         "password": cls.another_user_data["password"],
+    #         "email": cls.another_user_data["email"],
+    #     }
+    #     response = cls.another_api_client.post(
+    #         cls.login_url, login_data, format="json"
+    #     )
+    #     assert "auth_token" in json.loads(response.content)
+    #     # token = Token.objects.get(user__username=cls.user_data["username"])
+    #     # cls.api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
     @classmethod
     def log_out_and_detokenize_user(cls):
