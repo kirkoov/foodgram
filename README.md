@@ -1,15 +1,13 @@
 # Foodgram
 Both a recipe website & a shopping list service for you to never forget what 
-you need to buy to cook that fancy meal you've heard or seen, featuring its 
-interface in English or 
-Russian thanks to `rosetta`. This is my main project to 
-showcase my skills 
+you need to buy to cook that fancy meal you've heard or seen. The project 
+can be tweaked to either an English or Russian interface thanks to `rosetta` 
+and it
+showcases my skills 
 as a 
-Python backend developer able to docker & pytest a Django/DRF project. At 
-present, I'm 
-still on 
-it with more tests to go, 
-since my goal is 'to cover it all'. Please 
+Python backend developer able to docker & pytest a Django/DRF + React coupling.
+At 
+present, I'm on more tests for it to get 100% coverage. Please 
 find in the 
 description below the tools 
 and stack used and the motivation behind the project. Made with ❤️ on the 
@@ -17,7 +15,7 @@ SublimeText4 and continued on the
 PyCharm 2024.
 1.1 
 (Community 
-Edition), no affiliation to either implied.
+Edition). No affiliation to either implied.
 
 ## Table of contents
 - [Description](#description)
@@ -45,8 +43,7 @@ This project helped me a lot in further grasping the following:
   perform as one;
 - Build & deploy both locally & remotely docker images & containers;
 - Enjoy more of DevOps, including CI/CD;
-- Use further both [DjDT](https://django-debug-toolbar.readthedocs.
-  io/en/latest/) for the dev & Telegram bot notifications about GitHub 
+- Use further both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/) for the dev & Telegram bot notifications about GitHub 
   Actions deploys - for better performance & automated deployments.
 
 Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #Flake8 #Ruff #Black #Mypy #DjDT #Django-cleanup
@@ -62,22 +59,21 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx #PostgreSQL 
 
 ## Installations
 ### Local non-Docker
-```cd``` into a folder of your choice, clone the project from https://github.
-com/kirkoov/foodgram.git, `cd foodgram` & create your virtual env (venv, e.g.
+`cd` into a folder of your choice, clone the project from https://github.com/kirkoov/foodgram.git, `cd foodgram` & create your virtual env (venv, e.g.
 with `poetry`). This installation case is best to tweak to your needs and 
-language. ```rosetta``` comes included, but for further ops should be 
+language. `rosetta` comes included, but for further ops should be 
 re-installed in place to work properly & entered like 
 `http://localhost:8000/rosetta/` only while under an admin 
 session.
 If you care 
 about 
-English wording only for your admin zone, uninstall ```rosetta```.
-##### 1. In the same Terminal, ```cd backend``` or elsewhere you've put the requirements.txt & run ```poetry add $( cat requirements.txt )```. Take the above note about ```rosetta``` or just remove its lines from the requirements.txt before running this command.
+English wording only for your admin zone, uninstall `rosetta`.
+##### 1. In the same Terminal, `cd backend` or elsewhere you've put the requirements.txt & run `poetry add $( cat requirements.txt )`. Take the above note about `rosetta` or just remove its lines from the requirements.txt before running this command.
 
 ##### 2. If you want to try both the frontend and backend locally, in the frontend folder package.json's "proxy" change the `"http://web:8000/"` to `"http://127.0.0.1:8000/"` & do not forget to undo this change later if required. Then in a Terminal, to launch the frontend, run & ignore warnings:
-- ```npm install```;
-- ```npm run build```;
-- ```npm start```.
+- `npm install`;
+- `npm run build`;
+- `npm start`.
 
 ##### 3. In the project folder, where the ```.env.example``` file is, create your own .env file like below. If you plan to work with an sqlite3 db only, no need to include all the fields:
 ```
@@ -97,8 +93,7 @@ Then run:
 - (optional) `python manage.py test` or `poetry run pytest` from the backend folder containing the `pytest.ini`;
 - ```python manage.py runserver```.
 
-<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.
-org/project/django-cleanup/)</b> is used. By default, the admin zone accepts 
+<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts 
 images<=1Mb, although when running live locally, the frontend may accept larger images. Still, in a live server case, the nginx container will instruct its Docker cousins not to.
 
 ##### 4. Skip if para. 2 above doesn't apply. Back in the browser, reload the page http://localhost:3000 for the test recipes to appear.
@@ -281,12 +276,12 @@ save, close & run
 [Back to TOC](#table-of-contents)
 
 ## Credits
-- The frontend (React) is a fork from YandexPracticum's [repo](https://github.com/yandex-praktikum/foodgram-project-react)
+- The frontend (React) is a fork from YandexPracticum's [repo](https://github.com/yandex-praktikum/foodgram-project-react).
 
 [Back to TOC](#table-of-contents)
 
 ## Licence
-MIT [https://choosealicense.com/](https://choosealicense.com/).
+[MIT]([https://choosealicense.com/])
 
 [Back to TOC](#table-of-contents)
 

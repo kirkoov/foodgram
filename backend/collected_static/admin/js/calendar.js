@@ -93,10 +93,10 @@ depends on core.js for utility functions like removeChildren or quickElement
             // and using the UTC function variants prevent the local time offset
             // from altering the date, specifically the day field.  For example:
             //
-            // ```
+            // `
             // var x = new Date('2013-10-02');
             // var day = x.getDate();
-            // ```
+            // `
             //
             // The day variable above will be 1 instead of 2 in, say, US Pacific time
             // zone.
