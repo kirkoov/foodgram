@@ -1,4 +1,4 @@
-# Foodgram * UNDER REPAIR *
+# Foodgram
 Both a recipe website & a shopping list service for you to never forget what 
 you need to buy to cook that fancy meal you've heard or seen. The project 
 can be tweaked to either an English or Russian interface thanks to `rosetta` 

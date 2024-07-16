@@ -29,7 +29,7 @@ from users.models import Subscription
 
 from .filters import IngredientFilter, RecipeFilter
 from .paginations import LimitPagination
-from .permissions import IsAuthorOrReadOnly
+from .permissions import IsAuthorOrReadOnly, ReadOnly
 from .serializers import (
     AbridgedRecipeSerializer,
     FavoriteSerializer,
@@ -55,7 +55,10 @@ class RecipeViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action == "patch" or self.action == "delete":
-            self.permission_classes = (IsAuthorOrReadOnly,)
+            # self.permission_classes = (IsAuthorOrReadOnly,)
+            return (IsAuthorOrReadOnly(),)
+        elif self.action == "retrieve":
+            return (ReadOnly(),)
         return super().get_permissions()
 
     def get_queryset(self):
