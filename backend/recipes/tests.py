@@ -1,11 +1,13 @@
 import json
 import os
 import random
+
 # from pprint import pprint
 from typing import List
 
 # import pytest
 from django.contrib.auth import get_user_model
+
 # from django.db import IntegrityError
 from rest_framework import status
 from rest_framework.authtoken.models import Token
