@@ -152,8 +152,9 @@ class RecipeTests(APITestCase):
                 "slug": tag.slug,
             },
         )
-        wrong_id = len(self.test_tags) + 1
-        response = self.client.get(f"{self.tags_url}{wrong_id}/")
+        response = self.client.get(
+            f"{self.tags_url}{len(self.test_tags) + 1}/"
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_list_ingredients(self):
