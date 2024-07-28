@@ -28,22 +28,12 @@ def test_list_users(
 ):
     test_users = []
     for idx in range(1, test_users_num):
+        assert len(get_standard_user_data["data"]["username"]) <= NUM_CHARS_USERNAME
         assert (
-            len(get_standard_user_data["data"]["username"])
-            <= NUM_CHARS_USERNAME
+            validate_username_field(get_standard_user_data["data"]["username"]) is True
         )
-        assert (
-            validate_username_field(get_standard_user_data["data"]["username"])
-            is True
-        )
-        assert (
-            len(get_standard_user_data["data"]["first_name"])
-            <= NUM_CHARS_FIRSTNAME
-        )
-        assert (
-            len(get_standard_user_data["data"]["last_name"])
-            <= NUM_CHARS_LASTNAME
-        )
+        assert len(get_standard_user_data["data"]["first_name"]) <= NUM_CHARS_FIRSTNAME
+        assert len(get_standard_user_data["data"]["last_name"]) <= NUM_CHARS_LASTNAME
         assert len(get_standard_user_data["data"]["email"]) <= NUM_CHARS_EMAIL
         user = User(
             username=f"{get_standard_user_data['data']['username']}{idx}",
@@ -78,9 +68,7 @@ def test_list_users(
         f"{get_standard_user_data['url']}?limit={test_users_list_limit}"
     )
     assert response.status_code == status.HTTP_200_OK
-    assert (
-        len(json.loads(response.content)["results"]) == test_users_list_limit
-    )
+    assert len(json.loads(response.content)["results"]) == test_users_list_limit
 
 
 # @pytest.mark.django_db
@@ -184,6 +172,9 @@ def test_user_sign_up_400(api_client, get_standard_user_data):
 #         "is_subscribed": False,
 #     }
 
+## More changes for the sake of rerunning the foodgram via the
+# workflow+githubactions
+
 
 @pytest.mark.django_db
 def test_user_pwd_change(api_client, get_standard_user_data):
@@ -193,9 +184,7 @@ def test_user_pwd_change(api_client, get_standard_user_data):
         format="json",
     )
     assert response.status_code == status.HTTP_201_CREATED
-    user = User.objects.get(
-        username=get_standard_user_data["data"]["username"]
-    )
+    user = User.objects.get(username=get_standard_user_data["data"]["username"])
     api_client.force_authenticate(user=user)
     pwd_data = {
         "new_password": "what_eVa$",
@@ -246,9 +235,7 @@ def test_user_gets_deletes_token(api_client, get_standard_user_data):
     )
     assert response.status_code == status.HTTP_200_OK  # Tho 201 in the Docs...
     assert "auth_token" in json.loads(response.content)
-    token = Token.objects.get(
-        user__username=get_standard_user_data["data"]["username"]
-    )
+    token = Token.objects.get(user__username=get_standard_user_data["data"]["username"])
     assert token is not None
 
     api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
