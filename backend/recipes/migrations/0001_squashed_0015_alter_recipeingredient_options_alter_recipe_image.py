@@ -245,9 +245,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "output_order",
-                    models.PositiveSmallIntegerField(
-                        verbose_name="output order"
-                    ),
+                    models.PositiveSmallIntegerField(verbose_name="output order"),
                 ),
             ],
             options={
@@ -383,9 +381,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="recipe",
             name="tags",
-            field=models.ManyToManyField(
-                to="recipes.tag", verbose_name="mealtimes"
-            ),
+            field=models.ManyToManyField(to="recipes.tag", verbose_name="mealtimes"),
         ),
         migrations.AddConstraint(
             model_name="favorite",

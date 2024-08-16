@@ -19,9 +19,7 @@ class RecipeFilter(django_filters.FilterSet):
     is_in_shopping_cart = django_filters.filters.NumberFilter(
         method="is_recipe_in_shoppingcart"
     )
-    is_favorited = rest_framework.BooleanFilter(
-        method="is_recipe_in_favorites"
-    )
+    is_favorited = rest_framework.BooleanFilter(method="is_recipe_in_favorites")
 
     def is_recipe_in_favorites(self, queryset, name, value):
         if value:
