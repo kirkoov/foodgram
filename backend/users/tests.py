@@ -172,9 +172,6 @@ def test_user_sign_up_400(api_client, get_standard_user_data):
 #         "is_subscribed": False,
 #     }
 
-# More changes for the sake of rerunning the foodgram via the
-# workflow+githubactions
-
 
 @pytest.mark.django_db
 def test_user_pwd_change(api_client, get_standard_user_data):
