@@ -620,8 +620,6 @@ class RecipeTests(APITestCase):
     def delete_test_users():
         User.objects.all().delete()
 
-    # Add this to make a change for another remote server reboot's sake.
-
     @classmethod
     def tearDownClass(cls):
         cls.api_client.logout()
