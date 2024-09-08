@@ -1,21 +1,8 @@
 # Foodgram
-Both a recipe website & a shopping list service for you to never forget what 
-you need to buy to cook that fancy meal you've heard or seen. The project 
-can be tweaked to either an English or Russian interface thanks to `rosetta` 
-and it
-showcases my skills 
-as a 
-Python backend developer able to docker & pytest a Django/DRF + React coupling.
-At 
-present, I'm on more tests for it to get 100% coverage. Please 
-find in the 
-description below the tools 
-and stack used and the motivation behind the project. Made with ❤️ on the 
-SublimeText4 and continued on the 
-PyCharm 2024.
-1.1 
-(Community 
-Edition). No affiliation to either implied.
+Both a recipe website & a shopping list service for you to never forget what you need to buy to cook that fancy meal you've heard or seen. The project can be tweaked to either an English or Russian interface thanks to `rosetta` 
+and it showcases my skills as a Python backend developer able to docker & pytest a Django/DRF + React coupling.
+At present, I'm on more tests for it to get 100% coverage. Please find in the description below the tools 
+and stack used and the motivation behind the project. Started on the SublimeText4 and continued on the PyCharm 2024.2.1 (Community Edition). No affiliation to either implied.
 
 ## Table of contents
 - [Description](#description)
