@@ -6,6 +6,7 @@ TEST_USER_PAGE_PAGENUM = TEST_USERS_PAGE + "?page=1"
 TEST_USER_PAGE_LIMIT = TEST_USERS_PAGE + "?limit=1"
 TEST_USER_TOKEN_ON = TEST_USERS_TOKEN + "login/"
 TEST_USER_TOKEN_OFF = TEST_USERS_TOKEN + "logout/"
+TEST_USER_PWD_CHANGE = TEST_USERS_PAGE + "set_password/"
 
 TEST_USER_DATA = {
     "email": "vpupkin@yandex.ru",
