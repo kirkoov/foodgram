@@ -161,3 +161,11 @@ class TestRoutes(TestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         return tmp_d["auth_token"]
+
+    @staticmethod
+    def delete_test_users():
+        User.objects.all().delete()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.delete_test_users()
