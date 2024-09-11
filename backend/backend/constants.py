@@ -1,4 +1,4 @@
-# Test user data
+# Test user data: routes
 TEST_USERS_PAGE = "/api/users/"
 TEST_USERS_TOKEN = "/api/auth/token/"
 TEST_USER_OWN_PAGE = TEST_USERS_PAGE + "me/"
@@ -7,7 +7,6 @@ TEST_USER_PAGE_LIMIT = TEST_USERS_PAGE + "?limit=1"
 TEST_USER_TOKEN_ON = TEST_USERS_TOKEN + "login/"
 TEST_USER_TOKEN_OFF = TEST_USERS_TOKEN + "logout/"
 TEST_USER_PWD_CHANGE = TEST_USERS_PAGE + "set_password/"
-
 TEST_USER_DATA = {
     "email": "vpupkin@yandex.ru",
     "username": "vasya.pupkin",
@@ -21,6 +20,14 @@ TEST_USER_DATA_2 = {
     "first_name": "Test",
     "last_name": "User",
     "password": "Q_6wR-oL8y9Za",
+}
+
+# Test user data: content
+TEST_USER_CONTENT_ITEMS = {
+    "count": None,
+    "next": None,
+    "previous": None,
+    "results": None,
 }
 
 NUM_CHARS_USERNAME = 150
