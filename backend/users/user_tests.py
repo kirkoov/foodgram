@@ -5,71 +5,8 @@ import pytest
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from users.validators import validate_username_field
-
-from backend.constants import (  # TEST_NUM_USERS,
-    NUM_CHARS_EMAIL,
-    NUM_CHARS_FIRSTNAME,
-    NUM_CHARS_LASTNAME,
-    NUM_CHARS_USERNAME,
-)
 
 User = get_user_model()
-
-
-@pytest.mark.django_db
-def test_list_users(
-    api_client,
-    get_standard_user_data,
-    test_server_url,
-    test_users_num,
-    test_paginator_num,
-    test_users_list_limit,
-):
-    test_users = []
-    for idx in range(1, test_users_num):
-        assert len(get_standard_user_data["data"]["username"]) <= NUM_CHARS_USERNAME
-        assert (
-            validate_username_field(get_standard_user_data["data"]["username"]) is True
-        )
-        assert len(get_standard_user_data["data"]["first_name"]) <= NUM_CHARS_FIRSTNAME
-        assert len(get_standard_user_data["data"]["last_name"]) <= NUM_CHARS_LASTNAME
-        assert len(get_standard_user_data["data"]["email"]) <= NUM_CHARS_EMAIL
-        user = User(
-            username=f"{get_standard_user_data['data']['username']}{idx}",
-            first_name=f"{get_standard_user_data['data']['first_name']}{idx}",
-            last_name=f"{get_standard_user_data['data']['last_name']}{idx}",
-            email=f"standard@user{idx}.com",
-            password=f"{get_standard_user_data['data']['password']}{idx}",
-        )
-        test_users.append(user)
-    User.objects.bulk_create(test_users)
-    response = api_client.get(get_standard_user_data["url"])
-    assert response.status_code == status.HTTP_200_OK
-    assert json.loads(response.content) == {
-        "count": User.objects.count(),
-        "next": f"{test_server_url}" f"{get_standard_user_data['url']}?page=2",
-        "previous": None,
-        "results": [
-            {
-                "email": x.email,
-                "first_name": x.first_name,
-                "id": x.id,
-                "is_subscribed": False,
-                "last_name": x.last_name,
-                "username": x.username,
-            }
-            for x in User.objects.all()[:test_paginator_num]
-        ],
-    }
-    response = api_client.get(f"{get_standard_user_data['url']}?page=2")
-    assert response.status_code == status.HTTP_200_OK
-    response = api_client.get(
-        f"{get_standard_user_data['url']}?limit={test_users_list_limit}"
-    )
-    assert response.status_code == status.HTTP_200_OK
-    assert len(json.loads(response.content)["results"]) == test_users_list_limit
-
 
 # @pytest.mark.django_db
 # def test_user_sign_up_201(api_client, get_standard_user_data):

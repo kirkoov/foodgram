@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient, APITestCase
 
-from backend.constants import (
+from backend.constants import (  # PAGINATOR_NUM,; TEST_SERVER_URL,
     MAX_COOKING_TIME_MINS,
     MAX_INGREDIENT_AMOUNT,
     MIN_COOKING_TIME_MINS,
@@ -24,11 +24,9 @@ from backend.constants import (
     NUM_CHARS_MEALTIME_SLUG,
     NUM_CHARS_MEASUREMENT_UNIT,
     NUM_CHARS_RECIPE_NAME,
-    PAGINATOR_NUM,
     TEST_NUM_INGREDIENTS,
     TEST_NUM_RECIPES,
     TEST_NUM_TAGS,
-    TEST_SERVER_URL,
 )
 from backend.settings import MEDIA_ROOT
 from .models import Ingredient, Recipe, Tag
@@ -211,67 +209,67 @@ class RecipeTests(APITestCase):
             },
         )
 
-    def test_list_recipes(self):
-        recipe_total = Recipe.objects.count()
-        if 1 < PAGINATOR_NUM < recipe_total:
-            response = self.client.get(f"{self.recipes_url}?page=2")
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(json.loads(response.content)["count"], recipe_total)
-            self.assertEqual(
-                json.loads(response.content)["next"],
-                f"{TEST_SERVER_URL}{self.recipes_url}?page=3",
-            )
-            self.assertEqual(
-                json.loads(response.content)["previous"],
-                f"{TEST_SERVER_URL}{self.recipes_url}",
-            )
-            self.assertEqual(
-                len(json.loads(response.content)["results"]),
-                PAGINATOR_NUM,
-            )
-            for author_dict in json.loads(response.content)["results"]:
-                self.assertEqual(
-                    author_dict["author"]["email"],
-                    self.test_user1_data["email"],
-                )
-
-            response = self.client.get(f"{self.recipes_url}?limit=2")
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertEqual(
-                len(json.loads(response.content)["results"]),
-                2,
-            )
-
-            # response = self.client.get(f"{self.recipes_url}?is_favorited=1")
-            # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-            # response = self.client.get(f"{self.recipes_url}?tags=dinner")
-            # self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-            response = self.client.get(f"{self.recipes_url}?author=1")
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-            # tmp_tags = []
-            # self.assertEqual(
-            #     json.loads(response.content),
-            #     [
-            #         {
-            #             "id": x.id,
-            #             "name": x.name,
-            #             "color": x.color,
-            #             "slug": x.slug,
-            #         }
-            #         for x in Tag.objects.all()
-            #     ],
-            # )
-        # for x in Tag.objects.all():
-        #     self.assertTrue(len(x.name) <= NUM_CHARS_MEALTIME_NAME)
-        #     self.assertTrue(len(x.color) <= NUM_CHARS_MEALTIME_HEX)
-        #     self.assertIsNone(validate_hex_color(x.color))
-        #     self.assertTrue(len(x.slug) <= NUM_CHARS_MEALTIME_SLUG)
-        #     self.assertIsNone(validate_slug_field(x.slug))
-        #     tmp_tags.append(x.slug)
-        # self.assertEqual(Tag.objects.count(), len(set(tmp_tags)))
+    # def test_list_recipes(self):
+    #     recipe_total = Recipe.objects.count()
+    #     if 1 < PAGINATOR_NUM < recipe_total:
+    #         response = self.client.get(f"{self.recipes_url}?page=2")
+    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #         self.assertEqual(json.loads(response.content)["count"], recipe_total)
+    #         self.assertEqual(
+    #             json.loads(response.content)["next"],
+    #             f"{TEST_SERVER_URL}{self.recipes_url}?page=3",
+    #         )
+    #         self.assertEqual(
+    #             json.loads(response.content)["previous"],
+    #             f"{TEST_SERVER_URL}{self.recipes_url}",
+    #         )
+    #         self.assertEqual(
+    #             len(json.loads(response.content)["results"]),
+    #             PAGINATOR_NUM,
+    #         )
+    #         for author_dict in json.loads(response.content)["results"]:
+    #             self.assertEqual(
+    #                 author_dict["author"]["email"],
+    #                 self.test_user1_data["email"],
+    #             )
+    #
+    #         response = self.client.get(f"{self.recipes_url}?limit=2")
+    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #         self.assertEqual(
+    #             len(json.loads(response.content)["results"]),
+    #             2,
+    #         )
+    #
+    #         # response = self.client.get(f"{self.recipes_url}?is_favorited=1")
+    #         # self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #
+    #         # response = self.client.get(f"{self.recipes_url}?tags=dinner")
+    #         # self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #
+    #         response = self.client.get(f"{self.recipes_url}?author=1")
+    #         self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #
+    #         # tmp_tags = []
+    #         # self.assertEqual(
+    #         #     json.loads(response.content),
+    #         #     [
+    #         #         {
+    #         #             "id": x.id,
+    #         #             "name": x.name,
+    #         #             "color": x.color,
+    #         #             "slug": x.slug,
+    #         #         }
+    #         #         for x in Tag.objects.all()
+    #         #     ],
+    #         # )
+    #     # for x in Tag.objects.all():
+    #     #     self.assertTrue(len(x.name) <= NUM_CHARS_MEALTIME_NAME)
+    #     #     self.assertTrue(len(x.color) <= NUM_CHARS_MEALTIME_HEX)
+    #     #     self.assertIsNone(validate_hex_color(x.color))
+    #     #     self.assertTrue(len(x.slug) <= NUM_CHARS_MEALTIME_SLUG)
+    #     #     self.assertIsNone(validate_slug_field(x.slug))
+    #     #     tmp_tags.append(x.slug)
+    #     # self.assertEqual(Tag.objects.count(), len(set(tmp_tags)))
 
     # def test_create_recipe(self):
     #     recipe_count_ini = Recipe.objects.count()

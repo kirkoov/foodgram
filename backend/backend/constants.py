@@ -1,12 +1,23 @@
-# Test user data: routes
-TEST_USERS_PAGE = "/api/users/"
-TEST_USERS_TOKEN = "/api/auth/token/"
-TEST_USER_OWN_PAGE = TEST_USERS_PAGE + "me/"
-TEST_USER_PAGE_PAGENUM = TEST_USERS_PAGE + "?page=1"
-TEST_USER_PAGE_LIMIT = TEST_USERS_PAGE + "?limit=1"
-TEST_USER_TOKEN_ON = TEST_USERS_TOKEN + "login/"
-TEST_USER_TOKEN_OFF = TEST_USERS_TOKEN + "logout/"
-TEST_USER_PWD_CHANGE = TEST_USERS_PAGE + "set_password/"
+PAGINATOR_NUM = 6
+AUTH_TOKEN_FIELD = "auth_token"
+
+# Test user data: BEGIN
+TEST_NUM_USERS = 1000
+# Test user routes
+TEST_USERS_PAGE_URL = "/api/users/"
+TEST_USERS_TOKEN_URL = "/api/auth/token/"
+TEST_USER_ME_PAGE_URL = TEST_USERS_PAGE_URL + "me/"
+
+TEST_USERS_PER_PAGE_INT = 3
+# fmt: off
+TEST_USERS_PER_PAGE_URL = TEST_USERS_PAGE_URL + (
+    f"?limit={TEST_USERS_PER_PAGE_INT}"
+)
+TEST_USER_PAGE_PAGENUM = TEST_USERS_PAGE_URL + "?page=1"
+
+TEST_USER_TOKEN_ON_URL = TEST_USERS_TOKEN_URL + "login/"
+TEST_USER_TOKEN_OFF_URL = TEST_USERS_TOKEN_URL + "logout/"
+TEST_USER_PWD_CHANGE = TEST_USERS_PAGE_URL + "set_password/"
 TEST_USER_DATA = {
     "email": "vpupkin@yandex.ru",
     "username": "vasya.pupkin",
@@ -15,20 +26,30 @@ TEST_USER_DATA = {
     "password": "my_AwSeOm-pr$iOs",
 }
 TEST_USER_DATA_2 = {
-    "email": "test.user@aha.org",
+    "email": "test_user@example.org",
     "username": "test.user",
     "first_name": "Test",
     "last_name": "User",
-    "password": "Q_6wR-oL8y9Za",
+    "password": "Q_6~cwR-oL8y9Za",
 }
 
-# Test user data: content
+# Test user content
 TEST_USER_CONTENT_ITEMS = {
     "count": None,
     "next": None,
     "previous": None,
     "results": None,
 }
+TEST_USER_CONTENT_RESULTS_ITEMS = {
+    "email": None,
+    "id": 0,
+    "username": None,
+    "first_name": None,
+    "last_name": None,
+    "is_subscribed": False,
+}
+
+# Test user data: END
 
 NUM_CHARS_USERNAME = 150
 NUM_CHARS_FIRSTNAME = 150
@@ -51,9 +72,7 @@ MAX_INGREDIENT_AMOUNT = 1000
 
 MAX_IMG_SIZE = 1  # Mb
 
-PAGINATOR_NUM = 6
 
-TEST_NUM_USERS = 100
 TEST_SERVER_URL = "http://testserver"
 TEST_LIMIT_LIST_USERS = 1
 
