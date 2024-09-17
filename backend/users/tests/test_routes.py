@@ -126,18 +126,17 @@ class TestRoutes(TestCase):
         )
         self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
 
-    # def test_fail_change_password(self):
-    #     valid_data = TestRoutes.signup_user_data
-    #     fail_data = {
-    #         "new_password": constants.TEST_USER_DATA_2["password"],
-    #         "current_password": valid_data["password"],
-    #     }
-    #
-    #    response = self.client.post(
-    #     constants.TEST_USER_PWD_CHANGE,
-    #     data=fail_data,
-    # )
-    # self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    def test_fail_change_password(self):
+        fail_data = {
+            "new_password": TestRoutes.DATA["password"],
+            "current_password": TestRoutes.DATA["password"],
+        }
+
+        response = self.client.post(
+            constants.TEST_USER_PWD_CHANGE,
+            data=fail_data,
+        )
+        self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
     #     self.test_signup_user()
     #     data_400 = {
