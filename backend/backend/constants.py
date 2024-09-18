@@ -2,7 +2,7 @@ PAGINATOR_NUM = 6
 AUTH_TOKEN_FIELD = "auth_token"
 
 # Test user data: BEGIN
-TEST_NUM_USERS = 1000
+TEST_NUM_USERS = 100
 # Test user routes
 TEST_USERS_PAGE_URL = "/api/users/"
 TEST_USERS_TOKEN_URL = "/api/auth/token/"
