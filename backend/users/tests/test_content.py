@@ -1,6 +1,7 @@
 import json
 import math
 import random
+from unittest import skip
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -134,20 +135,69 @@ class TestContent(TestCase):
         )
         self.assertEqual(json.loads(response.content), expected_error_data)
 
-        # fail_data2 = dict(constants.TEST_USER_DATA)
-        # fail_data2[failers[1]] = ""
-        #
+    def test_user_signup(self):
+        user_count_ini = User.objects.count()
+        tmp_signup_data = dict(constants.TEST_USER_DATA)
+        ok_signup_data = tmp_signup_data
+        rand_add = str((rnd := random.randint(1, 5)))
+
+        for field in tmp_signup_data:
+            tmp_signup_data[field] += rand_add
+        # fmt: off
+        tmp_signup_data["username"] += rand_add * rnd + "testing"[:rnd]
+        tmp_signup_data["email"] = (
+            f"test_user{rand_add * rnd}@example{rand_add}{'testing'[:rnd]}.org"
+        )
+        tmp_signup_data["password"] += rand_add
+        # fmt: off
+        response = self.client.post(
+            constants.TEST_USERS_PAGE_URL,
+            data=tmp_signup_data,
+        )
+        self.assertEqual(User.objects.count(), user_count_ini + 1)
+        TestContent.DUMMY_DATA = tmp_signup_data
+        del ok_signup_data["password"]
+        # fmt: off
+        self.assertIsNotNone(
+            (uza := User.objects.get(
+                username=tmp_signup_data["username"])
+             )
+        )
+        ok_signup_data["id"] = uza.id
+        self.assertEqual(json.loads(response.content), ok_signup_data)
+
+    @skip(reason="toDo")
+    def test_user_gets_token_opens_me_page_deletes_token(self):
+        pass
         # response = self.client.post(
         #     constants.TEST_USERS_PAGE_URL,
-        #     data=fail_data2,
+        #     data=constants.TEST_USER_DATA,
         # )
-        # self.assertIn(failers[1], json.loads(response.content))
-
-        # urls_args_statuses = (
-        #     (constants.TEST_USERS_PAGE_URL, fail_data, HTTPStatus.BAD_REQUEST),
-        #     (constants.TEST_USERS_PAGE_URL, fail_data2, HTTPStatus.BAD_REQUEST),
+        # self.assertEqual(response.status_code, HTTPStatus.CREATED)
+        #
+        # token = self.get_token(
+        #     {
+        #         "password": constants.TEST_USER_DATA["password"],
+        #         "email": constants.TEST_USER_DATA["email"],
+        #     }
         # )
-        # for url, args, status in urls_args_statuses:
-        #     with self.subTest(url=url):
-        #         response = self.client.post(url, data=args)
-        #         self.assertEqual(response.status_code, status)
+        # self.assertIn(constants.AUTH_TOKEN_FIELD, token)
+        #
+        # headers = {
+        #     "Authorization": f"Token {token[constants.AUTH_TOKEN_FIELD]}",
+        # }
+        # response = self.client.get(
+        #     constants.TEST_USER_ME_PAGE_URL,
+        #     data={
+        #         "password": constants.TEST_USER_DATA["password"],
+        #         "email": constants.TEST_USER_DATA["email"],
+        #     },
+        #     headers=headers,
+        # )
+        # self.assertEqual(response.status_code, HTTPStatus.OK)
+        #
+        # response = self.client.post(
+        #     constants.TEST_USER_TOKEN_OFF_URL,
+        #     headers=headers,
+        # )
+        # self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
