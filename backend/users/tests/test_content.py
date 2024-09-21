@@ -166,13 +166,14 @@ class TestContent(TestCase):
         ok_signup_data["id"] = uza.id
         self.assertEqual(json.loads(response.content), ok_signup_data)
 
-    @skip(reason="toDo")
     def test_user_gets_token_opens_me_page_deletes_token(self):
-        pass
-        # response = self.client.post(
-        #     constants.TEST_USERS_PAGE_URL,
-        #     data=constants.TEST_USER_DATA,
-        # )
+        u_count_ini = User.objects.count()
+        self.test_user_signup()
+        response = self.client.post(
+            constants.TEST_USERS_PAGE_URL,
+            data=TestContent.DUMMY_DATA,
+        )
+        self.assertEqual(User.objects.count(), u_count_ini + 1)
         # self.assertEqual(response.status_code, HTTPStatus.CREATED)
         #
         # token = self.get_token(
