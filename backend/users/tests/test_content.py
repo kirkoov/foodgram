@@ -154,7 +154,7 @@ class TestContent(TestCase):
             data=tmp_signup_data,
         )
         self.assertEqual(User.objects.count(), user_count_ini + 1)
-        TestContent.DUMMY_DATA = tmp_signup_data
+        TestContent.DUMMY_DATA = dict(tmp_signup_data)
         del ok_signup_data["password"]
         # fmt: off
         self.assertIsNotNone(
@@ -165,39 +165,114 @@ class TestContent(TestCase):
         ok_signup_data["id"] = uza.id
         self.assertEqual(json.loads(response.content), ok_signup_data)
 
+    def test_user_fails_me_page_get_delete_token(self):
+        u_count = User.objects.count()
+        self.test_user_signup()
+        self.assertEqual(User.objects.count(), u_count + 1)
+        test_data = {
+            "password": TestContent.DUMMY_DATA["password"],
+            "email": TestContent.DUMMY_DATA["email"],
+        }
+        headers = {
+            "Authorization": "Token ",
+        }
+        response = self.client.get(
+            constants.TEST_USER_ME_PAGE_URL,
+            data=test_data,
+            headers=headers,
+        )
+        self.assertIn("detail", json.loads(response.content))
+
+        test_d = {
+            "password": TestContent.DUMMY_DATA["password"][2:],
+            "email": TestContent.DUMMY_DATA["email"],
+        }
+        self.assertIn("non_field_errors", self.get_token(test_d))
+
+        response = self.client.post(
+            constants.TEST_USER_TOKEN_OFF_URL,
+            data=test_d,
+            headers=headers,
+        )
+        self.assertIn("detail", json.loads(response.content))
+
     def test_user_gets_token_opens_me_page_deletes_token(self):
         u_count = User.objects.count()
         self.test_user_signup()
-        self.assertEqual(u_count + 1, User.objects.count())
-        # response = self.client.post(
-        #     constants.TEST_USERS_PAGE_URL,
-        #     data=constants.TEST_USER_DATA,
-        # )
-        # self.assertEqual(response.status_code, HTTPStatus.CREATED)
-        #
-        # token = self.get_token(
-        #     {
-        #         "password": constants.TEST_USER_DATA["password"],
-        #         "email": constants.TEST_USER_DATA["email"],
-        #     }
-        # )
-        # self.assertIn(constants.AUTH_TOKEN_FIELD, token)
-        #
-        # headers = {
-        #     "Authorization": f"Token {token[constants.AUTH_TOKEN_FIELD]}",
-        # }
-        # response = self.client.get(
-        #     constants.TEST_USER_ME_PAGE_URL,
-        #     data={
-        #         "password": constants.TEST_USER_DATA["password"],
-        #         "email": constants.TEST_USER_DATA["email"],
-        #     },
-        #     headers=headers,
-        # )
-        # self.assertEqual(response.status_code, HTTPStatus.OK)
-        #
-        # response = self.client.post(
-        #     constants.TEST_USER_TOKEN_OFF_URL,
-        #     headers=headers,
-        # )
-        # self.assertEqual(response.status_code, HTTPStatus.NO_CONTENT)
+        test_d = {
+            "password": TestContent.DUMMY_DATA["password"],
+            "email": TestContent.DUMMY_DATA["email"],
+        }
+        self.assertEqual(User.objects.count(), u_count + 1)
+        uza = User.objects.get(username=TestContent.DUMMY_DATA["username"])
+        token_d = self.get_token(test_d)
+        self.assertIn(constants.AUTH_TOKEN_FIELD, token_d)
+        headers = {
+            "Authorization": f"Token {token_d[constants.AUTH_TOKEN_FIELD]}",
+        }
+        response = self.client.get(
+            constants.TEST_USER_ME_PAGE_URL,
+            data=test_d,
+            headers=headers,
+        )
+        self.assertEqual(
+            (resp_d := json.loads(response.content)).keys(),
+            constants.TEST_USER_CONTENT_RESULTS_ITEMS.keys(),
+        )
+        comp_data = dict(TestContent.DUMMY_DATA)
+        comp_data["id"] = uza.id
+        comp_data["is_subscribed"] = False
+        del comp_data["password"]
+        self.assertEqual(resp_d, comp_data)
+
+        response = self.client.post(
+            constants.TEST_USER_TOKEN_OFF_URL,
+            headers=headers,
+        )
+        self.assertEqual(response.content, b"")
+        response = self.client.get(
+            constants.TEST_USER_ME_PAGE_URL,
+            data=test_d,
+            headers=headers,
+        )
+        self.assertIn("detail", json.loads(response.content))
+
+    # def test_fail_change_password(self):
+    #     fail_data = {
+    #         "new_password": TestRoutes.DATA["password"],
+    #         "current_password": TestRoutes.DATA["password"],
+    #     }
+    #
+    #     response = self.client.post(
+    #         constants.TEST_USER_PWD_CHANGE,
+    #         data=fail_data,
+    #     )
+    #     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
+    #
+    #     self.test_user_signup()
+    #     data_400 = {
+    #         "new_password": "-",
+    #         "current_password": TestRoutes.DUMMY_DATA["password"],
+    #     }
+    #     token = self.get_token(
+    #         {
+    #             "password": TestRoutes.DUMMY_DATA["password"],
+    #             "email": TestRoutes.DUMMY_DATA["email"],
+    #         }
+    #     )
+    #     headers = {
+    #         "Authorization": f"Token {token[constants.AUTH_TOKEN_FIELD]}",
+    #     }
+    #     response = self.client.post(
+    #         constants.TEST_USER_PWD_CHANGE,
+    #         data=data_400,
+    #         headers=headers,
+    #     )
+    #     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+    def get_token(self, user_data) -> str:
+        response = self.client.post(
+            constants.TEST_USER_TOKEN_ON_URL,
+            data=user_data,
+        )
+        return json.loads(response.content)
