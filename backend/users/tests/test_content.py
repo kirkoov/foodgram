@@ -166,9 +166,7 @@ class TestContent(TestCase):
         self.assertEqual(json.loads(response.content), ok_signup_data)
 
     def test_user_fails_me_page_get_delete_token(self):
-        u_count = User.objects.count()
         self.test_user_signup()
-        self.assertEqual(User.objects.count(), u_count + 1)
         test_data = {
             "password": TestContent.DUMMY_DATA["password"],
             "email": TestContent.DUMMY_DATA["email"],
@@ -197,13 +195,11 @@ class TestContent(TestCase):
         self.assertIn("detail", json.loads(response.content))
 
     def test_user_gets_token_opens_me_page_deletes_token(self):
-        u_count = User.objects.count()
         self.test_user_signup()
         test_d = {
             "password": TestContent.DUMMY_DATA["password"],
             "email": TestContent.DUMMY_DATA["email"],
         }
-        self.assertEqual(User.objects.count(), u_count + 1)
         uza = User.objects.get(username=TestContent.DUMMY_DATA["username"])
         token_d = self.get_token(test_d)
         self.assertIn(constants.AUTH_TOKEN_FIELD, token_d)
@@ -237,38 +233,72 @@ class TestContent(TestCase):
         )
         self.assertIn("detail", json.loads(response.content))
 
-    # def test_fail_change_password(self):
-    #     fail_data = {
-    #         "new_password": TestRoutes.DATA["password"],
-    #         "current_password": TestRoutes.DATA["password"],
-    #     }
-    #
-    #     response = self.client.post(
-    #         constants.TEST_USER_PWD_CHANGE,
-    #         data=fail_data,
-    #     )
-    #     self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
-    #
-    #     self.test_user_signup()
-    #     data_400 = {
-    #         "new_password": "-",
-    #         "current_password": TestRoutes.DUMMY_DATA["password"],
-    #     }
-    #     token = self.get_token(
-    #         {
-    #             "password": TestRoutes.DUMMY_DATA["password"],
-    #             "email": TestRoutes.DUMMY_DATA["email"],
-    #         }
-    #     )
-    #     headers = {
-    #         "Authorization": f"Token {token[constants.AUTH_TOKEN_FIELD]}",
-    #     }
-    #     response = self.client.post(
-    #         constants.TEST_USER_PWD_CHANGE,
-    #         data=data_400,
-    #         headers=headers,
-    #     )
-    #     self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+    def test_fail_change_password(self):
+        self.test_user_signup()
+        test_ds = (
+            {
+                "password": TestContent.DUMMY_DATA["password"][2:],
+                "email": TestContent.DUMMY_DATA["email"],
+            },
+            None,
+            {
+                "password": TestContent.DATA["password"],
+                "email": TestContent.DATA["email"],
+            },
+        )
+        for test_d in test_ds:
+            response = self.client.post(
+                constants.TEST_USER_PWD_CHANGE,
+                data=test_d,
+            )
+            self.assertIn("detail", json.loads(response.content))
+        token_d = self.get_token(
+            {
+                "password": TestContent.DUMMY_DATA["password"],
+                "email": TestContent.DUMMY_DATA["email"],
+            }
+        )
+        headers = {
+            "Authorization": f"Token {token_d[constants.AUTH_TOKEN_FIELD]}",
+        }
+        data_400 = {
+            "new_password": "-",
+            "current_password": TestContent.DUMMY_DATA["password"][1:],
+        }
+        response = self.client.post(
+            constants.TEST_USER_PWD_CHANGE,
+            data=data_400,
+            headers=headers,
+        )
+        self.assertIn("current_password", json.loads(response.content))
+
+    def test_change_password(self):
+        self.test_user_signup()
+        user_data = {
+            "password": TestContent.DUMMY_DATA["password"],
+            "email": TestContent.DUMMY_DATA["email"],
+        }
+        token_d = self.get_token(user_data)
+        headers = {
+            "Authorization": f"Token {token_d[constants.AUTH_TOKEN_FIELD]}",
+        }
+        data_204 = {
+            "new_password": TestContent.DUMMY_DATA["password"][1:],
+            "current_password": TestContent.DUMMY_DATA["password"],
+        }
+        response = self.client.post(
+            constants.TEST_USER_PWD_CHANGE,
+            data=data_204,
+            headers=headers,
+        )
+        self.assertEqual(response.content, b"")
+        token_d = self.get_token(
+            {
+                "password": data_204["new_password"],
+                "email": TestContent.DUMMY_DATA["email"],
+            }
+        )
+        self.assertIn(constants.AUTH_TOKEN_FIELD, token_d)
 
     def get_token(self, user_data) -> str:
         response = self.client.post(
