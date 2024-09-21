@@ -1,7 +1,6 @@
 import json
 import math
 import random
-from unittest import skip
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -166,9 +165,10 @@ class TestContent(TestCase):
         ok_signup_data["id"] = uza.id
         self.assertEqual(json.loads(response.content), ok_signup_data)
 
-    @skip(reason="toDo")
     def test_user_gets_token_opens_me_page_deletes_token(self):
-        pass
+        u_count = User.objects.count()
+        self.test_user_signup()
+        self.assertEqual(u_count + 1, User.objects.count())
         # response = self.client.post(
         #     constants.TEST_USERS_PAGE_URL,
         #     data=constants.TEST_USER_DATA,
