@@ -53,8 +53,6 @@ TEST_USER_CONTENT_RESULTS_ITEMS = {
 
 
 # Test recipe data: BEGIN
-TEST_NUM_USERS = 100
-
 # Test recipe routes
 TEST_RECIPE_PAGE_URL = "/api/recipes/"
 
