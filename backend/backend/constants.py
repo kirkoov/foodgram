@@ -51,6 +51,16 @@ TEST_USER_CONTENT_RESULTS_ITEMS = {
 
 # Test user data: END
 
+
+# Test recipe data: BEGIN
+TEST_NUM_USERS = 100
+
+# Test recipe routes
+TEST_RECIPE_PAGE_URL = "/api/recipes/"
+
+# Test recipe data: END
+
+
 NUM_CHARS_USERNAME = 150
 NUM_CHARS_FIRSTNAME = 150
 NUM_CHARS_LASTNAME = 150
