@@ -1,8 +1,8 @@
-import json
-from http import HTTPStatus
-import pytest
-
-from backend.constants import TEST_RECIPE_PAGE_URL, TEST_TAG_PAGE_URL
+# import json
+# from http import HTTPStatus
+# import pytest
+#
+# from backend.constants import TEST_RECIPE_PAGE_URL, TEST_TAG_PAGE_URL
 
 
 # from recipes.tests.engine_class import Engine
@@ -109,8 +109,8 @@ from backend.constants import TEST_RECIPE_PAGE_URL, TEST_TAG_PAGE_URL
 #     assert response.status_code == 200
 
 
-@pytest.mark.django_db
-def test_home_availability_for_anonymous_user(client):
-    response = client.get(TEST_RECIPE_PAGE_URL)
-    # assert response.status_code == HTTPStatus.OK
-    print(json.loads(response.content))
+# @pytest.mark.django_db
+# def test_home_availability_for_anonymous_user(client):
+#     response = client.get(TEST_RECIPE_PAGE_URL)
+#     # assert response.status_code == HTTPStatus.OK
+#     print(json.loads(response.content))
