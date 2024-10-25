@@ -55,6 +55,7 @@ TEST_USER_CONTENT_RESULTS_ITEMS = {
 # Test recipe data: BEGIN
 # Test recipe routes
 TEST_RECIPE_PAGE_URL = "/api/recipes/"
+TEST_TAG_PAGE_URL = "/api/tags/"
 
 # Test recipe data: END
 
