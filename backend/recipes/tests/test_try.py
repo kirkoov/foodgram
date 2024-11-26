@@ -92,9 +92,11 @@
 # below
 
 
-# def test_with_client(client):
-#     response = client.get("/api/")
-#     assert response.status_code == 401
+def test_with_client(client):
+    response = client.get("/api/")
+    assert response.status_code == 401
+
+
 #
 #
 # def test_closed_page(admin_client):
