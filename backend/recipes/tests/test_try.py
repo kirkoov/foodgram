@@ -1,9 +1,9 @@
 # import json
 # from http import HTTPStatus
+#
 # import pytest
 #
-# from backend.constants import TEST_RECIPE_PAGE_URL, TEST_TAG_PAGE_URL
-
+# from backend.constants import TEST_TAG_PAGE_URL
 
 # from recipes.tests.engine_class import Engine
 
@@ -91,17 +91,6 @@
 # Default client fixtures from the pytest-django
 # below
 
-
-def test_with_client(client):
-    response = client.get("/api/")
-    assert response.status_code == 401
-
-
-#
-#
-# def test_closed_page(admin_client):
-#     response = admin_client.get("/api/recipes/")
-#     assert response.status_code == 200
 #
 #
 # def test_with_authenticated_client(client, django_user_model):

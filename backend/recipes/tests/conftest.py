@@ -1,9 +1,11 @@
 import pytest
+from recipes.models import Tag
 from rest_framework.test import APIClient
 
 from backend.constants import (
     PAGINATOR_NUM,
     TEST_LIMIT_LIST_USERS,
+    TEST_NUM_TAGS,
     TEST_NUM_USERS,
     TEST_SERVER_URL,
 )
@@ -75,3 +77,17 @@ def test_paginator_num() -> int:
 #     engine.is_running = False  # Заглушим двигатель.
 #     # Распечатаем строчку после выполнения теста и остановки двигателя.
 #     # print(f"After test engine.is_running {engine.is_running}")
+
+
+@pytest.fixture(autouse=True)
+def create_test_tags():
+    test_tags = []
+    for index in range(1, TEST_NUM_TAGS + 1):
+        tag = Tag(
+            name=f"Tag{index}",
+            color=f"#E26C{index}D",
+            slug=f"-{index}_slug",
+        )
+        test_tags.append(tag)
+    Tag.objects.bulk_create(test_tags)
+    return Tag.objects.all()
