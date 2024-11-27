@@ -10,6 +10,16 @@ from backend.constants import (
     TEST_SERVER_URL,
 )
 
+# @pytest.fixture
+# def note(author):
+#     note = Note.objects.create(  # Создаём объект заметки.
+#         title='Заголовок',
+#         text='Текст заметки',
+#         slug='note-slug',
+#         author=author,
+#     )
+#     return note
+
 
 @pytest.fixture(scope="function")
 def get_standard_user_data() -> dict:
