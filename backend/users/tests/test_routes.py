@@ -12,9 +12,6 @@ from backend import constants
 User = get_user_model()
 
 
-# Added for any changes' sake
-
-
 class TestRoutes(TestCase):
     TOTAL = constants.TEST_NUM_USERS
     DATA = constants.TEST_USER_DATA_2
