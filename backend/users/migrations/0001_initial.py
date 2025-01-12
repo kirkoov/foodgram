@@ -182,7 +182,7 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="subscription",
             constraint=models.CheckConstraint(
-                check=models.Q(("author", models.F("user")), _negated=True),
+                condition=models.Q(("author", models.F("user")), _negated=True),
                 name="user_cannot_subscribe_to_themselves",
             ),
         ),
