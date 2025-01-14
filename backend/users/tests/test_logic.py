@@ -20,8 +20,6 @@ class TestLogic(TestCase):
             data=cls.DATA,
         )
 
-    # Changing
-
     def test_anonymous_user_cant_change_password(self):
         data = {
             "new_password": TestLogic.DATA["password"][1:],
