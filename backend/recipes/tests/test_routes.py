@@ -42,5 +42,7 @@ def test_tag_id_url_for_anonymous404(client, create_test_tags):
 
 @pytest.mark.django_db
 def test_tag_id_url_for_authenticated404(admin_client, create_test_tags):
-    response = admin_client.get(TEST_TAG_PAGE_URL + f"{len(create_test_tags) + 1}/")
+    response = admin_client.get(
+        TEST_TAG_PAGE_URL + f"{len(create_test_tags) + 1}/"
+    )
     assert response.status_code == HTTPStatus.NOT_FOUND

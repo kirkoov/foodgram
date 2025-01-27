@@ -91,7 +91,8 @@ class RecipeTests(APITestCase):
     }
     default_images = [
         "front-view-arrangement-healthy-breakfast-meal-with-yogurt.jpg",
-        "vertical-shot-delicious-vegetable-meatballs-with-creamy-sauce.resized." "jpg",
+        "vertical-shot-delicious-vegetable-meatballs-with-creamy-sauce.resized."
+        "jpg",
         "korean-fish-cake-vegetable-soup-table.jpg",
         "lunch.resized.jpg",
         "dinner.resized.jpg",
@@ -149,7 +150,9 @@ class RecipeTests(APITestCase):
                 "slug": tag.slug,
             },
         )
-        response = self.client.get(f"{self.tags_url}{len(self.test_tags) + 1}/")
+        response = self.client.get(
+            f"{self.tags_url}{len(self.test_tags) + 1}/"
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_list_ingredients(self):
@@ -169,7 +172,9 @@ class RecipeTests(APITestCase):
         )
         for x in Ingredient.objects.all():
             self.assertTrue(len(x.name) <= NUM_CHARS_INGREDIENT_NAME)
-            self.assertTrue(len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT)
+            self.assertTrue(
+                len(x.measurement_unit) <= NUM_CHARS_MEASUREMENT_UNIT
+            )
             tmp_ingredients.append(x.name)
         self.assertEqual(Ingredient.objects.count(), len(set(tmp_ingredients)))
 
@@ -180,7 +185,9 @@ class RecipeTests(APITestCase):
             measurement_unit="shovel",
         )
         self.assertEqual(Ingredient.objects.count(), count_ini + 1)
-        response = self.client.get(f"{self.ingredients_url}?name=find_me%20ing")
+        response = self.client.get(
+            f"{self.ingredients_url}?name=find_me%20ing"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         if TEST_NUM_INGREDIENTS == 2000:
             self.assertEqual(
@@ -197,7 +204,9 @@ class RecipeTests(APITestCase):
     def test_ingredient_detail(self):
         ingredient_total = len(self.test_ingredients)
         self.assertTrue(ingredient_total >= 1)
-        response = self.client.get(f"{self.ingredients_url}{ingredient_total}/")
+        response = self.client.get(
+            f"{self.ingredients_url}{ingredient_total}/"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         ingredient = Ingredient.objects.get(id=ingredient_total)
         self.assertEqual(
@@ -603,9 +612,13 @@ class RecipeTests(APITestCase):
             "password": cls.test_user1_data["password"],
             "email": cls.test_user1_data["email"],
         }
-        response = cls.api_client.post(cls.login_url, login_data, format="json")
+        response = cls.api_client.post(
+            cls.login_url, login_data, format="json"
+        )
         assert "auth_token" in json.loads(response.content)
-        token = Token.objects.get(user__username=cls.test_user1_data["username"])
+        token = Token.objects.get(
+            user__username=cls.test_user1_data["username"]
+        )
         cls.api_client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
 
     @classmethod

@@ -245,7 +245,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "output_order",
-                    models.PositiveSmallIntegerField(verbose_name="output order"),
+                    models.PositiveSmallIntegerField(
+                        verbose_name="output order"
+                    ),
                 ),
             ],
             options={
@@ -381,7 +383,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="recipe",
             name="tags",
-            field=models.ManyToManyField(to="recipes.tag", verbose_name="mealtimes"),
+            field=models.ManyToManyField(
+                to="recipes.tag", verbose_name="mealtimes"
+            ),
         ),
         migrations.AddConstraint(
             model_name="favorite",
@@ -598,7 +602,9 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="subscription",
             constraint=models.CheckConstraint(
-                condition=models.Q(("author", models.F("user")), _negated=True),
+                condition=models.Q(
+                    ("author", models.F("user")), _negated=True
+                ),
                 name="user_cannot_subscribe_to_themselves",
             ),
         ),

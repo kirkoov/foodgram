@@ -66,7 +66,11 @@ class TestRoutes(TestCase):
         fail_data2["username"] = ""
         urls_args_statuses = (
             (constants.TEST_USERS_PAGE_URL, fail_data, HTTPStatus.BAD_REQUEST),
-            (constants.TEST_USERS_PAGE_URL, fail_data2, HTTPStatus.BAD_REQUEST),
+            (
+                constants.TEST_USERS_PAGE_URL,
+                fail_data2,
+                HTTPStatus.BAD_REQUEST,
+            ),
         )
         for url, args, status in urls_args_statuses:
             with self.subTest(url=url):

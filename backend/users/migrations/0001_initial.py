@@ -94,7 +94,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "first_name",
-                    models.CharField(max_length=150, verbose_name="first name"),
+                    models.CharField(
+                        max_length=150, verbose_name="first name"
+                    ),
                 ),
                 (
                     "last_name",
@@ -182,7 +184,9 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="subscription",
             constraint=models.CheckConstraint(
-                condition=models.Q(("author", models.F("user")), _negated=True),
+                condition=models.Q(
+                    ("author", models.F("user")), _negated=True
+                ),
                 name="user_cannot_subscribe_to_themselves",
             ),
         ),
