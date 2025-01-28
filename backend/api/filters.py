@@ -12,6 +12,7 @@ class IngredientFilter(FilterSet):
 
 # Changes for re-deployment sake
 
+
 class RecipeFilter(django_filters.FilterSet):
     tags = django_filters.AllValuesMultipleFilter(
         field_name="tags__slug",
