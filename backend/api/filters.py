@@ -10,6 +10,7 @@ class IngredientFilter(FilterSet):
         model = Ingredient
         fields = ("name",)
 
+# Changes for re-deployment sake
 
 class RecipeFilter(django_filters.FilterSet):
     tags = django_filters.AllValuesMultipleFilter(
