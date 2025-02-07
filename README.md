@@ -29,8 +29,7 @@ Eng/Rus? Well, [this project](https://foodgram.zapto.org/) may be your
 starting point. Sign up/in to post/edit/delete your recipes, add others' as 
 your favourites or subscriptions & generate downloadable pdf shopping lists 
 in line with the recipes you'd like to try. The shop items just sum up if 
-duplicate, and go alphabetically. [The admin zone](https://foodgram.zapto.
-org/admin/) & [the docs](https://foodgram.zapto.org/api/docs/) (in Russian) follow. 
+duplicate, and go alphabetically. [The admin zone](https://foodgram.zapto.org/admin/) & [the docs](https://foodgram.zapto.org/api/docs/) (in Russian) follow. 
 
 This project helped me a lot in further grasping the following:
 - Set up a Django app for it to interact with third-party APIs;
@@ -40,8 +39,7 @@ This project helped me a lot in further grasping the following:
  perform as one;
 - Build & deploy both locally & remotely docker images & containers;
 - Enjoy more of DevOps, including CI/CD;
-- Use further both [DjDT](https://django-debug-toolbar.readthedocs.
- io/en/latest/) for the dev & Telegram bot notifications about GitHub 
+- Use further both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/)  for the dev & Telegram bot notifications about GitHub 
  Actions deploys - for better performance & automated deployments.
 
 Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx 
@@ -60,8 +58,7 @@ Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx
 
 ## Installations
 ### Local non-Docker
-`cd` into a folder of your choice, clone the project from https://github.
-com/kirkoov/foodgram.git, `cd foodgram` & create your virtual env (venv, e.g.
+`cd` into a folder of your choice, clone the project from https://github.com/kirkoov/foodgram.git,  `cd foodgram` & create your virtual env (venv, e.g.
 with `poetry`). This installation case is best to tweak to your needs and 
 language. `rosetta` comes included, but for further ops should be 
 re-installed in place to work properly & entered like 
@@ -93,8 +90,7 @@ Then run:
  folder containing the `pytest.ini`;
 - ```python manage.py runserver```.
 
-<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.
-org/project/django-cleanup/)</b> is used. By default, the admin zone accepts 
+<b>NB</b>: to handle img consistency, <b>[django-cleanup](https://pypi.org/project/django-cleanup/)</b> is used. By default, the admin zone accepts 
 images<=1Mb, although when running live locally, the frontend may accept 
 larger images. Still, in a live server case, the nginx container will 
 instruct its Docker cousins not to.
