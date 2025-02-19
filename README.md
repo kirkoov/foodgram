@@ -33,14 +33,15 @@ duplicate, and go alphabetically. [The admin zone](https://foodgram.zapto.org/ad
 
 This project helped me a lot in further grasping the following:
 - Set up a Django app for it to interact with third-party APIs;
-- Create a custom API based on a Django project & as per its 
- tech docs/requirements;
-- Connect friendlily a React SPA to a backend app for both to 
- perform as one;
+- Use own scripts to populate the database from csv after re-deployments via 
+  CI-CD;
+- Create a custom API based on a Django project & as per its tech docs/requirements;
+- Connect friendlily a React SPA to a backend app for both to perform as one;
 - Build & deploy both locally & remotely docker images & containers;
 - Enjoy more of DevOps, including CI/CD;
-- Use further both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/)  for the dev & Telegram bot notifications about GitHub 
- Actions deploys - for better performance & automated deployments.
+- Use further both [DjDT](https://django-debug-toolbar.readthedocs.io/en/latest/)  for the dev & Telegram bot notifications about GitHub Actions deploys - for better performance & automated deployments;
+- Create a downloadable PDF with ingredients & their quantities for your 
+  favourite recipes to go shopping with.
 
 Tools & stack: #Python #Django #DRF #Json #Yaml #API #Docker #Nginx 
 #PostgreSQL #Gunicorn #Djoser #JWT #Postman #TelegramBot #Flake8 #Ruff 
