@@ -9,8 +9,6 @@ from backend import constants
 User = get_user_model()
 
 
-# Adding this for the sake of any changes
-
 class TestLogic(TestCase):
     DATA = constants.TEST_USER_DATA
     client = Client()
