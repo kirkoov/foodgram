@@ -9,9 +9,6 @@ from backend import constants
 User = get_user_model()
 
 
-# Some changes for the entire thing to re-deploy via CI-CD
-
-
 class TestLogic(TestCase):
     DATA = constants.TEST_USER_DATA
     client = Client()
