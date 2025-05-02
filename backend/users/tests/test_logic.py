@@ -9,9 +9,6 @@ from backend import constants
 User = get_user_model()
 
 
-# Another minor change for a push after a server reboot.
-
-
 class TestLogic(TestCase):
     DATA = constants.TEST_USER_DATA
     client = Client()
