@@ -58,7 +58,7 @@ numpy==1.26.4
 oauthlib==3.2.2 
 packaging==24.0 
 pandas==2.2.1 
-pbs-installer[download,install]==2025.4.9 
+pbs-installer[download,install]==2025.5.17 
 pillow==10.3.0 
 pkginfo==1.12.1.2 
 platformdirs==4.3.8 
@@ -109,5 +109,5 @@ virtualenv==20.31.2
 webcolors-stubs==0.0.3 
 webcolors==1.13 
 xattr==1.1.4 
-zipp==3.21.0 
+zipp==3.22.0 
 zstandard==0.23.0 
