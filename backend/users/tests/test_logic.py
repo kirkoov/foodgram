@@ -8,8 +8,6 @@ from backend import constants
 
 User = get_user_model()
 
-# More challenges to face
-
 
 class TestLogic(TestCase):
     DATA = constants.TEST_USER_DATA
