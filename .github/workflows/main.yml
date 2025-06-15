@@ -131,26 +131,49 @@ jobs:
           ls -ld foodgram
           ls -l foodgram
 
-    # NEW: Simplified SSH setup using webfactory/ssh-agent
-    - name: Setup SSH keys via webfactory/ssh-agent
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }} # Passphrase is handled automatically by this action
-        # The known_hosts file is automatically populated by this action
-
-    # Copy critical config files via rsync
-    # These commands will automatically use the SSH key now available in the agent
-    - name: Copy critical config files via rsync
+    # NEW: Direct SSH Agent & Key Setup with SSH_ASKPASS for Passphrase-Protected Keys
+    - name: Set up SSH and Copy critical config files via rsync
       run: |
         set -x # Enable shell debugging
-        # Add server's host key to known_hosts using ssh-keyscan, as webfactory/ssh-agent
-        # handles the known_hosts for GitHub, but not necessarily your custom host.
+
+        # Start ssh-agent if not already running
+        if [ -z "$SSH_AUTH_SOCK" ]; then
+          eval "$(ssh-agent -s)"
+        fi
+
+        # Clear existing keys from the agent to prevent conflicts
+        ssh-add -D
+
+        # Create a temporary script for SSH_ASKPASS if a passphrase exists
+        # This is the most robust way to provide passphrase non-interactively
+        PASSPHRASE_SCRIPT=""
+        if [ -n "${{ secrets.SSH_PASSPHRASE }}" ]; then
+          PASSPHRASE_SCRIPT=$(mktemp)
+          # Use printf for robust multi-line output to the script file
+          printf '#!/bin/sh\nprintf "%%s\\n" "${SSH_PASSPHRASE_VAL}"\n' > "$PASSPHRASE_SCRIPT"
+          chmod +x "$PASSPHRASE_SCRIPT"
+          export SSH_ASKPASS="$PASSPHRASE_SCRIPT"
+          # DISPLAY=:0 is sometimes needed for SSH_ASKPASS, even in headless environments
+          export DISPLAY=:0 
+        fi
+
+        # Add the SSH private key to the agent
+        # The 'printf' command is robust for multi-line strings
+        # 2>/dev/null suppresses any interactive prompts that might still appear if SSH_ASKPASS fails
+        printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add - 2>/dev/null
+
+        # Clean up the temporary passphrase script if created
+        if [ -n "$PASSPHRASE_SCRIPT" ]; then
+          rm "$PASSPHRASE_SCRIPT"
+          unset SSH_ASKPASS
+          unset DISPLAY
+        fi
+
+        # Add server's host key to known_hosts to prevent interactive prompts
         ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
         chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
 
         # Verify key is added (outputs fingerprint if successful)
-        # This will now work correctly after webfactory/ssh-agent has run
         ssh-add -l
 
         # Copy docker-compose.production.yaml
@@ -167,7 +190,13 @@ jobs:
         rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
               ./.env \
               ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
-      # No need for manual SSH_AUTH_SOCK or SSH_AGENT_PID env vars here, webfactory/ssh-agent sets them globally
+      env:
+        # These are set by eval "$(ssh-agent -s)" and are crucial for rsync/ssh.
+        SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+        SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
+        # Pass the passphrase value as an environment variable to the SSH_ASKPASS script
+        SSH_PASSPHRASE_VAL: ${{ secrets.SSH_PASSPHRASE }}
+
 
     # Original scp for docs folder (if it's working)
     - name: Copy doc folder via ssh
