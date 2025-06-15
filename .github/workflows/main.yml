@@ -129,7 +129,7 @@ jobs:
           # This should fix the 'not a directory' error
           rm -rf foodgram/nginx.conf
 
-    # REVISED: SCP actions to copy files *into* the foodgram directory (simplified target)
+    # REVISED: SCP actions to copy files *to specific file paths* within foodgram directory
     - name: Copy docker-compose.production.yaml via ssh
       uses: appleboy/scp-action@master
       with:
@@ -138,7 +138,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "./infra/docker-compose.production.yaml"
-        target: "foodgram" # Copy into the foodgram directory
+        target: "foodgram/docker-compose.production.yaml" # Explicit full path
     - name: Copy nginx.conf via ssh
       uses: appleboy/scp-action@master
       with:
@@ -147,7 +147,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "./infra/nginx.conf"
-        target: "foodgram" # Copy into the foodgram directory
+        target: "foodgram/nginx.conf" # Explicit full path for nginx.conf
 
     - name: Copy doc folder via ssh
       uses: appleboy/scp-action@master
@@ -165,9 +165,12 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }} # Fixed typo here
         script: |
+          set -x # Enable shell debugging
           cd foodgram
+          # VERIFY nginx.conf type BEFORE docker compose up
+          ls -ld nginx.conf 
           # Files are now directly in foodgram/ from scp, so no internal 'cp' needed.
           docker compose -f docker-compose.production.yaml --progress=quiet pull
           docker compose -f docker-compose.production.yaml --progress=quiet down -v
