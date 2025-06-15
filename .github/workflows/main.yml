@@ -131,32 +131,46 @@ jobs:
           ls -ld foodgram
           ls -l foodgram
 
-    # NEW: Use rsync for robust file copying of docker-compose.production.yaml and nginx.conf
-    # This step will run on the GitHub Actions runner, connecting to the remote via SSH
-    # and using rsync to copy the specific files. rsync is much better at handling
-    # file/directory distinctions and overwrites.
-    - name: Copy critical config files via rsync over SSH
+    # NEW: Robust SSH key setup using ssh-agent for rsync
+    - name: Set up SSH and Copy critical config files via rsync
       run: |
         set -x # Enable shell debugging
-        # Ensure SSH key is set up for rsync to use
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_KEY }}" | base64 -d > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        # Add host key to known_hosts to prevent interactive prompts (StrictHostKeyChecking=no handled by rsync's ssh wrapper)
+        # Start ssh-agent if not already running
+        if [ -z "$SSH_AUTH_SOCK" ]; then
+          eval "$(ssh-agent -s)"
+        fi
+        # Add the SSH private key to the agent
+        # The 'printf' command is more robust for multi-line strings than 'echo'
+        printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add - # The '-' reads from stdin
+
+        # Add server's host key to known_hosts to prevent interactive prompts
+        # This scans your target host, not GitHub.com
         ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
-        
+        chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
+
+        # Verify key is added
+        ssh-add -l
+
         # Copy docker-compose.production.yaml
-        rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
               ./infra/docker-compose.production.yaml \
               ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
 
         # Copy nginx.conf
-        rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
               ./infra/nginx.conf \
               ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
+        
+        # Copy .env file (assuming it's at the root of your repo)
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
+              ./.env \
+              ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
       env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }} # Used by ssh-keyscan and rsync's ssh wrapper
-        # GITHUB_HOST_KEY: $(ssh-keyscan github.com) # This is not needed for rsync to your server
+        # The SSH_KEY secret is directly used by printf and ssh-add, not as a file.
+        # SSH_AUTH_SOCK is set by eval "$(ssh-agent -s)" and is crucial for rsync/ssh.
+        SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }} # Ensure agent socket is available
+        SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }} # Ensure agent PID is available
+
 
     # Original scp for docs folder (if it's working)
     - name: Copy doc folder via ssh
@@ -179,8 +193,8 @@ jobs:
         script: |
           set -x # Enable shell debugging
           cd foodgram
-          # VERIFY nginx.conf and docker-compose.production.yaml types AFTER copying
-          ls -ld nginx.conf docker-compose.production.yaml
+          # VERIFY nginx.conf, docker-compose.production.yaml, and .env types AFTER copying
+          ls -ld nginx.conf docker-compose.production.yaml .env
           # Files are now directly in foodgram/ from rsync/scp, no internal 'cp' needed.
           docker compose -f docker-compose.production.yaml --progress=quiet pull
           docker compose -f docker-compose.production.yaml --progress=quiet down -v
