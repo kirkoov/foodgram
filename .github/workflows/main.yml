@@ -115,8 +115,9 @@ jobs:
     - name: Checkout the repo
       uses: actions/checkout@v4
 
-    # NEW: Aggressive cleanup of foodgram directory and immediate check
-    - name: Prepare remote foodgram directory and cleanup old files
+    # Forcefully remove the entire foodgram directory to ensure a clean slate
+    # Then recreate it. This ensures no lingering directory issues from previous failed copies.
+    - name: Prepare remote foodgram directory (aggressive cleanup)
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -125,35 +126,39 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           set -x # Enable shell debugging for this step
-          # Forcefully remove the entire foodgram directory
           rm -rf foodgram
-          # Recreate it as an empty directory
           mkdir -p foodgram
-          # Verify that foodgram is now an empty directory
           ls -ld foodgram
           ls -l foodgram
 
-    # REVISED: SCP actions to copy files to explicit file paths within foodgram
-    - name: Copy docker-compose.production.yaml via ssh
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "./infra/docker-compose.production.yaml"
-        target: "foodgram/docker-compose.production.yaml" # Explicit full file path
-        # Removed overwrite: true as it's implied by explicit file target after rm -rf
-    - name: Copy nginx.conf via ssh
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "./infra/nginx.conf"
-        target: "foodgram/nginx.conf" # Explicit full file path for nginx.conf
-        # Removed overwrite: true
+    # NEW: Use rsync for robust file copying of docker-compose.production.yaml and nginx.conf
+    # This step will run on the GitHub Actions runner, connecting to the remote via SSH
+    # and using rsync to copy the specific files. rsync is much better at handling
+    # file/directory distinctions and overwrites.
+    - name: Copy critical config files via rsync over SSH
+      run: |
+        set -x # Enable shell debugging
+        # Ensure SSH key is set up for rsync to use
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_KEY }}" | base64 -d > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        # Add host key to known_hosts to prevent interactive prompts (StrictHostKeyChecking=no handled by rsync's ssh wrapper)
+        ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+        
+        # Copy docker-compose.production.yaml
+        rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+              ./infra/docker-compose.production.yaml \
+              ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
+
+        # Copy nginx.conf
+        rsync -avz -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+              ./infra/nginx.conf \
+              ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }} # Used by ssh-keyscan and rsync's ssh wrapper
+        # GITHUB_HOST_KEY: $(ssh-keyscan github.com) # This is not needed for rsync to your server
+
+    # Original scp for docs folder (if it's working)
     - name: Copy doc folder via ssh
       uses: appleboy/scp-action@master
       with:
@@ -174,9 +179,9 @@ jobs:
         script: |
           set -x # Enable shell debugging
           cd foodgram
-          # VERIFY nginx.conf type BEFORE docker compose up (should now be a file)
-          ls -ld nginx.conf 
-          # Files are now directly in foodgram/ from scp, so no internal 'cp' needed.
+          # VERIFY nginx.conf and docker-compose.production.yaml types AFTER copying
+          ls -ld nginx.conf docker-compose.production.yaml
+          # Files are now directly in foodgram/ from rsync/scp, no internal 'cp' needed.
           docker compose -f docker-compose.production.yaml --progress=quiet pull
           docker compose -f docker-compose.production.yaml --progress=quiet down -v
           docker compose -f docker-compose.production.yaml --progress=quiet up -d
