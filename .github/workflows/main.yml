@@ -141,7 +141,12 @@ jobs:
         fi
         # Add the SSH private key to the agent
         # The 'printf' command is more robust for multi-line strings than 'echo'
-        printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add - # The '-' reads from stdin
+        # Provide the passphrase via stdin if SSH_PASSPHRASE is set
+        if [ -n "${{ secrets.SSH_PASSPHRASE }}" ]; then
+          printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add - -p "${{ secrets.SSH_PASSPHRASE }}"
+        else
+          printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add -
+        fi
 
         # Add server's host key to known_hosts to prevent interactive prompts
         # This scans your target host, not GitHub.com
@@ -170,6 +175,9 @@ jobs:
         # SSH_AUTH_SOCK is set by eval "$(ssh-agent -s)" and is crucial for rsync/ssh.
         SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }} # Ensure agent socket is available
         SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }} # Ensure agent PID is available
+        # SSH_ASKPASS is sometimes used, but piping directly is often more reliable for non-interactive scripts.
+        # However, for ssh-add with passphrase, it's better to explicitly provide it if possible.
+        # The above if/else block directly handles passing the passphrase to ssh-add.
 
 
     # Original scp for docs folder (if it's working)
