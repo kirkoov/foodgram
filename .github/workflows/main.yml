@@ -165,7 +165,8 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        passphra
+        se: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd foodgram
           # Files are now directly in foodgram/ from scp, so no internal 'cp' needed.
