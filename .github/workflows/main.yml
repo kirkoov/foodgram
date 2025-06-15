@@ -131,7 +131,7 @@ jobs:
           ls -ld foodgram
           ls -l foodgram
 
-    # NEW: Robust SSH key setup using ssh-agent for rsync
+    # NEW: Robust SSH key setup using ssh-agent and SSH_ASKPASS for rsync
     - name: Set up SSH and Copy critical config files via rsync
       run: |
         set -x # Enable shell debugging
@@ -139,21 +139,37 @@ jobs:
         if [ -z "$SSH_AUTH_SOCK" ]; then
           eval "$(ssh-agent -s)"
         fi
-        # Add the SSH private key to the agent
-        # The 'printf' command is more robust for multi-line strings than 'echo'
-        # Provide the passphrase via stdin if SSH_PASSPHRASE is set
+
+        # Create a temporary file for SSH_ASKPASS if a passphrase exists
+        # This is a more robust way to provide passphrase non-interactively
+        PASSPHRASE_SCRIPT="" # Initialize to empty
         if [ -n "${{ secrets.SSH_PASSPHRASE }}" ]; then
-          printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add - -p "${{ secrets.SSH_PASSPHRASE }}"
-        else
-          printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add -
+          PASSPHRASE_SCRIPT=$(mktemp)
+          echo '#!/bin/sh' > "$PASSPHRASE_SCRIPT"
+          echo 'echo "${{ secrets.SSH_PASSPHRASE }}"' >> "$PASSPHRASE_SCRIPT"
+          chmod +x "$PASSPHRASE_SCRIPT"
+          export SSH_ASKPASS="$PASSPHRASE_SCRIPT"
+          # DISPLAY=:0 is sometimes needed for SSH_ASKPASS, even in headless environments
+          export DISPLAY=:0 
+        fi
+
+        # Add the SSH private key to the agent
+        # The 'printf' command is robust for multi-line strings
+        # 2>/dev/null suppresses any interactive prompts that might still appear if SSH_ASKPASS fails
+        printf "%s\n" "${{ secrets.SSH_KEY }}" | ssh-add - 2>/dev/null
+
+        # Clean up the temporary passphrase script if created
+        if [ -n "$PASSPHRASE_SCRIPT" ]; then
+          rm "$PASSPHRASE_SCRIPT"
+          unset SSH_ASKPASS
+          unset DISPLAY
         fi
 
         # Add server's host key to known_hosts to prevent interactive prompts
-        # This scans your target host, not GitHub.com
         ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
         chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
 
-        # Verify key is added
+        # Verify key is added (outputs fingerprint if successful)
         ssh-add -l
 
         # Copy docker-compose.production.yaml
@@ -171,13 +187,10 @@ jobs:
               ./.env \
               ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
       env:
-        # The SSH_KEY secret is directly used by printf and ssh-add, not as a file.
-        # SSH_AUTH_SOCK is set by eval "$(ssh-agent -s)" and is crucial for rsync/ssh.
-        SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }} # Ensure agent socket is available
-        SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }} # Ensure agent PID is available
-        # SSH_ASKPASS is sometimes used, but piping directly is often more reliable for non-interactive scripts.
-        # However, for ssh-add with passphrase, it's better to explicitly provide it if possible.
-        # The above if/else block directly handles passing the passphrase to ssh-add.
+        # SSH_AUTH_SOCK and SSH_AGENT_PID are set by eval "$(ssh-agent -s)"
+        # and need to be explicitly exposed to subsequent steps or commands
+        SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+        SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
 
 
     # Original scp for docs folder (if it's working)
