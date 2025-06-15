@@ -115,7 +115,23 @@ jobs:
     - name: Checkout the repo
       uses: actions/checkout@v4
 
-    # NEW: Streamlined SCP actions to directly copy files
+    # NEW: Ensure foodgram directory exists before copying files
+    - name: Ensure remote foodgram directory exists
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          mkdir -p foodgram
+          # Also, remove any lingering 'nginx.conf' which might be a directory from previous failures
+          if [ -d foodgram/nginx.conf ]; then
+            echo "Warning: foodgram/nginx.conf is a directory. Removing it."
+            rm -rf foodgram/nginx.conf
+          fi
+
+    # REVISED: SCP actions to copy files *into* the foodgram directory
     - name: Copy docker-compose.production.yaml via ssh
       uses: appleboy/scp-action@master
       with:
@@ -124,7 +140,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "./infra/docker-compose.production.yaml"
-        target: "foodgram/docker-compose.production.yaml" # Direct target path
+        target: "foodgram" # Copy into the foodgram directory
     - name: Copy nginx.conf via ssh
       uses: appleboy/scp-action@master
       with:
@@ -133,7 +149,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: "./infra/nginx.conf"
-        target: "foodgram/nginx.conf" # Direct target path
+        target: "foodgram" # Copy into the foodgram directory
 
     - name: Copy doc folder via ssh
       uses: appleboy/scp-action@master
@@ -154,13 +170,7 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd foodgram
-          # Ensure old nginx.conf (if directory) is removed before docker compose attempts to use it
-          # This should only be needed once if nginx.conf was a directory
-          if [ -d nginx.conf ]; then
-            echo "Warning: nginx.conf is a directory. Removing it."
-            rm -rf nginx.conf
-          fi
-          # The files are already copied directly by scp-action, no need for 'cp' here.
+          # Files are now directly in foodgram/ from scp, so no internal 'cp' needed.
           docker compose -f docker-compose.production.yaml --progress=quiet pull
           docker compose -f docker-compose.production.yaml --progress=quiet down -v
           docker compose -f docker-compose.production.yaml --progress=quiet up -d
@@ -169,14 +179,6 @@ jobs:
           docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic
           docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json
           docker compose -f docker-compose.production.yaml exec backend python manage.py import_csv eng
-          # Remove temp infra and nginx.conf files from original infra directory on host if they're still there
-          # (assuming infra/ and nginx.conf are only needed for the CI runner, not remote server)
-          # Note: 'rm -r infra' and 'rm nginx.conf' at the end of the script
-          # should be done on the *remote* server in the foodgram directory.
-          # The previous script had 'rm -r infra' which might remove the original infra/ if not careful.
-          # Let's keep only necessary cleanup for clarity and safety.
-          # If infra folder is always copied to 'foodgram/infra' it should be removed from there.
-          # If nginx.conf is copied to 'foodgram/nginx.conf' it should not be removed as it's critical.
           echo "Deployment commands executed on remote server."
 
   send_telegram:
