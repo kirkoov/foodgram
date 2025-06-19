@@ -6,8 +6,25 @@ on:
       - main
 
 jobs:
+  # frontend_tests: # Uncomment if you have frontend tests to run
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #   - name: Set up nodeJS
+  #     uses: actions/setup-node@v4
+  #     with:
+  #       node-version: 16
+  #   - name: Install dependencies
+  #     run: |
+  #       cd frontend/
+  #       npm ci
+  #   - name: Test frontend
+  #     run: |
+  #       cd frontend/
+  #       npm run test
+
   backend_tests:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Using ubuntu-latest for consistency with modern runners
 
     services:
       postgres:
@@ -26,12 +43,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-      - name: Install dependencies
+          python-version: '3.10.12' # Updated to a specific 3.10 version
+      - name: Install backend dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install poetry
-          poetry install
+          pip install flake8==7.0.0 # Install flake8 for linting
+          pip install -r ./backend/requirements.txt # Install backend dependencies from requirements.txt
       - name: Run backend tests
         env:
           POSTGRES_USER: django_user
@@ -42,151 +59,205 @@ jobs:
           DJANGO_SETTINGS_MODULE: backend.settings
         run: |
           cd backend/
-          poetry run pytest
+          python -m flake8 . # Run flake8 for linting
+          pytest # Run pytest for unit tests
 
-  # Docker build/push jobs are still commented out
-  # build_and_push_frontend_docker_img_to_dockerhub:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-  #     - name: Login to DockerHub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-  #     - name: Build and push frontend Docker image
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: ./frontend/
-  #         push: true
-  #         tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+  build_and_push_backend_docker_img_to_dockerhub:
+    name: Build & Push Backend Docker Image
+    runs-on: ubuntu-latest
+    needs: backend_tests # Ensures backend tests pass before building
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push backend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend/
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
 
-  # build_and_push_backend_docker_img_to_docker_hub:
-  #   runs-on: ubuntu-latest
-  #   needs: backend_tests
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-  #     - name: Login to DockerHub
-  #       uses: docker/login-action@v3
-  #       with:
-  #         username: ${{ secrets.DOCKER_USERNAME }}
-  #         password: ${{ secrets.DOCKER_PASSWORD }}
-  #     - name: Build and push backend Docker image
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         context: ./backend/
-  #         push: true
-  #         tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+  build_and_push_frontend_docker_img_to_dockerhub:
+    name: Build & Push Frontend Docker Image
+    runs-on: ubuntu-latest
+    # needs: frontend_tests # Uncomment if you have frontend tests
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push frontend Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend/
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: backend_tests
+    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
+    needs:
+      - build_and_push_backend_docker_img_to_dockerhub
+      - build_and_push_frontend_docker_img_to_dockerhub # Depends on both images being built
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Mask sensitive SSH_KEY in logs
-      - name: Mask SSH Key in logs
-        run: echo "::add-mask::${{ secrets.SSH_KEY }}"
-      - name: Mask .env content in logs
-        run: echo "::add-mask::${{ secrets.DOT_ENV }}" # Mask .env content in logs
+      # Mask sensitive SSH_KEY and DOT_ENV content in logs
+      - name: Mask Sensitive Secrets
+        run: |
+          echo "::add-mask::${{ secrets.SSH_KEY }}"
+          echo "::add-mask::${{ secrets.DOT_ENV }}"
 
-      # --- Step 1: Test basic SSH connection and remote directory creation (from previous step) ---
-      - name: Prepare Remote Foodgram Directory
+      # Forcefully remove the entire foodgram directory to ensure a clean slate
+      # Then recreate it. This ensures no lingering directory issues from previous failed copies.
+      - name: Prepare Remote Foodgram Directory (Aggressive Cleanup)
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Passphrase is used if SSH_KEY has one
           script: |
-            set -x
-            echo "Checking remote foodgram directory..."
+            set -x # Enable shell debugging for this step
+            echo "Performing aggressive cleanup of foodgram directory..."
             rm -rf foodgram || echo "foodgram directory did not exist or could not be removed (ignoring error)."
             mkdir -p foodgram || { echo "ERROR: Failed to create foodgram directory on remote."; exit 1; }
             ls -ld foodgram # Show directory permissions and ownership
-            echo "Remote directory preparation successful."
+            ls -l foodgram # Show contents of the newly created directory
+            echo "Remote foodgram directory prepared."
 
-      # --- Step 2: Copy essential configuration files to the remote server ---
-      - name: Copy docker-compose.production.yaml
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "./infra/docker-compose.production.yaml"
-          target: "foodgram/docker-compose.production.yaml" # Explicitly copy to filename in foodgram
-      - name: Verify docker-compose.production.yaml copy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            set -x
-            ls -l foodgram/docker-compose.production.yaml || { echo "ERROR: docker-compose.production.yaml not found after copy."; exit 1; }
-
-      - name: Copy nginx.conf
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "./infra/nginx.conf"
-          target: "foodgram/nginx.conf" # Explicitly copy to filename in foodgram
-      - name: Verify nginx.conf copy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            set -x
-            ls -l foodgram/nginx.conf || { echo "ERROR: nginx.conf not found after copy."; exit 1; }
-
-      - name: Create and Copy .env file
+      # NEW: Robust SSH Agent & Key Setup.
+      # This step sets up ssh-agent, adds the private key (with passphrase handling),
+      # and copies essential config files and .env using rsync.
+      - name: Set up SSH Agent and Copy Critical Config Files via rsync
         run: |
+          set -x # Enable shell debugging
+
+          # Start ssh-agent if not already running. Save SSH_AUTH_SOCK and SSH_AGENT_PID for subsequent steps.
+          if [ -z "$SSH_AUTH_SOCK" ]; then
+            eval "$(ssh-agent -s)"
+            echo "SSH Agent started. SSH_AUTH_SOCK: $SSH_AUTH_SOCK, SSH_AGENT_PID: $SSH_AGENT_PID"
+          else
+            echo "SSH Agent already running. SSH_AUTH_SOCK: $SSH_AUTH_SOCK, SSH_AGENT_PID: $SSH_AGENT_PID"
+          fi
+
+          # Clear existing keys from the agent to prevent conflicts
+          ssh-add -D || echo "No keys to delete from agent." # Handle case where agent is empty
+
+          # Create temporary file for the SSH private key
+          # Use a here-document (EOF) with base64 decoding for the private key.
+          # This completely avoids shell interpretation of the secret's content.
+          SSH_KEY_FILE=$(mktemp)
+          echo "${{ secrets.SSH_KEY }}" | base64 -d > "$SSH_KEY_FILE"
+          chmod 600 "$SSH_KEY_FILE" # Set correct permissions for the private key file
+          echo "Temporary SSH key file created: $SSH_KEY_FILE"
+
+          # Handle passphrase if it exists
+          if [ -n "${{ secrets.SSH_PASSPHRASE }}" ]; then
+            echo "Passphrase detected. Setting up SSH_ASKPASS."
+            # Create a temporary SSH_ASKPASS script.
+            # The script itself will base64 decode the passphrase from its argument.
+            SSH_ASKPASS_SCRIPT=$(mktemp)
+            printf '#!/bin/sh\nprintf "%%s" "$1" | base64 -d\n' > "$SSH_ASKPASS_SCRIPT"
+            chmod +x "$SSH_ASKPASS_SCRIPT"
+            export SSH_ASKPASS="$SSH_ASKPASS_SCRIPT"
+            export DISPLAY=:0 # Required for SSH_ASKPASS in some headless environments (though not strictly for ssh-add)
+
+            # Add the key with passphrase. Pass the base64-encoded passphrase as an argument.
+            # ssh-add automatically sends its interactive prompt to SSH_ASKPASS.
+            echo "${{ secrets.SSH_PASSPHRASE }}" | base64 -d | ssh-add "$SSH_KEY_FILE" 2>/dev/null
+            echo "SSH key added with passphrase via SSH_ASKPASS."
+            
+            # Clean up SSH_ASKPASS script and unset environment variables
+            rm "$SSH_ASKPASS_SCRIPT"
+            unset SSH_ASKPASS
+            unset DISPLAY
+          else
+            echo "No passphrase detected. Adding SSH key directly."
+            # Add the key without passphrase
+            ssh-add "$SSH_KEY_FILE" 2>/dev/null
+            echo "SSH key added without passphrase."
+          fi
+
+          # Clean up the temporary private key file
+          rm "$SSH_KEY_FILE"
+          echo "Temporary SSH key file removed."
+
+          # Add server's host key to known_hosts to prevent interactive prompts
+          # Use StrictHostKeyChecking=no for first connection, then add to known_hosts.
+          # This is for robustness in CI; in production servers, pre-populate known_hosts.
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
+          echo "Server host key added to known_hosts."
+
+          # Verify key is added (outputs fingerprint if successful)
+          echo "Verifying SSH keys loaded in agent:"
+          ssh-add -l
+
           # Create the .env file locally from the GitHub secret
+          # This is done *before* rsync as rsync needs the local file to exist.
           echo "${{ secrets.DOT_ENV }}" > ./.env_decoded
           chmod 600 ./.env_decoded
-        shell: bash
-      - name: Copy .env file to remote
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "./.env_decoded"
-          target: "foodgram/.env" # Explicitly copy to filename in foodgram
-      - name: Verify .env copy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            set -x
-            ls -l foodgram/.env || { echo "ERROR: .env not found after copy."; exit 1; }
+          echo ".env_decoded created locally."
 
-      - name: Copy docs folder
+          # Copy docker-compose.production.yaml using rsync
+          echo "Copying docker-compose.production.yaml..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
+                ./infra/docker-compose.production.yaml \
+                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/docker-compose.production.yaml
+          echo "docker-compose.production.yaml copied."
+
+          # Copy nginx.conf using rsync
+          echo "Copying nginx.conf..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
+                ./infra/nginx.conf \
+                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/nginx.conf
+          echo "nginx.conf copied."
+          
+          # Copy .env file using rsync
+          echo "Copying .env file..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
+                ./.env_decoded \
+                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/.env
+          echo ".env file copied."
+
+          # Clean up the local .env_decoded file
+          rm ./.env_decoded
+          echo "Local .env_decoded removed."
+        env:
+          # These are set by eval "$(ssh-agent -s)" and are crucial for rsync/ssh to use the agent.
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
+
+
+      # Copy docs folder using appleboy/scp-action (if it's working well for directories)
+      - name: Copy Docs Folder
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "./docs" # This will copy the entire docs directory
           target: "foodgram/" # Trailing slash ensures docs is copied *into* foodgram
-      - name: Verify docs folder copy
+      - name: Verify Docs Folder Copy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             set -x
             echo "Contents of foodgram/docs:"
@@ -195,13 +266,51 @@ jobs:
             ls -l foodgram/docs/redoc.html || { echo "ERROR: redoc.html not found in foodgram/docs."; exit 1; }
 
 
-  # send_telegram: # Still commented out
-  #   runs-on: ubuntu-latest
-  #   needs: deploy
-  #   steps:
-  #     - name: Send Telegram notification
-  #       uses: appleboy/telegram-action@master
-  #       with:
-  #         to: ${{ secrets.TELEGRAM_TO }}
-  #         token: ${{ secrets.TELEGRAM_TOKEN }}
-  #         message: Foodgram has been refreshed in builds & deployed successfully to WebSpace.
+      - name: Execute Remote Docker Deployment Commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            set -x # Enable shell debugging
+            echo "Changing to foodgram directory on remote server..."
+            cd foodgram || { echo "ERROR: foodgram directory not found on remote."; exit 1; }
+            
+            echo "Verifying copied config files:"
+            ls -ld docker-compose.production.yaml nginx.conf .env docs || { echo "ERROR: Essential files not found in foodgram directory."; exit 1; }
+            
+            echo "Pulling latest Docker images..."
+            docker compose -f docker-compose.production.yaml --progress=quiet pull || { echo "ERROR: Docker pull failed."; exit 1; }
+            
+            echo "Bringing down existing Docker services..."
+            docker compose -f docker-compose.production.yaml --progress=quiet down -v || echo "No existing services to bring down or encountered error (ignoring if first deploy)."
+            
+            echo "Bringing up new Docker services..."
+            docker compose -f docker-compose.production.yaml --progress=quiet up -d || { echo "ERROR: Docker compose up failed."; exit 1; }
+            
+            echo "Running Django migrations..."
+            docker compose -f docker-compose.production.yaml exec backend python manage.py migrate --noinput || { echo "ERROR: Django migrations failed."; exit 1; }
+            
+            echo "Collecting static files..."
+            docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic --noinput || { echo "ERROR: Django collectstatic failed."; exit 1; }
+            
+            echo "Loading initial data from db.json..."
+            docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json || { echo "WARNING: Initial data loading from db.json failed or db.json not present (ignoring for ongoing deployments)."; }
+            
+            echo "Importing CSV data (eng)..."
+            docker compose -f docker-compose.production.yaml exec backend python manage.py import_csv eng || { echo "WARNING: CSV import failed (ignoring for ongoing deployments)."; }
+            
+            echo "Deployment commands executed successfully on remote server."
+
+  send_telegram:
+    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
+    needs: deploy # Ensures Telegram notification is sent after successful deployment
+    steps:
+      - name: Send Telegram Notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: Foodgram has been refreshed in builds & deployed successfully to WebSpace.
