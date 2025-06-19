@@ -189,8 +189,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             set -x
+            echo "Contents of foodgram/docs:"
             ls -l foodgram/docs || { echo "ERROR: docs folder not found after copy."; exit 1; }
-            ls -l foodgram/docs/api # Check a file inside to confirm content
+            ls -l foodgram/docs/openapi-schema.yml || { echo "ERROR: openapi-schema.yml not found in foodgram/docs."; exit 1; }
+            ls -l foodgram/docs/redoc.html || { echo "ERROR: redoc.html not found in foodgram/docs."; exit 1; }
+
 
   # send_telegram: # Still commented out
   #   runs-on: ubuntu-latest
