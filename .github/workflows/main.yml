@@ -7,7 +7,7 @@ on:
 
 jobs:
   backend_tests:
-    runs-on: ubuntu-latest # Using ubuntu-latest for consistency with modern runners
+    runs-on: ubuntu-latest
 
     services:
       postgres:
@@ -26,12 +26,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9' # Sticking to 3.9 as per your previous preference
+          python-version: '3.10'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install poetry # Assuming you use poetry
-          poetry install # Install backend dependencies via poetry
+          pip install poetry
+          poetry install
       - name: Run backend tests
         env:
           POSTGRES_USER: django_user
@@ -42,9 +42,9 @@ jobs:
           DJANGO_SETTINGS_MODULE: backend.settings
         run: |
           cd backend/
-          poetry run pytest # Assuming pytest is run via poetry
+          poetry run pytest
 
-  # Docker build/push jobs are temporarily commented out to focus on SSH
+  # Docker build/push jobs are still commented out
   # build_and_push_frontend_docker_img_to_dockerhub:
   #   runs-on: ubuntu-latest
   #   steps:
@@ -86,7 +86,6 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    # Temporarily only depends on backend_tests to simplify initial debugging
     needs: backend_tests
     steps:
       - name: Checkout code
@@ -95,25 +94,105 @@ jobs:
       # Mask sensitive SSH_KEY in logs
       - name: Mask SSH Key in logs
         run: echo "::add-mask::${{ secrets.SSH_KEY }}"
+      - name: Mask .env content in logs
+        run: echo "::add-mask::${{ secrets.DOT_ENV }}" # Mask .env content in logs
 
-      # --- Step 1: Test basic SSH connection and remote directory creation ---
-      - name: Test SSH Connection and Prepare Remote Directory
+      # --- Step 1: Test basic SSH connection and remote directory creation (from previous step) ---
+      - name: Prepare Remote Foodgram Directory
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # Explicitly pass the key. Removed passphrase parameter as key has no passphrase.
           key: ${{ secrets.SSH_KEY }}
           script: |
-            set -x # Enable shell debugging
-            echo "Attempting SSH connection to ${{ secrets.HOST }} as ${{ secrets.USER }}."
+            set -x
             echo "Checking remote foodgram directory..."
             rm -rf foodgram || echo "foodgram directory did not exist or could not be removed (ignoring error)."
             mkdir -p foodgram || { echo "ERROR: Failed to create foodgram directory on remote."; exit 1; }
             ls -ld foodgram # Show directory permissions and ownership
-            echo "SSH connection test and remote directory preparation successful."
+            echo "Remote directory preparation successful."
 
-  # send_telegram: # Temporarily commented out
+      # --- Step 2: Copy essential configuration files to the remote server ---
+      - name: Copy docker-compose.production.yaml
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./infra/docker-compose.production.yaml"
+          target: "foodgram/docker-compose.production.yaml" # Explicitly copy to filename in foodgram
+      - name: Verify docker-compose.production.yaml copy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -x
+            ls -l foodgram/docker-compose.production.yaml || { echo "ERROR: docker-compose.production.yaml not found after copy."; exit 1; }
+
+      - name: Copy nginx.conf
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./infra/nginx.conf"
+          target: "foodgram/nginx.conf" # Explicitly copy to filename in foodgram
+      - name: Verify nginx.conf copy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -x
+            ls -l foodgram/nginx.conf || { echo "ERROR: nginx.conf not found after copy."; exit 1; }
+
+      - name: Create and Copy .env file
+        run: |
+          # Create the .env file locally from the GitHub secret
+          echo "${{ secrets.DOT_ENV }}" > ./.env_decoded
+          chmod 600 ./.env_decoded
+        shell: bash
+      - name: Copy .env file to remote
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./.env_decoded"
+          target: "foodgram/.env" # Explicitly copy to filename in foodgram
+      - name: Verify .env copy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -x
+            ls -l foodgram/.env || { echo "ERROR: .env not found after copy."; exit 1; }
+
+      - name: Copy docs folder
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./docs" # This will copy the entire docs directory
+          target: "foodgram/" # Trailing slash ensures docs is copied *into* foodgram
+      - name: Verify docs folder copy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -x
+            ls -l foodgram/docs || { echo "ERROR: docs folder not found after copy."; exit 1; }
+            ls -l foodgram/docs/api # Check a file inside to confirm content
+
+  # send_telegram: # Still commented out
   #   runs-on: ubuntu-latest
   #   needs: deploy
   #   steps:
