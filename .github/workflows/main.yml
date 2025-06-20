@@ -113,9 +113,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Mask sensitive DOT_ENV content in logs
+      # Mask sensitive DOTENV_CONTENT content in logs
       - name: Mask Sensitive .env Secret
-        run: echo "::add-mask::${{ secrets.DOT_ENV }}"
+        run: echo "::add-mask::${{ secrets.DOTENV_CONTENT }}"
 
       # Step 1: Set up SSH Agent
       - name: Setup SSH Agent
@@ -177,20 +177,20 @@ jobs:
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-      # Create and Copy .env file (DOT_ENV is base64 encoded)
+      # Create and Copy .env file (DOTENV_CONTENT is base64 encoded)
       - name: Create and Copy .env file
         run: |
           set -x
-          # Debugging: Check if DOT_ENV secret has content before decoding
-          if [ -z "${{ secrets.DOT_ENV }}" ]; then
-              echo "ERROR: DOT_ENV secret is empty! Please verify your GitHub secret."
+          # Debugging: Check if DOTENV_CONTENT secret has content before decoding
+          if [ -z "${{ secrets.DOTENV_CONTENT }}" ]; then
+              echo "ERROR: DOTENV_CONTENT secret is empty! Please verify your GitHub secret."
               exit 1 # Fail the step if secret is empty
           else
-              echo "DOT_ENV secret has content. Proceeding with decode. Size of base64 string: ${#${{ secrets.DOT_ENV }}}"
+              echo "DOTENV_CONTENT secret has content. Proceeding with decode. Size of base64 string: ${#${{ secrets.DOTENV_CONTENT }}}"
           fi
 
           # Create the .env file locally from the GitHub secret, decoding it
-          echo "${{ secrets.DOT_ENV }}" | base64 -d > ./.env_decoded
+          echo "${{ secrets.DOTENV_CONTENT }}" | base64 -d > ./.env_decoded
           chmod 600 ./.env_decoded
           echo "Local .env_decoded created. Size: $(stat -c %s ./.env_decoded) bytes"
 
