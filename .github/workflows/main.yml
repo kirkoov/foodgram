@@ -119,32 +119,11 @@ jobs:
           echo "::add-mask::${{ secrets.SSH_KEY }}"
           echo "::add-mask::${{ secrets.DOT_ENV }}"
 
-      # Forcefully remove the entire foodgram directory to ensure a clean slate
-      # Then recreate it. This ensures no lingering directory issues from previous failed copies.
-      - name: Prepare Remote Foodgram Directory (Aggressive Cleanup)
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          # The key and passphrase here are passed directly to appleboy.
-          # If your secrets are base64 encoded, this step will fail.
-          # This step will be removed shortly if the next manual SSH setup works.
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Passphrase is used if SSH_KEY has one
-          script: |
-            set -x # Enable shell debugging for this step
-            echo "Performing aggressive cleanup of foodgram directory..."
-            rm -rf foodgram || echo "foodgram directory did not exist or could not be removed (ignoring error)."
-            mkdir -p foodgram || { echo "ERROR: Failed to create foodgram directory on remote."; exit 1; }
-            ls -ld foodgram # Show directory permissions and ownership
-            ls -l foodgram # Show contents of the newly created directory
-            echo "Remote foodgram directory prepared."
-
-      # NEW: Robust SSH Agent & Key Setup.
+      # NEW: Combined SSH Agent Setup and initial remote directory prep.
       # This step sets up ssh-agent, adds the private key (with passphrase handling),
-      # and copies essential config files and .env using rsync.
+      # and performs the aggressive cleanup.
       # This step *expects* SSH_KEY and SSH_PASSPHRASE secrets to be base64 encoded.
-      - name: Set up SSH Agent and Copy Critical Config Files via rsync
+      - name: Set up SSH Agent & Prepare Remote Foodgram Directory
         run: |
           set -x # Enable shell debugging
 
@@ -209,27 +188,55 @@ jobs:
           echo "Verifying SSH keys loaded in agent:"
           ssh-add -l
 
+          # Now perform remote directory cleanup
+          echo "Performing aggressive cleanup of remote foodgram directory..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -ld foodgram" # Show directory permissions and ownership
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram" # Show contents of the newly created directory
+          echo "Remote foodgram directory prepared."
+        env:
+          # These are set by eval "$(ssh-agent -s)" and are crucial for rsync/ssh to use the agent.
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
+
+      # Copy docker-compose.production.yaml using rsync (relies on SSH Agent)
+      - name: Copy docker-compose.production.yaml
+        run: |
+          set -x
           # Create the .env file locally from the GitHub secret
-          # This is done *before* rsync as rsync needs the local file to exist.
+          # This is done here as rsync needs the local file to exist.
           echo "${{ secrets.DOT_ENV }}" | base64 -d > ./.env_decoded # Decode DOT_ENV here
           chmod 600 ./.env_decoded
           echo ".env_decoded created locally."
 
-          # Copy docker-compose.production.yaml using rsync
           echo "Copying docker-compose.production.yaml..."
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
                 ./infra/docker-compose.production.yaml \
                 ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/docker-compose.production.yaml
           echo "docker-compose.production.yaml copied."
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
 
-          # Copy nginx.conf using rsync
+
+      # Copy nginx.conf using rsync (relies on SSH Agent)
+      - name: Copy nginx.conf
+        run: |
+          set -x
           echo "Copying nginx.conf..."
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
                 ./infra/nginx.conf \
                 ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/nginx.conf
           echo "nginx.conf copied."
-          
-          # Copy .env file using rsync
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
+
+      # Copy .env file using rsync (relies on SSH Agent)
+      - name: Copy .env file
+        run: |
+          set -x
           echo "Copying .env file..."
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
                 ./.env_decoded \
@@ -240,30 +247,27 @@ jobs:
           rm ./.env_decoded
           echo "Local .env_decoded removed."
         env:
-          # These are set by eval "$(ssh-agent -s)" and are crucial for rsync/ssh to use the agent.
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
           SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
 
 
-      # Copy docs folder using appleboy/scp-action (if it's working well for directories)
+      # Copy docs folder using scp (relies on SSH Agent). Removed key/passphrase from here as well.
       - name: Copy Docs Folder
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # Pass base64 encoded key directly to appleboy/scp-action
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Will be empty if secret removed
+          # Removed key/passphrase to rely on ssh-agent
           source: "./docs" # This will copy the entire docs directory
           target: "foodgram/" # Trailing slash ensures docs is copied *into* foodgram
+
+      # Verify Docs Folder Copy (relies on SSH Agent). Removed key/passphrase from here as well.
       - name: Verify Docs Folder Copy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # Pass base64 encoded key directly to appleboy/ssh-action
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Will be empty if secret removed
+          # Removed key/passphrase to rely on ssh-agent
           script: |
             set -x
             echo "Contents of foodgram/docs:"
@@ -272,14 +276,13 @@ jobs:
             ls -l foodgram/docs/redoc.html || { echo "ERROR: redoc.html not found in foodgram/docs."; exit 1; }
 
 
+      # Execute Remote Docker Deployment Commands (relies on SSH Agent). Removed key/passphrase from here as well.
       - name: Execute Remote Docker Deployment Commands
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # Pass base64 encoded key directly to appleboy/ssh-action
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Will be empty if secret removed
+          # Removed key/passphrase to rely on ssh-agent
           script: |
             set -x # Enable shell debugging
             echo "Changing to foodgram directory on remote server..."
