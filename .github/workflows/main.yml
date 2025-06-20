@@ -141,11 +141,15 @@ jobs:
           echo "Server host key added to runner's known_hosts."
 
           echo "Performing aggressive cleanup of remote foodgram directory..."
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -ld foodgram" # Show directory permissions and ownership
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram" # Show contents of the newly created directory
+          # Use SSH_AUTH_SOCK directly in the ssh command for maximum reliability
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -ld foodgram" # Show directory permissions and ownership
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram" # Show contents of the newly created directory
           echo "Remote foodgram directory prepared."
+        env:
+          # Crucial: Pass SSH_AUTH_SOCK to this run step so ssh command can use it
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
 
       # Copy docker-compose.production.yaml using scp (now relies on webfactory/ssh-agent)
@@ -154,9 +158,15 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # key and passphrase removed - now relies on ssh-agent
+          # Removed key and passphrase as it relies on ssh-agent.
+          # Explicitly set Agent option for appleboy actions.
+          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
           source: "./infra/docker-compose.production.yaml"
           target: "foodgram/docker-compose.production.yaml" # Explicitly copy to filename in foodgram
+        env:
+          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
 
       # Copy nginx.conf using scp (now relies on webfactory/ssh-agent)
       - name: Copy nginx.conf
@@ -164,9 +174,14 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # key and passphrase removed - now relies on ssh-agent
+          # Removed key and passphrase as it relies on ssh-agent.
+          # Explicitly set Agent option for appleboy actions.
+          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
           source: "./infra/nginx.conf"
           target: "foodgram/nginx.conf" # Explicitly copy to filename in foodgram
+        env:
+          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
       # Create and Copy .env file (DOT_ENV is base64 encoded)
       - name: Create and Copy .env file
@@ -180,9 +195,14 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # key and passphrase removed - now relies on ssh-agent
+          # Removed key and passphrase as it relies on ssh-agent.
+          # Explicitly set Agent option for appleboy actions.
+          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
           source: "./.env_decoded"
           target: "foodgram/.env" # Explicitly copy to filename in foodgram
+        env:
+          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
       - name: Cleanup local .env_decoded
         run: rm ./.env_decoded
 
@@ -192,21 +212,31 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # key and passphrase removed - now relies on ssh-agent
+          # Removed key and passphrase as it relies on ssh-agent.
+          # Explicitly set Agent option for appleboy actions.
+          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
           source: "./docs" # This will copy the entire docs directory
           target: "foodgram/" # Trailing slash ensures docs is copied *into* foodgram
+        env:
+          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
       - name: Verify Docs Folder Copy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # key and passphrase removed - now relies on ssh-agent
+          # Removed key and passphrase as it relies on ssh-agent.
+          # Explicitly set Agent option for appleboy actions.
+          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
           script: |
             set -x
             echo "Contents of foodgram/docs:"
             ls -l foodgram/docs || { echo "ERROR: docs folder not found after copy."; exit 1; }
             ls -l foodgram/docs/openapi-schema.yml || { echo "ERROR: openapi-schema.yml not found in foodgram/docs."; exit 1; }
             ls -l foodgram/docs/redoc.html || { echo "ERROR: redoc.html not found in foodgram/docs."; exit 1; }
+        env:
+          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
 
       - name: Execute Remote Docker Deployment Commands
@@ -214,7 +244,9 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # key and passphrase removed - now relies on ssh-agent
+          # Removed key and passphrase as it relies on ssh-agent.
+          # Explicitly set Agent option for appleboy actions.
+          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
           script: |
             set -x # Enable shell debugging
             echo "Changing to foodgram directory on remote server..."
@@ -245,6 +277,9 @@ jobs:
             docker compose -f docker-compose.production.yaml exec backend python manage.py import_csv eng || { echo "WARNING: CSV import failed (ignoring for ongoing deployments)."; }
             
             echo "Deployment commands executed successfully on remote server."
+        env:
+          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
   send_telegram:
     runs-on: ubuntu-latest # Using ubuntu-latest for consistency
