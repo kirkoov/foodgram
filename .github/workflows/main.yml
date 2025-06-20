@@ -21,7 +21,7 @@ jobs:
   #   - name: Test frontend
   #     run: |
   #       cd frontend/
-  #       npm run test
+  #       npm run test # This is a minor change to get things syncing
 
   backend_tests:
     runs-on: ubuntu-latest # Using ubuntu-latest for consistency with modern runners
