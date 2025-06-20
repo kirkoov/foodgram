@@ -113,165 +113,96 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Mask sensitive SSH_KEY and DOT_ENV content in logs
-      - name: Mask Sensitive Secrets
-        run: |
-          echo "::add-mask::${{ secrets.SSH_KEY }}"
-          echo "::add-mask::${{ secrets.DOT_ENV }}"
+      # Mask sensitive DOT_ENV content in logs
+      - name: Mask Sensitive .env Secret
+        run: echo "::add-mask::${{ secrets.DOT_ENV }}"
 
-      # NEW: Combined SSH Agent Setup and initial remote directory prep.
-      # This step sets up ssh-agent, adds the private key (with passphrase handling),
-      # and performs the aggressive cleanup.
-      # This step *expects* SSH_KEY and SSH_PASSPHRASE secrets to be base64 encoded.
-      - name: Set up SSH Agent & Prepare Remote Foodgram Directory
-        run: |
-          set -x # Enable shell debugging
-
-          # Start ssh-agent if not already running. Save SSH_AUTH_SOCK and SSH_AGENT_PID for subsequent steps.
-          if [ -z "$SSH_AUTH_SOCK" ]; then
-            eval "$(ssh-agent -s)"
-            echo "SSH Agent started. SSH_AUTH_SOCK: $SSH_AUTH_SOCK, SSH_AGENT_PID: $SSH_AGENT_PID"
-          else
-            echo "SSH Agent already running. SSH_AUTH_SOCK: $SSH_AUTH_SOCK, SSH_AGENT_PID: $SSH_AGENT_PID"
-          fi
-
-          # Clear existing keys from the agent to prevent conflicts
-          ssh-add -D || echo "No keys to delete from agent." # Handle case where agent is empty
-
-          # Create temporary file for the SSH private key
-          # Use a here-document (EOF) with base64 decoding for the private key.
-          # This completely avoids shell interpretation of the secret's content.
-          SSH_KEY_FILE=$(mktemp)
-          echo "${{ secrets.SSH_KEY }}" | base64 -d > "$SSH_KEY_FILE"
-          chmod 600 "$SSH_KEY_FILE" # Set correct permissions for the private key file
-          echo "Temporary SSH key file created: $SSH_KEY_FILE"
-
-          # Handle passphrase if it exists
-          if [ -n "${{ secrets.SSH_PASSPHRASE }}" ]; then
-            echo "Passphrase detected. Setting up SSH_ASKPASS."
-            # Create a temporary SSH_ASKPASS script.
-            # The script itself will base64 decode the passphrase from its argument.
-            SSH_ASKPASS_SCRIPT=$(mktemp)
-            printf '#!/bin/sh\nprintf "%%s" "$1" | base64 -d\n' > "$SSH_ASKPASS_SCRIPT"
-            chmod +x "$SSH_ASKPASS_SCRIPT"
-            export SSH_ASKPASS="$SSH_ASKPASS_SCRIPT"
-            export DISPLAY=:0 # Required for SSH_ASKPASS in some headless environments (though not strictly for ssh-add)
-
-            # Add the key with passphrase. Pass the base64-encoded passphrase as an argument.
-            # ssh-add automatically sends its interactive prompt to SSH_ASKPASS.
-            echo "${{ secrets.SSH_PASSPHRASE }}" | base64 -d | ssh-add "$SSH_KEY_FILE" 2>/dev/null
-            echo "SSH key added with passphrase via SSH_ASKPASS."
-            
-            # Clean up SSH_ASKPASS script and unset environment variables
-            rm "$SSH_ASKPASS_SCRIPT"
-            unset SSH_ASKPASS
-            unset DISPLAY
-          else
-            echo "No passphrase detected. Adding SSH key directly."
-            # Add the key without passphrase
-            ssh-add "$SSH_KEY_FILE" 2>/dev/null
-            echo "SSH key added without passphrase."
-          fi
-
-          # Clean up the temporary private key file
-          rm "$SSH_KEY_FILE"
-          echo "Temporary SSH key file removed."
-
-          # Ensure ~/.ssh directory exists before adding known_hosts
-          mkdir -p ~/.ssh 
-          echo "Ensured ~/.ssh directory exists."
-
-          # Add server's host key to known_hosts to prevent interactive prompts
-          # Use StrictHostKeyChecking=no for first connection, then add to known_hosts.
-          # This is for robustness in CI; in production servers, pre-populate known_hosts.
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
-          chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
-          echo "Server host key added to known_hosts."
-
-          # Verify key is added (outputs fingerprint if successful)
-          echo "Verifying SSH keys loaded in agent:"
-          ssh-add -l
-
-          # Now perform remote directory cleanup
-          echo "Performing aggressive cleanup of remote foodgram directory..."
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -ld foodgram" # Show directory permissions and ownership
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram" # Show contents of the newly created directory
-          echo "Remote foodgram directory prepared."
+      # NEW: Use webfactory/ssh-agent for robust SSH key handling
+      - name: Setup SSH Agent and Prepare Remote Directory
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }} # This action expects the plain-text key
+          # Passphrase is automatically handled if provided and linked to the key
+          # ssh-known-hosts: ${{ secrets.HOST }} # You can also add known hosts here if needed
+          # ssh-known-hosts-file: ~/.ssh/known_hosts # If you want to specify a different path
         env:
-          # These are set by eval "$(ssh-agent -s)" and are crucial for rsync/ssh to use the agent.
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
+            # Set up the remote aggressive cleanup directly within this step's script
+            # because this action makes SSH available for commands run *within* this step's script block.
+            # It ensures the remote directory is ready before other SCP/SSH actions run.
+            SSH_HOST: ${{ secrets.HOST }}
+            SSH_USER: ${{ secrets.USER }}
+        run: |
+            set -x # Enable shell debugging
+            echo "SSH agent is now running and key should be added."
+            ssh-add -l # Verify key is added
 
-      # Copy docker-compose.production.yaml using rsync (relies on SSH Agent)
+            # Add server's host key to known_hosts to prevent interactive prompts for subsequent steps
+            mkdir -p ~/.ssh # Ensure .ssh directory exists on the runner
+            ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+            chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
+            echo "Server host key added to runner's known_hosts."
+
+            echo "Performing aggressive cleanup of remote foodgram directory..."
+            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
+            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
+            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "ls -ld foodgram" # Show directory permissions and ownership
+            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "ls -l foodgram" # Show contents of the newly created directory
+            echo "Remote foodgram directory prepared."
+
+
+      # Copy docker-compose.production.yaml using scp (now relies on webfactory/ssh-agent)
       - name: Copy docker-compose.production.yaml
-        run: |
-          set -x
-          # Create the .env file locally from the GitHub secret
-          # This is done here as rsync needs the local file to exist.
-          echo "${{ secrets.DOT_ENV }}" | base64 -d > ./.env_decoded # Decode DOT_ENV here
-          chmod 600 ./.env_decoded
-          echo ".env_decoded created locally."
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          # key and passphrase removed - now relies on ssh-agent
+          source: "./infra/docker-compose.production.yaml"
+          target: "foodgram/docker-compose.production.yaml" # Explicitly copy to filename in foodgram
 
-          echo "Copying docker-compose.production.yaml..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
-                ./infra/docker-compose.production.yaml \
-                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/docker-compose.production.yaml
-          echo "docker-compose.production.yaml copied."
-        env:
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
-
-
-      # Copy nginx.conf using rsync (relies on SSH Agent)
+      # Copy nginx.conf using scp (now relies on webfactory/ssh-agent)
       - name: Copy nginx.conf
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          # key and passphrase removed - now relies on ssh-agent
+          source: "./infra/nginx.conf"
+          target: "foodgram/nginx.conf" # Explicitly copy to filename in foodgram
+
+      # Create and Copy .env file (DOT_ENV is base64 encoded)
+      - name: Create and Copy .env file
         run: |
-          set -x
-          echo "Copying nginx.conf..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
-                ./infra/nginx.conf \
-                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/nginx.conf
-          echo "nginx.conf copied."
-        env:
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
+          # Create the .env file locally from the GitHub secret, decoding it
+          echo "${{ secrets.DOT_ENV }}" | base64 -d > ./.env_decoded
+          chmod 600 ./.env_decoded
+        shell: bash
+      - name: Copy .env file to remote
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          # key and passphrase removed - now relies on ssh-agent
+          source: "./.env_decoded"
+          target: "foodgram/.env" # Explicitly copy to filename in foodgram
+      - name: Cleanup local .env_decoded
+        run: rm ./.env_decoded
 
-      # Copy .env file using rsync (relies on SSH Agent)
-      - name: Copy .env file
-        run: |
-          set -x
-          echo "Copying .env file..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" \
-                ./.env_decoded \
-                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/.env
-          echo ".env file copied."
-
-          # Clean up the local .env_decoded file
-          rm ./.env_decoded
-          echo "Local .env_decoded removed."
-        env:
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-          SSH_AGENT_PID: ${{ env.SSH_AGENT_PID }}
-
-
-      # Copy docs folder using scp (relies on SSH Agent). Removed key/passphrase from here as well.
+      # Copy docs folder using scp (now relies on webfactory/ssh-agent)
       - name: Copy Docs Folder
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # Removed key/passphrase to rely on ssh-agent
+          # key and passphrase removed - now relies on ssh-agent
           source: "./docs" # This will copy the entire docs directory
           target: "foodgram/" # Trailing slash ensures docs is copied *into* foodgram
-
-      # Verify Docs Folder Copy (relies on SSH Agent). Removed key/passphrase from here as well.
       - name: Verify Docs Folder Copy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # Removed key/passphrase to rely on ssh-agent
+          # key and passphrase removed - now relies on ssh-agent
           script: |
             set -x
             echo "Contents of foodgram/docs:"
@@ -280,13 +211,12 @@ jobs:
             ls -l foodgram/docs/redoc.html || { echo "ERROR: redoc.html not found in foodgram/docs."; exit 1; }
 
 
-      # Execute Remote Docker Deployment Commands (relies on SSH Agent). Removed key/passphrase from here as well.
       - name: Execute Remote Docker Deployment Commands
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          # Removed key/passphrase to rely on ssh-agent
+          # key and passphrase removed - now relies on ssh-agent
           script: |
             set -x # Enable shell debugging
             echo "Changing to foodgram directory on remote server..."
