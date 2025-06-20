@@ -186,7 +186,8 @@ jobs:
               echo "ERROR: DOTENV_CONTENT secret is empty! Please verify your GitHub secret."
               exit 1 # Fail the step if secret is empty
           else
-              echo "DOTENV_CONTENT secret has content. Proceeding with decode. Size of base64 string: ${#${{ secrets.DOTENV_CONTENT }}}"
+              # Removed the problematic string length expansion
+              echo "DOTENV_CONTENT secret has content. Proceeding with decode."
           fi
 
           # Create the .env file locally from the GitHub secret, decoding it
