@@ -117,37 +117,35 @@ jobs:
       - name: Mask Sensitive .env Secret
         run: echo "::add-mask::${{ secrets.DOT_ENV }}"
 
-      # NEW: Use webfactory/ssh-agent for robust SSH key handling
-      - name: Setup SSH Agent and Prepare Remote Directory
+      # Step 1: Set up SSH Agent
+      - name: Setup SSH Agent
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }} # This action expects the plain-text key
           # Passphrase is automatically handled if provided and linked to the key
           # ssh-known-hosts: ${{ secrets.HOST }} # You can also add known hosts here if needed
           # ssh-known-hosts-file: ~/.ssh/known_hosts # If you want to specify a different path
-        env:
-            # Set up the remote aggressive cleanup directly within this step's script
-            # because this action makes SSH available for commands run *within* this step's script block.
-            # It ensures the remote directory is ready before other SCP/SSH actions run.
-            SSH_HOST: ${{ secrets.HOST }}
-            SSH_USER: ${{ secrets.USER }}
+        # No 'run' key here, as it's a 'uses' step.
+
+      # Step 2: Prepare Remote Directory and add host key (relies on SSH Agent from previous step)
+      - name: Prepare Remote Directory and Add Host Key
         run: |
-            set -x # Enable shell debugging
-            echo "SSH agent is now running and key should be added."
-            ssh-add -l # Verify key is added
+          set -x # Enable shell debugging
+          echo "SSH agent is now running and key should be added."
+          ssh-add -l # Verify key is added
 
-            # Add server's host key to known_hosts to prevent interactive prompts for subsequent steps
-            mkdir -p ~/.ssh # Ensure .ssh directory exists on the runner
-            ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
-            chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
-            echo "Server host key added to runner's known_hosts."
+          # Add server's host key to known_hosts to prevent interactive prompts for subsequent steps
+          mkdir -p ~/.ssh # Ensure .ssh directory exists on the runner
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+          chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
+          echo "Server host key added to runner's known_hosts."
 
-            echo "Performing aggressive cleanup of remote foodgram directory..."
-            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
-            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
-            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "ls -ld foodgram" # Show directory permissions and ownership
-            ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" "ls -l foodgram" # Show contents of the newly created directory
-            echo "Remote foodgram directory prepared."
+          echo "Performing aggressive cleanup of remote foodgram directory..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -ld foodgram" # Show directory permissions and ownership
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram" # Show contents of the newly created directory
+          echo "Remote foodgram directory prepared."
 
 
       # Copy docker-compose.production.yaml using scp (now relies on webfactory/ssh-agent)
