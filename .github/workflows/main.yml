@@ -181,10 +181,18 @@ jobs:
       - name: Create and Copy .env file
         run: |
           set -x
+          # Debugging: Check if DOT_ENV secret has content before decoding
+          if [ -z "${{ secrets.DOT_ENV }}" ]; then
+              echo "ERROR: DOT_ENV secret is empty! Please verify your GitHub secret."
+              exit 1 # Fail the step if secret is empty
+          else
+              echo "DOT_ENV secret has content. Proceeding with decode. Size of base64 string: ${#${{ secrets.DOT_ENV }}}"
+          fi
+
           # Create the .env file locally from the GitHub secret, decoding it
           echo "${{ secrets.DOT_ENV }}" | base64 -d > ./.env_decoded
           chmod 600 ./.env_decoded
-          echo "Local .env_decoded created."
+          echo "Local .env_decoded created. Size: $(stat -c %s ./.env_decoded) bytes"
 
           echo "Copying .env file..."
           rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
