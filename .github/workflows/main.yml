@@ -21,7 +21,7 @@ jobs:
   #   - name: Test frontend
   #     run: |
   #       cd frontend/
-  #       npm run test # This is a minor change to get things syncing
+  #       npm run test
 
   backend_tests:
     runs-on: ubuntu-latest # Using ubuntu-latest for consistency with modern runners
@@ -126,6 +126,9 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
+          # The key and passphrase here are passed directly to appleboy.
+          # If your secrets are base64 encoded, this step will fail.
+          # This step will be removed shortly if the next manual SSH setup works.
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }} # Passphrase is used if SSH_KEY has one
           script: |
@@ -140,6 +143,7 @@ jobs:
       # NEW: Robust SSH Agent & Key Setup.
       # This step sets up ssh-agent, adds the private key (with passphrase handling),
       # and copies essential config files and .env using rsync.
+      # This step *expects* SSH_KEY and SSH_PASSPHRASE secrets to be base64 encoded.
       - name: Set up SSH Agent and Copy Critical Config Files via rsync
         run: |
           set -x # Enable shell debugging
@@ -207,7 +211,7 @@ jobs:
 
           # Create the .env file locally from the GitHub secret
           # This is done *before* rsync as rsync needs the local file to exist.
-          echo "${{ secrets.DOT_ENV }}" > ./.env_decoded
+          echo "${{ secrets.DOT_ENV }}" | base64 -d > ./.env_decoded # Decode DOT_ENV here
           chmod 600 ./.env_decoded
           echo ".env_decoded created locally."
 
@@ -247,8 +251,9 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
+          # Pass base64 encoded key directly to appleboy/scp-action
           key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Will be empty if secret removed
           source: "./docs" # This will copy the entire docs directory
           target: "foodgram/" # Trailing slash ensures docs is copied *into* foodgram
       - name: Verify Docs Folder Copy
@@ -256,8 +261,9 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
+          # Pass base64 encoded key directly to appleboy/ssh-action
           key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Will be empty if secret removed
           script: |
             set -x
             echo "Contents of foodgram/docs:"
@@ -271,8 +277,9 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
+          # Pass base64 encoded key directly to appleboy/ssh-action
           key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }} # Will be empty if secret removed
           script: |
             set -x # Enable shell debugging
             echo "Changing to foodgram directory on remote server..."
