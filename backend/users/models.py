@@ -98,7 +98,7 @@ class Subscription(models.Model):
                 fields=["user", "author"], name="unique_user_author_subscribe"
             ),
             models.CheckConstraint(
-                check=~models.Q(author=models.F("user")),
+                condition=~models.Q(author=models.F("user")),
                 name="user_cannot_subscribe_to_themselves",
             ),
         ]
