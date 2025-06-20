@@ -152,133 +152,110 @@ jobs:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
 
-      # Copy docker-compose.production.yaml using scp (now relies on webfactory/ssh-agent)
+      # Copy docker-compose.production.yaml using rsync (relies on SSH Agent)
       - name: Copy docker-compose.production.yaml
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          # Removed key and passphrase as it relies on ssh-agent.
-          # Explicitly set Agent option for appleboy actions.
-          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
-          source: "./infra/docker-compose.production.yaml"
-          target: "foodgram/docker-compose.production.yaml" # Explicitly copy to filename in foodgram
+        run: |
+          set -x
+          echo "Copying docker-compose.production.yaml..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
+                ./infra/docker-compose.production.yaml \
+                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/docker-compose.production.yaml
+          echo "docker-compose.production.yaml copied."
         env:
-          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
 
-      # Copy nginx.conf using scp (now relies on webfactory/ssh-agent)
+      # Copy nginx.conf using rsync (relies on SSH Agent)
       - name: Copy nginx.conf
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          # Removed key and passphrase as it relies on ssh-agent.
-          # Explicitly set Agent option for appleboy actions.
-          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
-          source: "./infra/nginx.conf"
-          target: "foodgram/nginx.conf" # Explicitly copy to filename in foodgram
+        run: |
+          set -x
+          echo "Copying nginx.conf..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
+                ./infra/nginx.conf \
+                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/nginx.conf
+          echo "nginx.conf copied."
         env:
-          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
       # Create and Copy .env file (DOT_ENV is base64 encoded)
       - name: Create and Copy .env file
         run: |
+          set -x
           # Create the .env file locally from the GitHub secret, decoding it
           echo "${{ secrets.DOT_ENV }}" | base64 -d > ./.env_decoded
           chmod 600 ./.env_decoded
-        shell: bash
-      - name: Copy .env file to remote
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          # Removed key and passphrase as it relies on ssh-agent.
-          # Explicitly set Agent option for appleboy actions.
-          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
-          source: "./.env_decoded"
-          target: "foodgram/.env" # Explicitly copy to filename in foodgram
-        env:
-          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-      - name: Cleanup local .env_decoded
-        run: rm ./.env_decoded
+          echo "Local .env_decoded created."
 
-      # Copy docs folder using scp (now relies on webfactory/ssh-agent)
-      - name: Copy Docs Folder
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          # Removed key and passphrase as it relies on ssh-agent.
-          # Explicitly set Agent option for appleboy actions.
-          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
-          source: "./docs" # This will copy the entire docs directory
-          target: "foodgram/" # Trailing slash ensures docs is copied *into* foodgram
+          echo "Copying .env file..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
+                ./.env_decoded \
+                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/.env
+          echo ".env file copied."
+
+          # Clean up the local .env_decoded file
+          rm ./.env_decoded
+          echo "Local .env_decoded removed."
         env:
-          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-      - name: Verify Docs Folder Copy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          # Removed key and passphrase as it relies on ssh-agent.
-          # Explicitly set Agent option for appleboy actions.
-          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
-          script: |
-            set -x
-            echo "Contents of foodgram/docs:"
-            ls -l foodgram/docs || { echo "ERROR: docs folder not found after copy."; exit 1; }
-            ls -l foodgram/docs/openapi-schema.yml || { echo "ERROR: openapi-schema.yml not found in foodgram/docs."; exit 1; }
-            ls -l foodgram/docs/redoc.html || { echo "ERROR: redoc.html not found in foodgram/docs."; exit 1; }
+
+      # Copy docs folder using rsync (relies on SSH Agent)
+      - name: Copy Docs Folder
+        run: |
+          set -x
+          echo "Copying docs folder..."
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
+                ./docs \
+                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
+          echo "Docs folder copied."
         env:
-          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+      - name: Verify Docs Folder Copy
+        run: |
+          set -x
+          echo "Contents of foodgram/docs on remote:"
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram/docs || { echo 'ERROR: docs folder not found after copy.'; exit 1; }"
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram/docs/openapi-schema.yml || { echo 'ERROR: openapi-schema.yml not found in foodgram/docs.'; exit 1; }"
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram/docs/redoc.html || { echo 'ERROR: redoc.html not found in foodgram/docs.'; exit 1; }"
+        env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
 
       - name: Execute Remote Docker Deployment Commands
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          # Removed key and passphrase as it relies on ssh-agent.
-          # Explicitly set Agent option for appleboy actions.
-          ssh_options: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentityAgent=\"${{ env.SSH_AUTH_SOCK }}\""
-          script: |
-            set -x # Enable shell debugging
-            echo "Changing to foodgram directory on remote server..."
-            cd foodgram || { echo "ERROR: foodgram directory not found on remote."; exit 1; }
+        run: |
+          set -x # Enable shell debugging
+          echo "Changing to foodgram directory on remote server..."
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "
+            cd foodgram || { echo 'ERROR: foodgram directory not found on remote.'; exit 1; };
             
-            echo "Verifying copied config files:"
-            ls -ld docker-compose.production.yaml nginx.conf .env docs || { echo "ERROR: Essential files not found in foodgram directory."; exit 1; }
+            echo 'Verifying copied config files:';
+            ls -ld docker-compose.production.yaml nginx.conf .env docs || { echo 'ERROR: Essential files not found in foodgram directory.'; exit 1; };
             
-            echo "Pulling latest Docker images..."
-            docker compose -f docker-compose.production.yaml --progress=quiet pull || { echo "ERROR: Docker pull failed."; exit 1; }
+            echo 'Pulling latest Docker images:';
+            docker compose -f docker-compose.production.yaml --progress=quiet pull || { echo 'ERROR: Docker pull failed.'; exit 1; };
             
-            echo "Bringing down existing Docker services..."
-            docker compose -f docker-compose.production.yaml --progress=quiet down -v || echo "No existing services to bring down or encountered error (ignoring if first deploy)."
+            echo 'Bringing down existing Docker services:';
+            docker compose -f docker-compose.production.yaml --progress=quiet down -v || echo 'No existing services to bring down or encountered error (ignoring if first deploy).';
             
-            echo "Bringing up new Docker services..."
-            docker compose -f docker-compose.production.yaml --progress=quiet up -d || { echo "ERROR: Docker compose up failed."; exit 1; }
+            echo 'Bringing up new Docker services:';
+            docker compose -f docker-compose.production.yaml --progress=quiet up -d || { echo 'ERROR: Docker compose up failed.'; exit 1; };
             
-            echo "Running Django migrations..."
-            docker compose -f docker-compose.production.yaml exec backend python manage.py migrate --noinput || { echo "ERROR: Django migrations failed."; exit 1; }
+            echo 'Running Django migrations:';
+            docker compose -f docker-compose.production.yaml exec backend python manage.py migrate --noinput || { echo 'ERROR: Django migrations failed.'; exit 1; };
             
-            echo "Collecting static files..."
-            docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic --noinput || { echo "ERROR: Django collectstatic failed."; exit 1; }
+            echo 'Collecting static files:';
+            docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic --noinput || { echo 'ERROR: Django collectstatic failed.'; exit 1; };
             
-            echo "Loading initial data from db.json..."
-            docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json || { echo "WARNING: Initial data loading from db.json failed or db.json not present (ignoring for ongoing deployments)."; }
+            echo 'Loading initial data from db.json:';
+            docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json || { echo 'WARNING: Initial data loading from db.json failed or db.json not present (ignoring for ongoing deployments).'; };
             
-            echo "Importing CSV data (eng)..."
-            docker compose -f docker-compose.production.yaml exec backend python manage.py import_csv eng || { echo "WARNING: CSV import failed (ignoring for ongoing deployments)."; }
+            echo 'Importing CSV data (eng):';
+            docker compose -f docker-compose.production.yaml exec backend python manage.py import_csv eng || { echo 'WARNING: CSV import failed (ignoring for ongoing deployments).'; };
             
-            echo "Deployment commands executed successfully on remote server."
+            echo 'Deployment commands executed successfully on remote server.'
+          "
+          echo "Remote deployment commands execution completed."
         env:
-          # Ensure SSH_AUTH_SOCK is available in the environment for the ssh_options
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
   send_telegram:
