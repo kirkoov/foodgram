@@ -177,6 +177,10 @@ jobs:
           rm "$SSH_KEY_FILE"
           echo "Temporary SSH key file removed."
 
+          # Ensure ~/.ssh directory exists before adding known_hosts
+          mkdir -p ~/.ssh 
+          echo "Ensured ~/.ssh directory exists."
+
           # Add server's host key to known_hosts to prevent interactive prompts
           # Use StrictHostKeyChecking=no for first connection, then add to known_hosts.
           # This is for robustness in CI; in production servers, pre-populate known_hosts.
