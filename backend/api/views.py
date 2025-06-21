@@ -43,6 +43,7 @@ from .serializers import (
     UsersSerializer,
 )
 
+
 User = get_user_model()
 
 

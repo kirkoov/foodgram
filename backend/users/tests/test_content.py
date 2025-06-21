@@ -8,6 +8,7 @@ from users.validators import validate_username_field
 
 from backend import constants
 
+
 User = get_user_model()
 
 

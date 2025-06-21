@@ -32,6 +32,7 @@ from backend.settings import MEDIA_ROOT
 from .models import Ingredient, Recipe, Tag
 from .validators import validate_hex_color, validate_slug_field
 
+
 User = get_user_model()
 
 

@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 from backend.constants import PAGINATOR_NUM
 
+
 load_dotenv()
 
 

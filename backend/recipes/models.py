@@ -18,6 +18,7 @@ from backend.constants import (
 )
 from .validators import validate_img_size
 
+
 User = get_user_model()
 
 

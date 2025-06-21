@@ -9,6 +9,7 @@ from api.views import (
     subscribe_user,
 )
 
+
 app_name = "api"
 
 

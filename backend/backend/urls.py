@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
+
 app_name = "backend"
 
 urlpatterns = i18n_patterns(
