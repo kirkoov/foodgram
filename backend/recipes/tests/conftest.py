@@ -1,5 +1,4 @@
 import pytest
-from recipes.models import Tag
 from rest_framework.test import APIClient
 
 from backend.constants import (
@@ -9,6 +8,7 @@ from backend.constants import (
     TEST_NUM_USERS,
     TEST_SERVER_URL,
 )
+from recipes.models import Tag
 
 
 @pytest.fixture(scope="function")

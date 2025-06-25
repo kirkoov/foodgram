@@ -9,7 +9,6 @@ from django.test import TestCase
 
 from backend import constants
 
-
 User = get_user_model()
 
 

@@ -1,10 +1,9 @@
 from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
-from users.tests.test_base import UserAuthTestMixin  # Import the new mixin
 
 from backend import constants
-
+from users.tests.test_base import UserAuthTestMixin
 
 User = get_user_model()
 
@@ -14,17 +13,18 @@ class TestLogic(UserAuthTestMixin):  # Inherit from the new mixin
     def setUpTestData(cls):
         """
         For TestLogic, we might still want a base user to exist for some tests
-        or we create them in setUp.
-        The initial setup of one user can be done here for efficiency if
-        multiple tests in this class rely on the same initial user state.
-        If tests require different user states, it's better to create users in setUp.
+        or we create them in setUp. The initial setup of one user can be done
+        here for efficiency if multiple tests in this class rely on the same
+        initial user state. If tests require different user states,
+        it's better to create users in setUp.
         """
-        # Example: if a test needs a pre-existing user without needing to log them in,
-        # create_user_model will just create the Django user object.
+        # Example: if a test needs a pre-existing user without needing to log
+        # them in, create_user_model will just create the Django user object.
         # cls.initial_user = User.objects.create_user(
-        #     username="initialuser", email="initial@example.org", password="password123"
+        #     username="initialuser", email="initial@example.org",
+        #     password="password123"
         # )
-        pass  # Leaving empty as per your original refactoring path, users will be created in setUp or test method.
+        pass
 
     def setUp(self):
         """
@@ -32,28 +32,23 @@ class TestLogic(UserAuthTestMixin):  # Inherit from the new mixin
         This ensures each test method runs with a clean database and a
         freshly created user for authentication scenarios.
         """
-        self.user, self.user_data = self._create_user(
-            user_data=dict(self.DUMMY_AUTH_DATA)
-        )
+        self.user, self.user_data = self._create_user()
+
         # self.user_data now contains the data used to create self.user
 
     def test_anonymous_user_cant_change_password(self):
-        # No change needed here, as it tests an unauthorised scenario.
         data = {
-            "new_password": self.user_data["password"][
-                1:
-            ],  # Use self.user_data
+            "new_password": self.user_data["password"][1:],
             "current_password": self.user_data["password"],
         }
         response = self.client.post(
             constants.TEST_USER_PWD_CHANGE,
             data=data,
-            format="json",  # Explicitly send as JSON
+            format="json",
         )
         self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED)
 
     def test_anonymous_user_cant_get_delete_token(self):
-        # No change needed here, as it tests unauthorised scenarios.
         # The fake_data is independent of the user created in setUp.
         fake_data = dict(self.user_data)  # Use self.user_data as a base
         fake_data["password"] = "mY-favaRiteFak0r"
@@ -79,13 +74,7 @@ class TestLogic(UserAuthTestMixin):  # Inherit from the new mixin
         user_count_ini = User.objects.count()  # Should be 1 (from setUp)
 
         # Create a second, "another" user using the helper
-        anothers_data = {
-            "username": "trangerCoco23",
-            "password": "VeRY02strangelYd_ifFernt~",
-            "email": "elYd@ya.org",
-            "first_name": "Another",
-            "last_name": "User",
-        }
+        anothers_data = dict(constants.TEST_USER_DATA_2)
         self._create_user(anothers_data)  # Create the second user
         self.assertEqual(
             User.objects.count(), user_count_ini + 1
@@ -96,10 +85,12 @@ class TestLogic(UserAuthTestMixin):  # Inherit from the new mixin
             "new_password": anothers_data["password"][1:],
             "current_password": anothers_data[
                 "password"
-            ],  # This should be the other user's current password
+            ],  # This should be the
+            # other user's current password
             "email": anothers_data[
                 "email"
-            ],  # Potentially needed if serializer uses email for lookup
+            ],  # Potentially needed if serializer
+            # uses email for lookup
         }
         response = self.client.post(
             constants.TEST_USER_PWD_CHANGE,
@@ -107,9 +98,10 @@ class TestLogic(UserAuthTestMixin):  # Inherit from the new mixin
             headers=headers_primary_user,  # Use primary user's token
             format="json",
         )
-        # Expect BAD_REQUEST because primary user is trying to change another's password
+        # Expect BAD_REQUEST because primary user is trying to change another's
+        # password
         self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
-        # Verify the password of the 'another' user hasn't changed (optional but good)
+        # Verify the password of the 'another' user hasn't changed
         another_user_obj = User.objects.get(email=anothers_data["email"])
         self.assertTrue(
             another_user_obj.check_password(anothers_data["password"])

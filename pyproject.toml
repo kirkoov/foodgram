@@ -91,15 +91,44 @@ ruff = "^0.3.4"
 isort = "^5.13.2"
 deptry = "^0.23.0"
 
-[tool.isort]
-profile = "django"
-lines_after_imports = 2
-# known_django="django"
-known_first_party = "api"
-no_lines_before = "LOCALFOLDER"
-sections="FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+#[tool.isort]
+#profile = "django"
+#lines_after_imports = 2
+## known_django="django"
+#known_first_party = "api"
+#no_lines_before = "LOCALFOLDER"
+#sections="FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 
 [tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
 line-length = 79
 indent-width = 4
 target-version = "py310"  # Adjust to your Python version

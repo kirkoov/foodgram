@@ -4,10 +4,9 @@ import random
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from users.validators import validate_username_field
 
 from backend import constants
-
+from users.validators import validate_username_field
 
 User = get_user_model()
 

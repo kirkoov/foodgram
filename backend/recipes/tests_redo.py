@@ -29,9 +29,9 @@ from backend.constants import (  # PAGINATOR_NUM,; TEST_SERVER_URL,
     TEST_NUM_TAGS,
 )
 from backend.settings import MEDIA_ROOT
+
 from .models import Ingredient, Recipe, Tag
 from .validators import validate_hex_color, validate_slug_field
-
 
 User = get_user_model()
 

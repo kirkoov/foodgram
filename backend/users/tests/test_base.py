@@ -1,8 +1,9 @@
+from http import HTTPStatus
+
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
 
 from backend import constants
-
 
 User = get_user_model()
 
@@ -15,7 +16,8 @@ class UserAuthTestMixin(APITestCase):
 
     # Store dummy data for a user to be created and authenticated
     # This data should be unique enough not to conflict with other setup.
-    # Note: Using a dict copy here to ensure each test method gets a fresh copy if modified.
+    # Note: Using a dict copy here to ensure each test method gets a fresh copy
+    # if modified.
     DUMMY_AUTH_DATA = dict(constants.TEST_USER_DATA)
 
     def _create_user(self, user_data=None):
@@ -53,9 +55,9 @@ class UserAuthTestMixin(APITestCase):
         response = self.client.post(
             constants.TEST_USER_TOKEN_ON_URL,
             data=login_data,
-            format="json",  # APITestCase client supports format argument
+            format="json",
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
         return response.data[constants.AUTH_TOKEN_FIELD]
 
     def _get_auth_headers(self, email=None, password=None):

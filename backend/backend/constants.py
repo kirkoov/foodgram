@@ -9,7 +9,7 @@ TEST_USERS_TOKEN_URL = "/api/auth/token/"
 TEST_USER_ME_PAGE_URL = TEST_USERS_PAGE_URL + "me/"
 
 TEST_USERS_PER_PAGE_INT = 3
-# fmt: off
+
 TEST_USERS_PER_PAGE_URL = TEST_USERS_PAGE_URL + (
     f"?limit={TEST_USERS_PER_PAGE_INT}"
 )
@@ -19,10 +19,10 @@ TEST_USER_TOKEN_ON_URL = TEST_USERS_TOKEN_URL + "login/"
 TEST_USER_TOKEN_OFF_URL = TEST_USERS_TOKEN_URL + "logout/"
 TEST_USER_PWD_CHANGE = TEST_USERS_PAGE_URL + "set_password/"
 TEST_USER_DATA = {
-    "email": "vpupkin@yandex.ru",
-    "username": "vasya.pupkin",
+    "email": "vdoodkin@yandex.ru",
+    "username": "vasya.doodkin",
     "first_name": "Вася",
-    "last_name": "Пупкин",
+    "last_name": "Doodkin",
     "password": "my_AwSeOm-pr$iOs",
 }
 TEST_USER_DATA_2 = {
@@ -67,7 +67,9 @@ NUM_CHARS_EMAIL = 254
 
 NUM_CHARS_INGREDIENT_NAME = NUM_CHARS_RECIPE_NAME = 200
 NUM_CHARS_MEALTIME_HEX = 7
-NUM_CHARS_MEALTIME_NAME = NUM_CHARS_MEALTIME_SLUG = NUM_CHARS_MEASUREMENT_UNIT = 200
+NUM_CHARS_MEALTIME_NAME = NUM_CHARS_MEALTIME_SLUG = (
+    NUM_CHARS_MEASUREMENT_UNIT
+) = 200
 
 HEX_FIELD_REQ = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
 SLUG_FIELD_REQ = "^[-a-zA-Z0-9_]+$"
