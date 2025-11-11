@@ -32,7 +32,7 @@ class TestRoutes(TestCase):
 
     def test_user_pages_availability(self):
         limit = random.randint(1, TestRoutes.TOTAL)
-        # fmt: off
+
         if User.objects.count() < constants.PAGINATOR_NUM:
             page = 1
         else:
@@ -43,11 +43,17 @@ class TestRoutes(TestCase):
             (constants.TEST_USERS_PAGE_URL, None, HTTPStatus.OK),
             (constants.TEST_USERS_PAGE_URL, f"?limit={limit}", HTTPStatus.OK),
             (constants.TEST_USERS_PAGE_URL, f"?page={page}", HTTPStatus.OK),
-            (constants.TEST_USERS_PAGE_URL, f"?limit=1&page={self.TOTAL}",
-             HTTPStatus.OK),
+            (
+                constants.TEST_USERS_PAGE_URL,
+                f"?limit=1&page={self.TOTAL}",
+                HTTPStatus.OK,
+            ),
             (constants.TEST_USERS_PAGE_URL, f"{limit}/", HTTPStatus.OK),
-            (constants.TEST_USERS_PAGE_URL, f"{sys.maxsize}/",
-             HTTPStatus.NOT_FOUND),
+            (
+                constants.TEST_USERS_PAGE_URL,
+                f"{sys.maxsize}/",
+                HTTPStatus.NOT_FOUND,
+            ),
             (constants.TEST_USER_ME_PAGE_URL, None, HTTPStatus.UNAUTHORIZED),
         )
         for url, args, status in urls_args_statuses:
@@ -83,13 +89,13 @@ class TestRoutes(TestCase):
         tmp_signup_data = dict(TestRoutes.DATA)
         for field in tmp_signup_data:
             tmp_signup_data[field] += rand_add
-        # fmt: off
+
         tmp_signup_data["username"] += rand_add * rnd + "testing"[:rnd]
         tmp_signup_data["email"] = (
             f"test_user{rand_add * rnd}@example{rand_add}{'testing'[:rnd]}.org"
         )
         tmp_signup_data["password"] += rand_add
-        # fmt: off
+
         response = self.client.post(
             constants.TEST_USERS_PAGE_URL,
             data=tmp_signup_data,
