@@ -273,13 +273,51 @@ jobs:
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-  send_telegram:
-    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
-    needs: deploy # Ensures Telegram notification is sent after successful deployment
+#  send_telegram:  my prev ver before the intro of the OK/fail cases below
+#    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
+#    needs: deploy # Ensures Telegram notification is sent after successful deployment
+#    steps:
+#      - name: Send Telegram Notification
+#        uses: appleboy/telegram-action@master
+#        with:
+#          to: ${{ secrets.TELEGRAM_TO }}
+#          token: ${{ secrets.TELEGRAM_TOKEN }}
+#          message: Foodgram has been refreshed in builds & deployed successfully to WebSpace.
+
+  send_telegram_success:
+    name: 🟢 Telegram Success Notification
+    runs-on: ubuntu-latest
+    needs: deploy # Must wait for the 'deploy' job to finish
+    #
+    # 🔑 Success condition: Only run if the 'deploy' job (and all its dependencies) succeeded.
+    if: ${{ success() && needs.deploy.result == 'success' }}
     steps:
-      - name: Send Telegram Notification
+      - name: Send Success Message
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: Foodgram has been refreshed in builds & deployed successfully to WebSpace.
+          message: |
+            ✅ **Deployment Successful**
+            Foodgram has been refreshed in builds & deployed successfully to WebSpace.
+            Commit: ${{ github.sha }}
+
+  send_telegram_failure:
+    name: 🔴 Telegram Failure Notification
+    runs-on: ubuntu-latest
+    # Needs to wait for ALL jobs that could potentially fail, to ensure they complete before reporting.
+    needs: [ backend_tests, build_and_push_backend_docker_img_to_dockerhub, build_and_push_frontend_docker_img_to_dockerhub, deploy ]
+    #
+    # 🔑 Failure condition: Run if the overall workflow has failed.
+    if: ${{ failure() }}
+    steps:
+      - name: Send Failure Message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ❌ **Deployment Failed!**
+            The Foodgram workflow failed at one of the stages.
+            Check the workflow run for details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Commit: ${{ github.sha }}
