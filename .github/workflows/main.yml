@@ -127,6 +127,12 @@ jobs:
           # ssh-known-hosts-file: ~/.ssh/known_hosts # If you want to specify a different path
         # No 'run' key here, as it's a 'uses' step.
 
+      # Additional step to scheck SSH
+      - name: Check SSH Connectivity
+        run: |
+          echo "Checking if SSH port 22 on remote host is reachable..."
+          nc -zv ${{ secrets.HOST }} 22 || (echo "❌ SSH port 22 not reachable — check HOST, DNS, or firewall settings" && exit 1)
+
       # Step 2: Prepare Remote Directory and add host key (relies on SSH Agent from previous step)
       - name: Prepare Remote Directory and Add Host Key
         run: |
