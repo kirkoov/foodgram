@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import random
 
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase
@@ -66,3 +67,18 @@ class UserAuthTestMixin(APITestCase):
         """
         token = self._get_auth_token(email, password)
         return {"Authorization": f"Token {token}"}
+
+    @staticmethod
+    def _generate_unique_user_data():
+        """
+        Helper to generate truly unique user data for signup tests.
+        This prevents collisions when multiple signup tests run.
+        """
+        rand_add = str(random.randint(100000, 999999))
+        return {
+            "username": f"{constants.TEST_USER_DATA['username']}{rand_add}",
+            "first_name": constants.TEST_USER_DATA["first_name"],
+            "last_name": constants.TEST_USER_DATA["last_name"],
+            "email": f"test_user_{rand_add}@example.org",
+            "password": f"{constants.TEST_USER_DATA['password']}{rand_add}",
+        }
