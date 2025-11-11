@@ -1,5 +1,3 @@
-version: '3.9'  # 3.9 is the current stable Compose spec version
-
 volumes:
   pg_data:
   static:

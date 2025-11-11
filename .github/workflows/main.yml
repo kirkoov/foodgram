@@ -119,7 +119,8 @@ jobs:
 
       # Step 1: Set up SSH Agent
       - name: Setup SSH Agent
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.10.0  # Update to its recent remove the
+        # warning: The "file" argument must be of type string. Received undefined
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }} # This action expects the plain-text key
           # Passphrase is automatically handled if provided and linked to the key
