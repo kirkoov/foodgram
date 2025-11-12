@@ -6,26 +6,8 @@ on:
       - main
 
 jobs:
-  # frontend_tests: # Uncomment if you have frontend tests to run
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Set up nodeJS
-  #     uses: actions/setup-node@v4
-  #     with:
-  #       node-version: 16
-  #   - name: Install dependencies
-  #     run: |
-  #       cd frontend/
-  #       npm ci
-  #   - name: Test frontend
-  #     run: |
-  #       cd frontend/
-  #       npm run test
-
   backend_tests:
-    runs-on: ubuntu-latest # Using ubuntu-latest for consistency with modern runners
-
+    runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:14.11
@@ -36,21 +18,17 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.10.12' # Updated to a specific 3.10 version
-      - name: Install backend dependencies
-        run: |
+          python-version: '3.10.12'
+      - run: |
           python -m pip install --upgrade pip
-          pip install -r ./backend/requirements.txt # Install backend dependencies from requirements.txt
-#          pip install ruff isort mypy  # I.e. if tests ran ok locally, why
-#          would they fail remotely in the same env?
-      - name: Run backend tests
+          pip install -r ./backend/requirements.txt
+      - run: |
+          cd backend/
+          pytest
         env:
           POSTGRES_USER: django_user
           POSTGRES_PASSWORD: django_password
@@ -58,26 +36,19 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DJANGO_SETTINGS_MODULE: backend.settings
-        run: |
-          cd backend/
-          pytest # Run pytest for unit tests
 
   build_and_push_backend_docker_img_to_dockerhub:
     name: Build & Push Backend Docker Image
     runs-on: ubuntu-latest
-    needs: backend_tests # Ensures backend tests pass before building
+    needs: backend_tests
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push backend Docker image
-        uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v5
         with:
           context: ./backend/
           push: true
@@ -86,259 +57,120 @@ jobs:
   build_and_push_frontend_docker_img_to_dockerhub:
     name: Build & Push Frontend Docker Image
     runs-on: ubuntu-latest
-    # needs: frontend_tests # Uncomment if you have frontend tests
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Login to DockerHub
-        uses: docker/login-action@v3
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push frontend Docker image
-        uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v5
         with:
           context: ./frontend/
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
 
   deploy:
-    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
+    runs-on: ubuntu-latest
     needs:
       - build_and_push_backend_docker_img_to_dockerhub
-      - build_and_push_frontend_docker_img_to_dockerhub # Depends on both images being built
+      - build_and_push_frontend_docker_img_to_dockerhub
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - run: echo "::add-mask::${{ secrets.DOTENV_CONTENT }}"
 
-      # Mask sensitive DOTENV_CONTENT content in logs
-      - name: Mask Sensitive .env Secret
-        run: echo "::add-mask::${{ secrets.DOTENV_CONTENT }}"
-
-      # Step 1: Set up SSH Agent
-      - name: Setup SSH Agent
-        uses: webfactory/ssh-agent@v0.9.0
+      - uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }} # This action expects the plain-text key
-          # Passphrase is automatically handled if provided and linked to the key
-          # ssh-known-hosts: ${{ secrets.HOST }} # You can also add known hosts here if needed
-          # ssh-known-hosts-file: ~/.ssh/known_hosts # If you want to specify a different path
-        # No 'run' key here, as it's a 'uses' step.
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      # Additional step to scheck SSH
+      # --- Define reusable SSH and RSYNC helper functions ---
+      - name: Define SSH / RSYNC helpers
+        run: |
+          set -ex
+          # SSH helper function
+          echo 'function ssh_remote() { ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "$@"; }' >> $GITHUB_ENV
+          # RSYNC helper function
+          echo 'function rsync_to_remote() { rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=${SSH_AUTH_SOCK}" "$1" ${{ secrets.USER }}@${{ secrets.HOST }}:"$2"; }' >> $GITHUB_ENV
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
       - name: Check SSH Connectivity
-        run: |
-          echo "Checking if SSH port 22 on remote host is reachable..."
-          nc -zv ${{ secrets.HOST }} 22 || (echo "❌ SSH port 22 not reachable — check HOST, DNS, or firewall settings" && exit 1)
-
-
-      # === NEW: temporarily disable Fail2Ban on the remote host ===
-      - name: Temporarily disable Fail2Ban before deploy
-        run: |
-          echo "Stopping Fail2Ban service on remote host..."
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" \
-            ${{ secrets.USER }}@${{ secrets.HOST }} \
-            "sudo systemctl stop fail2ban && echo '✅ Fail2Ban stopped for deployment.'"
-
-      # Step 2: Prepare Remote Directory and add host key (relies on SSH Agent from previous step)
-      - name: Prepare Remote Directory and Add Host Key
-        run: |
-          set -x # Enable shell debugging
-          echo "SSH agent is now running and key should be added."
-          ssh-add -l # Verify key is added
-
-          # Add server's host key to known_hosts to prevent interactive prompts for subsequent steps
-          mkdir -p ~/.ssh # Ensure .ssh directory exists on the runner
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
-          chmod 600 ~/.ssh/known_hosts # Ensure correct permissions for known_hosts
-          echo "Server host key added to runner's known_hosts."
-
-          echo "Performing aggressive cleanup of remote foodgram directory..."
-          # Use SSH_AUTH_SOCK directly in the ssh command for maximum reliability
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "rm -rf foodgram || echo 'foodgram directory did not exist or could not be removed (ignoring error).'"
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "mkdir -p foodgram || { echo 'ERROR: Failed to create foodgram directory on remote.'; exit 1; }"
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -ld foodgram" # Show directory permissions and ownership
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram" # Show contents of the newly created directory
-          echo "Remote foodgram directory prepared."
-        env:
-          # Crucial: Pass SSH_AUTH_SOCK to this run step so ssh command can use it
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-
-
-      # Copy docker-compose.production.yaml using rsync (relies on SSH Agent)
-      - name: Copy docker-compose.production.yaml
-        run: |
-          set -x
-          echo "Copying docker-compose.production.yaml..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
-                ./infra/docker-compose.production.yaml \
-                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/docker-compose.production.yaml
-          echo "docker-compose.production.yaml copied."
+        run: ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "echo '✅ SSH OK'"
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-
-      # Copy nginx.conf using rsync (relies on SSH Agent)
-      - name: Copy nginx.conf
-        run: |
-          set -x
-          echo "Copying nginx.conf..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
-                ./infra/nginx.conf \
-                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/nginx.conf
-          echo "nginx.conf copied."
+      - name: Temporarily disable Fail2Ban
+        run: ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "sudo systemctl stop fail2ban && echo '✅ Fail2Ban stopped.'"
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-      # Create and Copy .env file (DOTENV_CONTENT is base64 encoded)
-      - name: Create and Copy .env file
+      - name: Prepare Remote Directory
         run: |
-          set -x
-          # Debugging: Check if DOTENV_CONTENT secret has content before decoding
-          if [ -z "${{ secrets.DOTENV_CONTENT }}" ]; then
-              echo "ERROR: DOTENV_CONTENT secret is empty! Please verify your GitHub secret."
-              exit 1 # Fail the step if secret is empty
-          else
-              # Removed the problematic string length expansion
-              echo "DOTENV_CONTENT secret has content. Proceeding with decode."
-          fi
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "
+            rm -rf foodgram || echo 'Directory did not exist.'
+            mkdir -p foodgram
+          "
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-          # Create the .env file locally from the GitHub secret, decoding it
+      - name: Copy Config Files & Docs
+        run: |
+          rsync -avz ./infra/docker-compose.production.yaml ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/docker-compose.production.yaml
+          rsync -avz ./infra/nginx.conf ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/nginx.conf
           echo "${{ secrets.DOTENV_CONTENT }}" | base64 -d > ./.env_decoded
           chmod 600 ./.env_decoded
-          echo "Local .env_decoded created. Size: $(stat -c %s ./.env_decoded) bytes"
-
-          echo "Copying .env file..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
-                ./.env_decoded \
-                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/.env
-          echo ".env file copied."
-
-          # Clean up the local .env_decoded file
+          rsync -avz ./.env_decoded ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/.env
           rm ./.env_decoded
-          echo "Local .env_decoded removed."
+          rsync -avz ./docs ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-      # Copy docs folder using rsync (relies on SSH Agent)
-      - name: Copy Docs Folder
+      - name: Remote Docker Deployment
         run: |
-          set -x
-          echo "Copying docs folder..."
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=\"${SSH_AUTH_SOCK}\"" \
-                ./docs \
-                ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
-          echo "Docs folder copied."
-        env:
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-
-      - name: Verify Docs Folder Copy
-        run: |
-          set -x
-          echo "Contents of foodgram/docs on remote:"
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram/docs || { echo 'ERROR: docs folder not found after copy.'; exit 1; }"
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram/docs/openapi-schema.yml || { echo 'ERROR: openapi-schema.yml not found in foodgram/docs.'; exit 1; }"
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "ls -l foodgram/docs/redoc.html || { echo 'ERROR: redoc.html not found in foodgram/docs.'; exit 1; }"
-        env:
-          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
-
-
-      - name: Execute Remote Docker Deployment Commands
-        run: |
-          set -x # Enable shell debugging
-          echo "Changing to foodgram directory on remote server..."
           ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "
-            cd foodgram || { echo 'ERROR: foodgram directory not found on remote.'; exit 1; };
-
-            echo 'Verifying copied config files:';
-            ls -ld docker-compose.production.yaml nginx.conf .env docs || { echo 'ERROR: Essential files not found in foodgram directory.'; exit 1; };
-
-            echo 'Pulling latest Docker images:';
-            docker compose -f docker-compose.production.yaml --progress=quiet pull || { echo 'ERROR: Docker pull failed.'; exit 1; };
-
-            echo 'Bringing down existing Docker services:';
-            docker compose -f docker-compose.production.yaml --progress=quiet down -v || echo 'No existing services to bring down or encountered error (ignoring if first deploy).';
-
-            echo 'Bringing up new Docker services:';
-            docker compose -f docker-compose.production.yaml --progress=quiet up -d || { echo 'ERROR: Docker compose up failed.'; exit 1; };
-
-            echo 'Running Django migrations:';
-            docker compose -f docker-compose.production.yaml exec backend python manage.py migrate --noinput || { echo 'ERROR: Django migrations failed.'; exit 1; };
-
-            echo 'Collecting static files:';
-            docker compose -f docker-compose.production.yaml exec backend python manage.py collectstatic --noinput || { echo 'ERROR: Django collectstatic failed.'; exit 1; };
-
-            echo 'Loading initial data from db.json:';
-            docker compose -f docker-compose.production.yaml exec backend python manage.py loaddata db.json || { echo 'WARNING: Initial data loading from db.json failed or db.json not present (ignoring for ongoing deployments).'; };
-
-            echo 'Importing CSV data (eng):';
-            docker compose -f docker-compose.production.yaml exec backend python manage.py import_csv eng || { echo 'WARNING: CSV import failed (ignoring for ongoing deployments).'; };
-
-            echo 'Deployment commands executed successfully on remote server.'
+            cd foodgram || exit 1
+            docker compose -f docker-compose.production.yaml --progress=quiet pull
+            docker compose -f docker-compose.production.yaml --progress=quiet down -v || echo 'Ignore if first deploy'
+            docker compose -f docker-compose.production.yaml --progress=quiet up -d
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py migrate --noinput
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py collectstatic --noinput
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py loaddata db.json || echo 'Ignore if missing'
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py import_csv eng || echo 'Ignore CSV failure'
           "
-          echo "Remote deployment commands execution completed."
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-      # === NEW: re-enable Fail2Ban even if deploy fails ===
-      - name: Re-enable Fail2Ban after deploy
+      - name: Re-enable Fail2Ban
         if: always()
-        run: |
-          echo "=== Restarting Fail2Ban service on remote host ==="
-          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" \
-            ${{ secrets.USER }}@${{ secrets.HOST }} \
-            "sudo systemctl start fail2ban" \
-            && echo "✅ Fail2Ban restarted successfully." \
-            || echo "⚠️ Fail2Ban restart failed, but continuing workflow..."
-
-
-#  send_telegram:  my prev ver before the intro of the OK/fail cases below
-#    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
-#    needs: deploy # Ensures Telegram notification is sent after successful deployment
-#    steps:
-#      - name: Send Telegram Notification
-#        uses: appleboy/telegram-action@master
-#        with:
-#          to: ${{ secrets.TELEGRAM_TO }}
-#          token: ${{ secrets.TELEGRAM_TOKEN }}
-#          message: Foodgram has been refreshed in builds & deployed successfully to WebSpace.
+        run: ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "sudo systemctl start fail2ban && echo '✅ Fail2Ban restarted.'" || echo "⚠️ Fail2Ban restart failed, continuing."
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
   send_telegram_success:
     name: 🟢 Telegram Success Notification
     runs-on: ubuntu-latest
-    needs: deploy # Must wait for the 'deploy' job to finish
-    #
-    # 🔑 Success condition: Only run if the 'deploy' job (and all its dependencies) succeeded.
+    needs: deploy
     if: ${{ success() && needs.deploy.result == 'success' }}
     steps:
-      - name: Send Success Message
-        uses: appleboy/telegram-action@master
+      - uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ✅ **Deployment Successful**
-            Foodgram has been refreshed in builds & deployed successfully to WebSpace.
+            ✅ **Foodgram deployed OK**
             Commit: ${{ github.sha }}
 
   send_telegram_failure:
     name: 🔴 Telegram Failure Notification
     runs-on: ubuntu-latest
-    # Needs to wait for ALL jobs that could potentially fail, to ensure they complete before reporting.
     needs: [ backend_tests, build_and_push_backend_docker_img_to_dockerhub, build_and_push_frontend_docker_img_to_dockerhub, deploy ]
-    #
-    # 🔑 Failure condition: Run if the overall workflow has failed.
     if: ${{ failure() }}
     steps:
-      - name: Send Failure Message
-        uses: appleboy/telegram-action@master
+      - uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
-            ❌ **Deployment Failed!**
-            The Foodgram workflow failed at one of the stages.
-            Check the workflow run for details: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            ❌ **Foodgram didn't deploy!**
+            Check: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             Commit: ${{ github.sha }}
