@@ -139,7 +139,7 @@ jobs:
         run: |
           echo "Stopping Fail2Ban service on remote host..."
           ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" \
-            ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} \
+            ${{ secrets.USER }}@${{ secrets.HOST }} \
             "sudo systemctl stop fail2ban && echo '✅ Fail2Ban stopped for deployment.'"
 
       # Step 2: Prepare Remote Directory and add host key (relies on SSH Agent from previous step)
@@ -288,7 +288,7 @@ jobs:
         run: |
           echo "=== Restarting Fail2Ban service on remote host ==="
           ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" \
-            ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} \
+            ${{ secrets.USER }}@${{ secrets.HOST }} \
             "sudo systemctl start fail2ban" \
             && echo "✅ Fail2Ban restarted successfully." \
             || echo "⚠️ Fail2Ban restart failed, but continuing workflow..."
