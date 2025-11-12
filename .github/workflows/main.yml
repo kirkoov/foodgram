@@ -292,10 +292,9 @@ jobs:
             "sudo systemctl start fail2ban" \
             && echo "✅ Fail2Ban restarted successfully." \
             || echo "⚠️ Fail2Ban restart failed, but continuing workflow..."
-  
-  
 
-  #  send_telegram:  my prev ver before the intro of the OK/fail cases below
+
+#  send_telegram:  my prev ver before the intro of the OK/fail cases below
 #    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
 #    needs: deploy # Ensures Telegram notification is sent after successful deployment
 #    steps:
