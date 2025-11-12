@@ -1,0 +1,176 @@
+name: Main Foodgram workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  backend_tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14.11
+        env:
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_DB: django_db
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r ./backend/requirements.txt
+      - run: |
+          cd backend/
+          pytest
+        env:
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_DB: django_db
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DJANGO_SETTINGS_MODULE: backend.settings
+
+  build_and_push_backend_docker_img_to_dockerhub:
+    name: Build & Push Backend Docker Image
+    runs-on: ubuntu-latest
+    needs: backend_tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./backend/
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+
+  build_and_push_frontend_docker_img_to_dockerhub:
+    name: Build & Push Frontend Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./frontend/
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build_and_push_backend_docker_img_to_dockerhub
+      - build_and_push_frontend_docker_img_to_dockerhub
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "::add-mask::${{ secrets.DOTENV_CONTENT }}"
+
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      # --- Define reusable SSH and RSYNC helper functions ---
+      - name: Define SSH / RSYNC helpers
+        run: |
+          set -ex
+          # SSH helper function
+          echo 'function ssh_remote() { ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "$@"; }' >> $GITHUB_ENV
+          # RSYNC helper function
+          echo 'function rsync_to_remote() { rsync -avz -e "ssh -o StrictHostKeyChecking=no -o IdentityAgent=${SSH_AUTH_SOCK}" "$1" ${{ secrets.USER }}@${{ secrets.HOST }}:"$2"; }' >> $GITHUB_ENV
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+      - name: Check SSH Connectivity
+        run: ssh -o BatchMode=yes -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "echo '✅ SSH OK'"
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+      - name: Temporarily disable Fail2Ban
+        run: ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "sudo systemctl stop fail2ban && echo '✅ Fail2Ban stopped.'"
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+      - name: Prepare Remote Directory
+        run: |
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "
+            rm -rf foodgram || echo 'Directory did not exist.'
+            mkdir -p foodgram
+          "
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+      - name: Copy Config Files & Docs
+        run: |
+          rsync -avz ./infra/docker-compose.production.yaml ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/docker-compose.production.yaml
+          rsync -avz ./infra/nginx.conf ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/nginx.conf
+          echo "${{ secrets.DOTENV_CONTENT }}" | base64 -d > ./.env_decoded
+          chmod 600 ./.env_decoded
+          rsync -avz ./.env_decoded ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/.env
+          rm ./.env_decoded
+          rsync -avz ./docs ${{ secrets.USER }}@${{ secrets.HOST }}:~/foodgram/
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+      - name: Remote Docker Deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "
+            cd foodgram || exit 1
+            docker compose -f docker-compose.production.yaml --progress=quiet pull
+            docker compose -f docker-compose.production.yaml --progress=quiet down -v || echo 'Ignore if first deploy'
+            docker compose -f docker-compose.production.yaml --progress=quiet up -d
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py migrate --noinput
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py collectstatic --noinput
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py loaddata db.json || echo 'Ignore if missing'
+            docker compose -f docker-compose.production.yaml exec --no-deps backend python manage.py import_csv eng || echo 'Ignore CSV failure'
+          "
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+      - name: Re-enable Fail2Ban
+        if: always()
+        run: ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" ${{ secrets.USER }}@${{ secrets.HOST }} "sudo systemctl start fail2ban && echo '✅ Fail2Ban restarted.'" || echo "⚠️ Fail2Ban restart failed, continuing."
+        env:
+          SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
+
+  send_telegram_success:
+    name: 🟢 Telegram Success Notification
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: ${{ success() && needs.deploy.result == 'success' }}
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ **Deployment Successful**
+            Commit: ${{ github.sha }}
+
+  send_telegram_failure:
+    name: 🔴 Telegram Failure Notification
+    runs-on: ubuntu-latest
+    needs: [ backend_tests, build_and_push_backend_docker_img_to_dockerhub, build_and_push_frontend_docker_img_to_dockerhub, deploy ]
+    if: ${{ failure() }}
+    steps:
+      - uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ❌ **Deployment Failed!**
+            Check: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Commit: ${{ github.sha }}
