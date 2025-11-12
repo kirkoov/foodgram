@@ -133,6 +133,15 @@ jobs:
           echo "Checking if SSH port 22 on remote host is reachable..."
           nc -zv ${{ secrets.HOST }} 22 || (echo "❌ SSH port 22 not reachable — check HOST, DNS, or firewall settings" && exit 1)
 
+
+      # === NEW: temporarily disable Fail2Ban on the remote host ===
+      - name: Temporarily disable Fail2Ban before deploy
+        run: |
+          echo "Stopping Fail2Ban service on remote host..."
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" \
+            ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} \
+            "sudo systemctl stop fail2ban && echo '✅ Fail2Ban stopped for deployment.'"
+
       # Step 2: Prepare Remote Directory and add host key (relies on SSH Agent from previous step)
       - name: Prepare Remote Directory and Add Host Key
         run: |
@@ -273,7 +282,20 @@ jobs:
         env:
           SSH_AUTH_SOCK: ${{ env.SSH_AUTH_SOCK }}
 
-#  send_telegram:  my prev ver before the intro of the OK/fail cases below
+      # === NEW: re-enable Fail2Ban even if deploy fails ===
+      - name: Re-enable Fail2Ban after deploy
+        if: always()
+        run: |
+          echo "=== Restarting Fail2Ban service on remote host ==="
+          ssh -o StrictHostKeyChecking=no -o IdentityAgent="${SSH_AUTH_SOCK}" \
+            ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} \
+            "sudo systemctl start fail2ban" \
+            && echo "✅ Fail2Ban restarted successfully." \
+            || echo "⚠️ Fail2Ban restart failed, but continuing workflow..."
+  
+  
+
+  #  send_telegram:  my prev ver before the intro of the OK/fail cases below
 #    runs-on: ubuntu-latest # Using ubuntu-latest for consistency
 #    needs: deploy # Ensures Telegram notification is sent after successful deployment
 #    steps:
