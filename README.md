@@ -1,10 +1,7 @@
 # Foodgram
 Both a recipe website & a shopping list service for you to never forget what 
-you need to buy to cook that fancy meal you've heard or seen. The project 
-can be tweaked to either an English or Russian interface thanks to `rosetta` 
-and it showcases my skills as a Python backend developer able to docker & 
-pytest. Please find in the description below the tools and stack used and 
-the motivation behind the project.
+you need to buy to cook that fancy meal you've heard or seen. The project can be tweaked to either an English or Russian interface thanks to `rosetta` 
+and it showcases my skills as a Python backend developer able to docker & pytest. Please find in the description below the tools and stack used and the motivation behind the project.
 
 ## Table of contents
 - [Description](#description)
