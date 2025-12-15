@@ -23,8 +23,8 @@ class Api {
           a.href = url;
           a.download = "shopping-list";
           document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-          a.click();    
-          a.remove();  //afterwards we remove the element again 
+          a.click();
+          a.remove();  //afterwards we remove the element again
         })
       }
       reject()
@@ -265,7 +265,7 @@ class Api {
   // subscriptions
 
   getSubscriptions ({
-    page, 
+    page,
     limit = 6,
     recipes_limit = 3
   }) {
@@ -401,5 +401,5 @@ class Api {
 }
 
 //export default new Api(process.env.API_URL || 'http://localhost', { 'content-type': 'application/json' })
-// See also the frontend/Dockerfile
+// See also the frontend/Dockerfile and infra/docker-compose.yaml
 export default new Api(process.env.REACT_APP_API_URL || '/', { 'content-type': 'application/json' })
