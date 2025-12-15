@@ -26,6 +26,10 @@ services:
     build:
      context: ../frontend
      dockerfile: Dockerfile
+     # New since the mixed-content error in Chromium
+     args:
+       # 💡 Inject the secure URL here for the CI/CD build
+       - REACT_APP_API_URL=https://foodgram.zapto.org
     volumes:
       - static_frontend:/app/result_build/
 
