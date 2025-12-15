@@ -308,7 +308,7 @@ reading the [Contributor Covenant](https://www.contributor-covenant.org/) which 
 
 
 ## Authors
-kirkoov (Django backend), YandexPracticum (React frontend)
+kirkoov (Django backend), YandexPracticum (React frontend), ***
 
 
 
