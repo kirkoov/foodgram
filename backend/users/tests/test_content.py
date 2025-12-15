@@ -6,8 +6,8 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 
 from backend import constants
-from users.validators import validate_username_field
 from users.tests.test_base import UserAuthTestMixin
+from users.validators import validate_username_field
 
 User = get_user_model()
 
@@ -65,7 +65,9 @@ class TestContent(UserAuthTestMixin):
 
     def test_list_users(self):
         self.assertEqual((u_count := User.objects.count()), self.TOTAL)
-        response = self.client.get(constants.TEST_USERS_PAGE_URL, format="json")
+        response = self.client.get(
+            constants.TEST_USERS_PAGE_URL, format="json"
+        )
         self.assertEqual(
             (users_d := response.data).keys(),
             constants.TEST_USER_CONTENT_ITEMS.keys(),
@@ -80,7 +82,9 @@ class TestContent(UserAuthTestMixin):
             self.assertIn("page=", users_d["next"])
         else:
             self.assertIsNone(users_d["next"])
-        self.assertIsNone(users_d["previous"]) # For first page, should be None
+        self.assertIsNone(
+            users_d["previous"]
+        )  # For first page, should be None
 
         for u_d in users_d["results"]:
             self.assertEqual(

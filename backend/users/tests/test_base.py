@@ -1,5 +1,5 @@
-from http import HTTPStatus
 import random
+from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase

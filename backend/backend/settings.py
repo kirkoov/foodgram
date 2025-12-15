@@ -19,6 +19,9 @@ SECRET_KEY = os.getenv("SECRET_KEY", "secret-key")
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localHHost").split()
 
+# Fix for Nginx HTTPS proxy
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 if DEBUG:
     # For DjDT
